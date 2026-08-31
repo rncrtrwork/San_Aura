@@ -8,8 +8,10 @@ import {
 } from '@/components/admin/MemberDetailTabs';
 import { MemberProfileSummary } from '@/components/admin/MemberProfileSummary';
 import { MemberDocumentsPanel } from '@/components/admin/MemberDocumentsPanel';
+import { MemberPaymentsPanel } from '@/components/admin/MemberPaymentsPanel';
 import { getMemberDocuments } from '@/server/members/getMemberDocuments';
 import { getMemberProfile } from '@/server/members/getMemberProfile';
+import { getMemberPayments } from '@/server/members/getMemberPayments';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,6 +33,7 @@ export default async function MemberDetailPage({ params, searchParams }: MemberD
   }
   const activeTab = parseTab((await searchParams).tab);
   const documents = activeTab === 'documents' ? await getMemberDocuments(memberId) : [];
+  const payments = activeTab === 'payments' ? await getMemberPayments(memberId) : [];
 
   return (
     <div className="space-y-6">
@@ -47,6 +50,8 @@ export default async function MemberDetailPage({ params, searchParams }: MemberD
       <MemberDetailTabs memberId={member.id} activeTab={activeTab}>
         {activeTab === 'documents' ? (
           <MemberDocumentsPanel memberId={member.id} initialDocuments={documents} />
+        ) : activeTab === 'payments' ? (
+          <MemberPaymentsPanel payments={payments} />
         ) : undefined}
       </MemberDetailTabs>
     </div>
