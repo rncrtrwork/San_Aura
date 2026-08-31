@@ -23,7 +23,9 @@ export function parseCalendarMonth(value: string | string[] | undefined, now = n
 export async function getCalendarMonth(month: string): Promise<CalendarReservation[]> {
   const [year, monthNumber] = month.split('-').map(Number);
   const rangeStart = new Date(year, monthNumber - 1, 1);
-  const rangeEnd = new Date(year, monthNumber, 1);
+  rangeStart.setDate(rangeStart.getDate() - rangeStart.getDay());
+  const rangeEnd = new Date(rangeStart);
+  rangeEnd.setDate(rangeEnd.getDate() + 42);
   return getCalendarRange(rangeStart, rangeEnd);
 }
 
