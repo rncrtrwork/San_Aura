@@ -250,7 +250,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build Reservation detail side panel (Booking Summary/Stay Details/Payment Summary/Internal Notes)
 - [x] Wire "Send Confirmation" action (email stub using SMTP config)
 - [x] Wire "Check In" action (updates status, enforces check-in time from PropertySettings)
-- [ ] Enforce checkout-by-noon / key-return-by-11am rule as a display reminder on checkout-day reservations
+- [x] Enforce checkout-by-noon / key-return-by-11am rule as a display reminder on checkout-day reservations
 - [ ] Build Calendar page (Month view) rendering Reservation bars by site/date range
 - [ ] Build Calendar Week and Timeline view toggles
 - [ ] Build day-cell popover (Arrivals/Departures/Occupancy quick view + "View Day" link)
