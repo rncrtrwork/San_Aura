@@ -14,6 +14,7 @@ export const ACTIVITY_ENTITY_TYPES = [
   'Policy',
   'Page',
   'PropertySettings',
+  'Season',
   'Site',
   'SiteBlock',
   'StayType',
