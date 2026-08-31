@@ -188,7 +188,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Create `.env.example` listing `MONGODB_URI`, `CLOUDINARY_CLOUD_NAME/API_KEY/API_SECRET`, `SESSION_SECRET`, `SMTP_*`
 - [x] Add base UI theme (colors/typography) matching approved admin design (dark green sidebar, gold accent, ivory background)
 - [x] Set up shared layout components: sidebar nav, topbar with search + notifications bell + "View Website" button, matching mockups
-- [ ] Add basic CI workflow (lint + typecheck on push)
+- [x] Add basic CI workflow (lint + typecheck on push)
 - [ ] Write project README with setup instructions
 
 ### Phase 1 — Data Models, Auth, RBAC
