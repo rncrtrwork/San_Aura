@@ -51,7 +51,7 @@ export default async function MemberDetailPage({ params, searchParams }: MemberD
         {activeTab === 'documents' ? (
           <MemberDocumentsPanel memberId={member.id} initialDocuments={documents} />
         ) : activeTab === 'payments' ? (
-          <MemberPaymentsPanel payments={payments} />
+          <MemberPaymentsPanel memberId={member.id} payments={payments} />
         ) : undefined}
       </MemberDetailTabs>
     </div>

@@ -235,7 +235,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build Document upload UI (Cloudinary upload widget) tagged by type (ID/insurance/pet rabies/waiver general/waiver pet/vehicle proof)
 - [x] Build Document expiry tracking (insurance/rabies) with "renews on" indicator
 - [x] Build Member payment history table (reads Payment collection filtered by member)
-- [ ] Build "Add Payment" manual-entry form (amount/type/method/date/appliesToPeriod)
+- [x] Build "Add Payment" manual-entry form (amount/type/method/date/appliesToPeriod)
 - [ ] Build Member status/renewal-month editor with ActivityLog entry on change
 - [ ] Build staff-only Notes tab (visibly marked "Staff Only", excluded from any member-portal serializer)
 - [ ] Build party-linking UI ("checked in with") — search + link other Member/Guest records

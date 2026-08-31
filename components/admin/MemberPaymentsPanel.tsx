@@ -1,7 +1,9 @@
 import { CircleDollarSign, ReceiptText } from 'lucide-react';
+import { MemberPaymentForm } from '@/components/admin/MemberPaymentForm';
 import type { MemberPaymentItem } from '@/server/members/getMemberPayments';
 
 type MemberPaymentsPanelProps = {
+  memberId: string;
   payments: MemberPaymentItem[];
 };
 
@@ -21,7 +23,7 @@ const methodLabels: Record<MemberPaymentItem['method'], string> = {
   'manual-adjustment': 'Manual adjustment',
 };
 
-export function MemberPaymentsPanel({ payments }: MemberPaymentsPanelProps) {
+export function MemberPaymentsPanel({ memberId, payments }: MemberPaymentsPanelProps) {
   const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
   const balance = payments.reduce((total, payment) => {
     if (payment.entryKind === 'charge') {
@@ -49,6 +51,7 @@ export function MemberPaymentsPanel({ payments }: MemberPaymentsPanelProps) {
           </div>
         </div>
       </div>
+      <MemberPaymentForm memberId={memberId} />
 
       {payments.length === 0 ? (
         <div className="grid justify-items-center py-12 text-center">
