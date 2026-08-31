@@ -217,7 +217,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 ### Phase 2 — Admin Shell & Overview Dashboard
 
-- [ ] Build admin sidebar nav (Overview/Reservations/Calendar/Events/Stays & Rates/Resort Map/Gallery/FAQ & Rules/Content/Settings) with active-state highlighting
+- [x] Build admin sidebar nav (Overview/Reservations/Calendar/Events/Stays & Rates/Resort Map/Gallery/FAQ & Rules/Content/Settings) with active-state highlighting
 - [ ] Build topbar global search input (wire to Members/Reservations/Sites search endpoint stub)
 - [ ] Build notifications bell UI (static list first, wired in Phase 10)
 - [ ] Build Overview KPI cards: Occupancy %, Arrivals Today, Departures Today, Revenue This Week (data-driven from Reservation/Payment)
