@@ -2,6 +2,7 @@ import { model, models, Schema, type Model, type Types } from 'mongoose';
 
 export const ACTIVITY_ENTITY_TYPES = [
   'Member',
+  'Document',
   'Guest',
   'Reservation',
   'Payment',

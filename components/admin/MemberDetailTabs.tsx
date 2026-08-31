@@ -1,5 +1,6 @@
 import { BadgeDollarSign, Bolt, FileText, LockKeyhole } from 'lucide-react';
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 
 export const MEMBER_DETAIL_TABS = ['documents', 'payments', 'electric', 'notes'] as const;
 export type MemberDetailTab = (typeof MEMBER_DETAIL_TABS)[number];
@@ -7,6 +8,7 @@ export type MemberDetailTab = (typeof MEMBER_DETAIL_TABS)[number];
 type MemberDetailTabsProps = {
   memberId: string;
   activeTab: MemberDetailTab;
+  children?: ReactNode;
 };
 
 const tabs = [
@@ -16,7 +18,7 @@ const tabs = [
   { id: 'notes', label: 'Notes', icon: LockKeyhole },
 ] satisfies Array<{ id: MemberDetailTab; label: string; icon: typeof FileText }>;
 
-export function MemberDetailTabs({ memberId, activeTab }: MemberDetailTabsProps) {
+export function MemberDetailTabs({ memberId, activeTab, children }: MemberDetailTabsProps) {
   const activeLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'Documents';
 
   return (
@@ -44,14 +46,16 @@ export function MemberDetailTabs({ memberId, activeTab }: MemberDetailTabsProps)
           );
         })}
       </nav>
-      <div className="grid min-h-56 place-items-center px-6 py-12 text-center">
-        <div>
-          <p className="font-serif text-2xl text-forest-900">{activeLabel}</p>
-          <p className="mt-2 text-sm text-admin-muted">
-            Member {activeLabel.toLowerCase()} will appear in this workspace.
-          </p>
+      {children ?? (
+        <div className="grid min-h-56 place-items-center px-6 py-12 text-center">
+          <div>
+            <p className="font-serif text-2xl text-forest-900">{activeLabel}</p>
+            <p className="mt-2 text-sm text-admin-muted">
+              Member {activeLabel.toLowerCase()} will appear in this workspace.
+            </p>
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }
