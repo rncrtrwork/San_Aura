@@ -1,8 +1,10 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import { AvailabilitySummary } from '@/components/admin/AvailabilitySummary';
 import { CalendarMonthGrid } from '@/components/admin/CalendarMonthGrid';
 import { CalendarTimeline, CalendarWeekGrid } from '@/components/admin/CalendarRangeViews';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
+import { getAvailabilitySummary } from '@/server/calendar/getAvailabilitySummary';
 import {
   getCalendarMonth,
   getCalendarRange,
@@ -61,8 +63,10 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
   const rangeStart = new Date(`${date}T00:00:00`);
   const rangeEnd = new Date(rangeStart);
   rangeEnd.setDate(rangeEnd.getDate() + rangeLength);
-  const reservations =
-    view === 'month' ? await getCalendarMonth(month) : await getCalendarRange(rangeStart, rangeEnd);
+  const [reservations, availability] = await Promise.all([
+    view === 'month' ? getCalendarMonth(month) : getCalendarRange(rangeStart, rangeEnd),
+    getAvailabilitySummary(rangeStart),
+  ]);
   const [year, monthNumber] = month.split('-').map(Number);
   const label =
     view === 'month'
@@ -129,14 +133,19 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
           </Link>
         ))}
       </nav>
-      <div className="overflow-x-auto">
-        {view === 'month' ? (
-          <CalendarMonthGrid month={month} reservations={reservations} />
-        ) : view === 'week' ? (
-          <CalendarWeekGrid startDate={date} reservations={reservations} />
-        ) : (
-          <CalendarTimeline startDate={date} reservations={reservations} />
-        )}
+      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_18rem]">
+        <div className="overflow-x-auto">
+          {view === 'month' ? (
+            <CalendarMonthGrid month={month} reservations={reservations} />
+          ) : view === 'week' ? (
+            <CalendarWeekGrid startDate={date} reservations={reservations} />
+          ) : (
+            <CalendarTimeline startDate={date} reservations={reservations} />
+          )}
+        </div>
+        <aside>
+          <AvailabilitySummary date={date} items={availability} />
+        </aside>
       </div>
     </div>
   );
