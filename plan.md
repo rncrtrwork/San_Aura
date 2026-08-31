@@ -202,7 +202,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Define `Member` schema
 - [x] Define `Guest` schema
 - [x] Define `Document` schema (polymorphic owner)
-- [ ] Define `Site` schema
+- [x] Define `Site` schema
 - [ ] Define `Reservation` schema
 - [ ] Define `Payment` schema
 - [ ] Define `ElectricReading` schema
