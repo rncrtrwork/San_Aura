@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-cream: #f7f3ea;
+  --color-cream-alt: #f1ecdf;
+  --color-forest-900: #1c2b1e;
+  --color-forest-800: #24331f;
+  --color-ink-700: #3a3a34;
+  --color-gold-600: #b8862e;
+  --color-gold-700: #9c701f;
+  --color-line: #dcd5c4;
+}
+
+html { scroll-behavior: smooth; }
+body { margin: 0; overflow-x: hidden; background: var(--color-cream); color: var(--color-ink-700); font-family: var(--font-inter), Arial, sans-serif; }
+* { box-sizing: border-box; }
+a, button, input, select { outline-color: var(--color-gold-600); outline-offset: 3px; }
+::selection { background: var(--color-gold-600); color: white; }
+
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
