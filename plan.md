@@ -209,7 +209,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Define `StayType`, `Season`, `Addon` schemas
 - [x] Define `Event`, `EventRegistration` schemas
 - [x] Define `MediaAsset`, `Album` schemas
-- [ ] Define `FAQItem`, `ResortRule`, `Policy` schemas
+- [x] Define `FAQItem`, `ResortRule`, `Policy` schemas
 - [ ] Define `Page`, section sub-schemas (hero/richText/timeline/CTA/gallery)
 - [ ] Define `PropertySettings` singleton schema
 - [ ] Define `Waitlist` schema
