@@ -212,7 +212,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Define `FAQItem`, `ResortRule`, `Policy` schemas
 - [x] Define `Page`, section sub-schemas (hero/richText/timeline/CTA/gallery)
 - [x] Define `PropertySettings` singleton schema
-- [ ] Define `Waitlist` schema
+- [x] Define `Waitlist` schema
 - [ ] Write seed script for initial Admin user + default PropertySettings
 
 ### Phase 2 — Admin Shell & Overview Dashboard
