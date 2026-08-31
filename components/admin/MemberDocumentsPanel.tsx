@@ -9,7 +9,12 @@ import type {
   MemberDocumentCreateRequest,
   MemberDocumentResponse,
 } from '@/lib/cloudinaryUpload';
-import { DOCUMENT_TYPES, DOCUMENT_TYPE_LABELS, type DocumentType } from '@/lib/documentOptions';
+import {
+  DOCUMENT_TYPES,
+  DOCUMENT_TYPE_LABELS,
+  documentTracksExpiry,
+  type DocumentType,
+} from '@/lib/documentOptions';
 import type { MemberDocumentItem } from '@/server/members/getMemberDocuments';
 
 type MemberDocumentsPanelProps = {
@@ -30,6 +35,21 @@ function mimeTypeForUpload(info: CloudinaryUploadInfo): string {
     : 'application/octet-stream';
 }
 
+function expiryIndicator(expiresAt: string | null): { label: string; className: string } | null {
+  if (!expiresAt) {
+    return null;
+  }
+  const expiration = new Date(expiresAt);
+  const daysRemaining = Math.ceil((expiration.getTime() - Date.now()) / 86_400_000);
+  if (daysRemaining < 0) {
+    return { label: 'Expired', className: 'bg-red-50 text-admin-danger' };
+  }
+  if (daysRemaining <= 30) {
+    return { label: 'Renews soon', className: 'bg-admin-accent/10 text-admin-accent' };
+  }
+  return { label: 'Current', className: 'bg-admin-success/10 text-admin-success' };
+}
+
 export function MemberDocumentsPanel({ memberId, initialDocuments }: MemberDocumentsPanelProps) {
   const [documents, setDocuments] = useState(initialDocuments);
   const [documentType, setDocumentType] = useState<DocumentType>('photoId');
@@ -45,7 +65,10 @@ export function MemberDocumentsPanel({ memberId, initialDocuments }: MemberDocum
       cloudinaryPublicId: info.public_id,
       originalFilename: info.original_filename,
       mimeType: mimeTypeForUpload(info),
-      expiresAt: expiresAt ? new Date(`${expiresAt}T12:00:00`).toISOString() : null,
+      expiresAt:
+        documentTracksExpiry(documentType) && expiresAt
+          ? new Date(`${expiresAt}T12:00:00`).toISOString()
+          : null,
     };
     const response = await fetch(`/api/admin/members/${memberId}/documents`, {
       method: 'POST',
@@ -60,6 +83,10 @@ export function MemberDocumentsPanel({ memberId, initialDocuments }: MemberDocum
   }
 
   async function openUploadWidget() {
+    if (documentTracksExpiry(documentType) && !expiresAt) {
+      setError('Choose an expiration date before uploading this document.');
+      return;
+    }
     setUploading(true);
     setError('');
     try {
@@ -134,7 +161,7 @@ export function MemberDocumentsPanel({ memberId, initialDocuments }: MemberDocum
     }
   }
 
-  const acceptsExpiry = documentType === 'insurance' || documentType === 'petRabies';
+  const acceptsExpiry = documentTracksExpiry(documentType);
 
   return (
     <div className="p-5 sm:p-6">
@@ -163,6 +190,7 @@ export function MemberDocumentsPanel({ memberId, initialDocuments }: MemberDocum
             Expiration date
             <input
               type="date"
+              required
               value={expiresAt}
               onChange={(event) => setExpiresAt(event.target.value)}
               className={inputClass}
@@ -199,31 +227,55 @@ export function MemberDocumentsPanel({ memberId, initialDocuments }: MemberDocum
         </div>
       ) : (
         <ul className="mt-5 divide-y divide-admin-border">
-          {documents.map((document) => (
-            <li
-              key={document.id}
-              className="flex flex-wrap items-center justify-between gap-3 py-3"
-            >
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-forest-900">
-                  {document.filename}
-                </p>
-                <p className="mt-0.5 text-xs text-admin-muted">
-                  {DOCUMENT_TYPE_LABELS[document.type]} · Uploaded{' '}
-                  {new Date(document.uploadedAt).toLocaleDateString('en-US')}
-                </p>
-              </div>
-              <a
-                href={document.url}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-admin-accent hover:text-admin-accent-hover"
+          {documents.map((document) => {
+            const indicator = expiryIndicator(document.expiresAt);
+            return (
+              <li
+                key={document.id}
+                className="flex flex-wrap items-center justify-between gap-3 py-3"
               >
-                View
-                <ExternalLink aria-hidden="true" className="size-3.5" />
-              </a>
-            </li>
-          ))}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-forest-900">
+                    {document.filename}
+                  </p>
+                  <p className="mt-0.5 text-xs text-admin-muted">
+                    {DOCUMENT_TYPE_LABELS[document.type]} · Uploaded{' '}
+                    {new Date(document.uploadedAt).toLocaleDateString('en-US')}
+                  </p>
+                  {document.expiresAt ? (
+                    <p className="mt-1 text-xs font-semibold text-admin-muted">
+                      Renews on{' '}
+                      {new Date(document.expiresAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                    </p>
+                  ) : documentTracksExpiry(document.type) ? (
+                    <p className="mt-1 text-xs font-semibold text-admin-danger">
+                      Renewal date needed
+                    </p>
+                  ) : null}
+                </div>
+                {indicator ? (
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-xs font-bold ${indicator.className}`}
+                  >
+                    {indicator.label}
+                  </span>
+                ) : null}
+                <a
+                  href={document.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-admin-accent hover:text-admin-accent-hover"
+                >
+                  View
+                  <ExternalLink aria-hidden="true" className="size-3.5" />
+                </a>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

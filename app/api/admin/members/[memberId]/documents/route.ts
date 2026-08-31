@@ -5,7 +5,7 @@ import {
   type MemberDocumentCreateRequest,
   type MemberDocumentResponse,
 } from '@/lib/cloudinaryUpload';
-import { DOCUMENT_TYPES, type DocumentType } from '@/lib/documentOptions';
+import { DOCUMENT_TYPES, documentTracksExpiry, type DocumentType } from '@/lib/documentOptions';
 import { Document } from '@/models/Document';
 import { Member } from '@/models/Member';
 import { logActivity } from '@/server/activity/logActivity';
@@ -35,6 +35,9 @@ function validateDocument(body: MemberDocumentCreateRequest): string | null {
   }
   if (!isDocumentType(body.type)) {
     return 'Select a valid document type.';
+  }
+  if (documentTracksExpiry(body.type) && !body.expiresAt) {
+    return 'An expiration date is required for insurance and rabies records.';
   }
   if (
     !body.cloudinaryUrl.startsWith('https://res.cloudinary.com/') ||
