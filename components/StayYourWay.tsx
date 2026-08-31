@@ -8,7 +8,9 @@ export function StayYourWay() {
       <div className="mx-auto max-w-[1360px]">
         <SectionHeading title="Stay Your Way" centered />
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {stayOptions.map((option) => <StayCard key={option.title} {...option} />)}
+          {stayOptions.map((option) => (
+            <StayCard key={option.title} {...option} />
+          ))}
         </div>
       </div>
     </section>
