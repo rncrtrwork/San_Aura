@@ -1,10 +1,12 @@
 import { BedDouble, CircleDollarSign, LogOut, Luggage } from 'lucide-react';
 import { KpiCard } from '@/components/admin/KpiCard';
 import { OccupancyChart } from '@/components/admin/OccupancyChart';
+import { RecentActivity } from '@/components/admin/RecentActivity';
 import { TodaysTasks } from '@/components/admin/TodaysTasks';
 import { UpcomingArrivals } from '@/components/admin/UpcomingArrivals';
 import { getOccupancySeries } from '@/server/dashboard/getOccupancySeries';
 import { getOverviewMetrics } from '@/server/dashboard/getOverviewMetrics';
+import { getRecentActivity } from '@/server/dashboard/getRecentActivity';
 import { getUpcomingArrivals } from '@/server/dashboard/getUpcomingArrivals';
 
 export const dynamic = 'force-dynamic';
@@ -14,10 +16,11 @@ export default function AdminPage() {
 }
 
 async function AdminOverview() {
-  const [metrics, occupancy, arrivals] = await Promise.all([
+  const [metrics, occupancy, arrivals, activity] = await Promise.all([
     getOverviewMetrics(),
     getOccupancySeries(),
     getUpcomingArrivals(),
+    getRecentActivity(),
   ]);
   const currency = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -70,6 +73,7 @@ async function AdminOverview() {
         <TodaysTasks />
         <UpcomingArrivals arrivals={arrivals} />
       </div>
+      <RecentActivity entries={activity} />
     </div>
   );
 }

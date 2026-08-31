@@ -224,7 +224,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build 14-Day Occupancy chart (Cabins/RV/Tent lines) fed by Reservation date-range query
 - [x] Build "Today's Tasks" list (static checklist model first — housekeeping/inspection/event/review tasks)
 - [x] Build "Upcoming Arrivals" table on Overview (next N reservations by check-in date)
-- [ ] Build "Recent Activity" feed on Overview reading from ActivityLog
+- [x] Build "Recent Activity" feed on Overview reading from ActivityLog
 - [ ] Add persistent "Privacy First — Photography is not permitted on the property" banner component (reused across Overview/Gallery/FAQ)
 
 ### Phase 3 — Members Module
