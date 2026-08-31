@@ -9,8 +9,12 @@ export function InfoColumn({ title, links }: Props) {
       <ul className="mt-5">
         {links.map((link) => (
           <li key={link} className="border-b border-line last:border-0">
-            <button type="button" className="group flex w-full items-center justify-between gap-3 py-3 text-left text-xs text-ink-700 hover:text-forest-900">
-              {link}<ChevronRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
+            <button
+              type="button"
+              className="group flex w-full items-center justify-between gap-3 py-3 text-left text-xs text-ink-700 hover:text-forest-900"
+            >
+              {link}
+              <ChevronRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
             </button>
           </li>
         ))}
