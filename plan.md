@@ -198,7 +198,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build staff login page + session/JWT issuance
 - [x] Build auth middleware for `/admin/*` routes (redirect unauthenticated to login)
 - [x] Build RBAC permission-check middleware/helper (`requirePermission('members.write')`)
-- [ ] Define `ActivityLog` schema + shared `logActivity()` service
+- [x] Define `ActivityLog` schema + shared `logActivity()` service
 - [ ] Define `Member` schema
 - [ ] Define `Guest` schema
 - [ ] Define `Document` schema (polymorphic owner)
