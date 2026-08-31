@@ -263,7 +263,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build site detail side panel (status, stay dates if occupied, amenities, length, next availability, maintenance note)
 - [x] Build "Block Site" and "View Reservation" actions from the map panel
 - [x] Build Site Summary counts widget (Available/Occupied/Maintenance/Blocked) on Resort Map
-- [ ] Build "Edit Map" mode for repositioning/adding site markers (admin-only)
+- [x] Build "Edit Map" mode for repositioning/adding site markers (admin-only)
 
 ### Phase 5 — Stays & Rates
 
