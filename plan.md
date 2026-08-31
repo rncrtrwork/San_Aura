@@ -196,7 +196,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Define `Role` schema + seed script for Admin/Front Desk/Content Editor/Maintenance
 - [x] Define `User` (staff) schema with password hashing (bcrypt)
 - [x] Build staff login page + session/JWT issuance
-- [ ] Build auth middleware for `/admin/*` routes (redirect unauthenticated to login)
+- [x] Build auth middleware for `/admin/*` routes (redirect unauthenticated to login)
 - [ ] Build RBAC permission-check middleware/helper (`requirePermission('members.write')`)
 - [ ] Define `ActivityLog` schema + shared `logActivity()` service
 - [ ] Define `Member` schema
