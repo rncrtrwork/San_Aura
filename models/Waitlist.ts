@@ -1,14 +1,7 @@
 import { model, models, Schema, type Model, type Types } from 'mongoose';
+import { WAITLIST_STATUSES, type WaitlistStatus } from '@/lib/waitlistOptions';
 
-export const WAITLIST_STATUSES = [
-  'pending',
-  'contacted',
-  'offered',
-  'converted',
-  'cancelled',
-] as const;
-
-export type WaitlistStatus = (typeof WAITLIST_STATUSES)[number];
+export { WAITLIST_STATUSES, type WaitlistStatus } from '@/lib/waitlistOptions';
 
 export type WaitlistContact = {
   name: string;

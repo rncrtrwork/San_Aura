@@ -244,26 +244,26 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 ### Phase 4 — Reservations, Calendar, Resort Map
 
-- [ ] Build Reservations list page with status tabs (All/Pending/Confirmed/Checked In/Completed/Cancelled)
-- [ ] Build Reservations filters (stay type, arrival date, payment status) + search
-- [ ] Build New Reservation form (guest/member lookup-or-create, stay type, site, dates, guest count)
-- [ ] Build Reservation detail side panel (Booking Summary/Stay Details/Payment Summary/Internal Notes)
-- [ ] Wire "Send Confirmation" action (email stub using SMTP config)
-- [ ] Wire "Check In" action (updates status, enforces check-in time from PropertySettings)
-- [ ] Enforce checkout-by-noon / key-return-by-11am rule as a display reminder on checkout-day reservations
-- [ ] Build Calendar page (Month view) rendering Reservation bars by site/date range
-- [ ] Build Calendar Week and Timeline view toggles
-- [ ] Build day-cell popover (Arrivals/Departures/Occupancy quick view + "View Day" link)
-- [ ] Build Availability Summary sidebar widget (available counts by site type)
-- [ ] Build Occupancy donut widget on Calendar page
-- [ ] Build Waitlist sidebar list + "Review Waitlist" flow
-- [ ] Build "Block Dates" action (creates a maintenance/blocked Site-date range)
-- [ ] Build Resort Map page: static base map with clickable site markers
-- [ ] Wire site marker color state to `Site.status` (available/occupied/maintenance/blocked)
-- [ ] Build site detail side panel (status, stay dates if occupied, amenities, length, next availability, maintenance note)
-- [ ] Build "Block Site" and "View Reservation" actions from the map panel
-- [ ] Build Site Summary counts widget (Available/Occupied/Maintenance/Blocked) on Resort Map
-- [ ] Build "Edit Map" mode for repositioning/adding site markers (admin-only)
+- [x] Build Reservations list page with status tabs (All/Pending/Confirmed/Checked In/Completed/Cancelled)
+- [x] Build Reservations filters (stay type, arrival date, payment status) + search
+- [x] Build New Reservation form (guest/member lookup-or-create, stay type, site, dates, guest count)
+- [x] Build Reservation detail side panel (Booking Summary/Stay Details/Payment Summary/Internal Notes)
+- [x] Wire "Send Confirmation" action (email stub using SMTP config)
+- [x] Wire "Check In" action (updates status, enforces check-in time from PropertySettings)
+- [x] Enforce checkout-by-noon / key-return-by-11am rule as a display reminder on checkout-day reservations
+- [x] Build Calendar page (Month view) rendering Reservation bars by site/date range
+- [x] Build Calendar Week and Timeline view toggles
+- [x] Build day-cell popover (Arrivals/Departures/Occupancy quick view + "View Day" link)
+- [x] Build Availability Summary sidebar widget (available counts by site type)
+- [x] Build Occupancy donut widget on Calendar page
+- [x] Build Waitlist sidebar list + "Review Waitlist" flow
+- [x] Build "Block Dates" action (creates a maintenance/blocked Site-date range)
+- [x] Build Resort Map page: static base map with clickable site markers
+- [x] Wire site marker color state to `Site.status` (available/occupied/maintenance/blocked)
+- [x] Build site detail side panel (status, stay dates if occupied, amenities, length, next availability, maintenance note)
+- [x] Build "Block Site" and "View Reservation" actions from the map panel
+- [x] Build Site Summary counts widget (Available/Occupied/Maintenance/Blocked) on Resort Map
+- [x] Build "Edit Map" mode for repositioning/adding site markers (admin-only)
 
 ### Phase 5 — Stays & Rates
 

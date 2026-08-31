@@ -15,12 +15,21 @@ export const ACTIVITY_ENTITY_TYPES = [
   'Page',
   'PropertySettings',
   'Site',
+  'SiteBlock',
+  'Waitlist',
   'StaffUser',
   'Role',
 ] as const;
 
 export type ActivityEntityType = (typeof ACTIVITY_ENTITY_TYPES)[number];
-export type ActivityAction = 'create' | 'update' | 'delete' | 'status-change' | 'publish' | 'login';
+export type ActivityAction =
+  | 'create'
+  | 'update'
+  | 'delete'
+  | 'status-change'
+  | 'publish'
+  | 'login'
+  | 'send';
 
 export type SnapshotValue = string | number | boolean | null | Date;
 
@@ -43,7 +52,7 @@ const activityLogSchema = new Schema<ActivityLogDocument>(
     actorId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     action: {
       type: String,
-      enum: ['create', 'update', 'delete', 'status-change', 'publish', 'login'],
+      enum: ['create', 'update', 'delete', 'status-change', 'publish', 'login', 'send'],
       required: true,
     },
     entityType: { type: String, enum: ACTIVITY_ENTITY_TYPES, required: true, index: true },
