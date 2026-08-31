@@ -1,8 +1,10 @@
+import { Types } from 'mongoose';
 import { connectToDatabase } from '@/lib/db';
 import { Guest } from '@/models/Guest';
 import { Member } from '@/models/Member';
 import {
   Reservation,
+  RESERVATION_PAYMENT_STATUSES,
   RESERVATION_STATUSES,
   type ReservationPaymentStatus,
   type ReservationStatus,
@@ -11,6 +13,28 @@ import { Site, type SiteType } from '@/models/Site';
 import { StayType } from '@/models/StayType';
 
 export type ReservationStatusFilter = ReservationStatus | 'all';
+
+export type ReservationListFilters = {
+  status: ReservationStatusFilter;
+  stayTypeId: string;
+  arrivalDate: string;
+  paymentStatus: ReservationPaymentStatus | '';
+  search: string;
+};
+
+type ReservationSearchClause =
+  | { _id: Types.ObjectId }
+  | { guestOrMemberRef: { $in: Types.ObjectId[] } }
+  | { siteRef: { $in: Types.ObjectId[] } }
+  | { source: RegExp };
+
+type ReservationQuery = {
+  status?: ReservationStatus;
+  stayType?: Types.ObjectId;
+  paymentStatus?: ReservationPaymentStatus;
+  checkIn?: { $gte: Date; $lt: Date };
+  $or?: ReservationSearchClause[];
+};
 
 export type ReservationListItem = {
   id: string;
@@ -30,21 +54,91 @@ export type ReservationListItem = {
 export type ReservationListResult = {
   reservations: ReservationListItem[];
   counts: Record<ReservationStatusFilter, number>;
+  stayTypes: Array<{ id: string; name: string }>;
 };
 
-export function parseReservationStatus(
-  value: string | string[] | undefined,
-): ReservationStatusFilter {
-  const selected = typeof value === 'string' ? value : '';
-  return RESERVATION_STATUSES.find((status) => status === selected) ?? 'all';
+function valueOf(params: Record<string, string | string[] | undefined>, key: string): string {
+  const value = params[key];
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function escapeRegularExpression(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function isIsoDate(value: string): boolean {
+  return /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00`));
+}
+
+export function parseReservationFilters(
+  params: Record<string, string | string[] | undefined>,
+): ReservationListFilters {
+  const statusValue = valueOf(params, 'status');
+  const paymentValue = valueOf(params, 'paymentStatus');
+  const stayTypeValue = valueOf(params, 'stayType');
+  const arrivalValue = valueOf(params, 'arrivalDate');
+  return {
+    status: RESERVATION_STATUSES.find((status) => status === statusValue) ?? 'all',
+    stayTypeId: Types.ObjectId.isValid(stayTypeValue) ? stayTypeValue : '',
+    arrivalDate: isIsoDate(arrivalValue) ? arrivalValue : '',
+    paymentStatus: RESERVATION_PAYMENT_STATUSES.find((status) => status === paymentValue) ?? '',
+    search: valueOf(params, 'search').slice(0, 120),
+  };
+}
+
+async function buildReservationQuery(filters: ReservationListFilters): Promise<ReservationQuery> {
+  const query: ReservationQuery = {};
+  if (filters.status !== 'all') {
+    query.status = filters.status;
+  }
+  if (filters.stayTypeId) {
+    query.stayType = new Types.ObjectId(filters.stayTypeId);
+  }
+  if (filters.paymentStatus) {
+    query.paymentStatus = filters.paymentStatus;
+  }
+  if (filters.arrivalDate) {
+    const dayStart = new Date(`${filters.arrivalDate}T00:00:00`);
+    const dayEnd = new Date(dayStart);
+    dayEnd.setDate(dayEnd.getDate() + 1);
+    query.checkIn = { $gte: dayStart, $lt: dayEnd };
+  }
+  if (filters.search) {
+    const expression = new RegExp(escapeRegularExpression(filters.search), 'i');
+    const [members, guests, sites] = await Promise.all([
+      Member.find({ $or: [{ name: expression }, { email: expression }, { phone: expression }] })
+        .select('_id')
+        .limit(50)
+        .lean(),
+      Guest.find({ $or: [{ name: expression }, { email: expression }, { phone: expression }] })
+        .select('_id')
+        .limit(50)
+        .lean(),
+      Site.find({ $or: [{ code: expression }, { area: expression }] })
+        .select('_id')
+        .limit(50)
+        .lean(),
+    ]);
+    const ownerIds = [...members, ...guests].map((record) => record._id);
+    const clauses: ReservationSearchClause[] = [
+      { guestOrMemberRef: { $in: ownerIds } },
+      { siteRef: { $in: sites.map((site) => site._id) } },
+      { source: expression },
+    ];
+    if (Types.ObjectId.isValid(filters.search)) {
+      clauses.push({ _id: new Types.ObjectId(filters.search) });
+    }
+    query.$or = clauses;
+  }
+  return query;
 }
 
 export async function getReservations(
-  status: ReservationStatusFilter,
+  filters: ReservationListFilters,
 ): Promise<ReservationListResult> {
   await connectToDatabase();
-  const filter = status === 'all' ? {} : { status };
-  const [reservations, statusCounts] = await Promise.all([
+  const filter = await buildReservationQuery(filters);
+  const [reservations, statusCounts, filterStayTypes] = await Promise.all([
     Reservation.find(filter)
       .select(
         'guestOrMemberType guestOrMemberRef siteRef stayType checkIn checkOut guestsCount totalAmount paymentStatus status',
@@ -55,6 +149,7 @@ export async function getReservations(
     Reservation.aggregate<{ _id: ReservationStatus; count: number }>([
       { $group: { _id: '$status', count: { $sum: 1 } } },
     ]),
+    StayType.find({ active: true }).select('_id name').sort({ name: 1 }).lean(),
   ]);
 
   const memberIds = reservations
@@ -118,5 +213,9 @@ export async function getReservations(
       };
     }),
     counts,
+    stayTypes: filterStayTypes.map((stayType) => ({
+      id: stayType._id.toString(),
+      name: stayType.name,
+    })),
   };
 }

@@ -1,18 +1,30 @@
-import { CalendarRange, Plus } from 'lucide-react';
+import { CalendarRange, Plus, Search } from 'lucide-react';
 import Link from 'next/link';
-import { RESERVATION_STATUSES } from '@/models/Reservation';
+import { RESERVATION_PAYMENT_STATUSES, RESERVATION_STATUSES } from '@/models/Reservation';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import {
   getReservations,
-  parseReservationStatus,
+  parseReservationFilters,
+  type ReservationListFilters,
   type ReservationStatusFilter,
 } from '@/server/reservations/getReservations';
 
 export const dynamic = 'force-dynamic';
 
 type ReservationsPageProps = {
-  searchParams: Promise<{ status?: string | string[] }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
+
+function statusHref(status: ReservationStatusFilter, filters: ReservationListFilters): string {
+  const params = new URLSearchParams();
+  if (status !== 'all') params.set('status', status);
+  if (filters.stayTypeId) params.set('stayType', filters.stayTypeId);
+  if (filters.arrivalDate) params.set('arrivalDate', filters.arrivalDate);
+  if (filters.paymentStatus) params.set('paymentStatus', filters.paymentStatus);
+  if (filters.search) params.set('search', filters.search);
+  const query = params.toString();
+  return query ? `/admin/reservations?${query}` : '/admin/reservations';
+}
 
 const statusLabels: Record<ReservationStatusFilter, string> = {
   all: 'All',
@@ -25,8 +37,9 @@ const statusLabels: Record<ReservationStatusFilter, string> = {
 
 export default async function ReservationsPage({ searchParams }: ReservationsPageProps) {
   await requirePagePermission('reservations.read');
-  const status = parseReservationStatus((await searchParams).status);
-  const { reservations, counts } = await getReservations(status);
+  const filters = parseReservationFilters(await searchParams);
+  const { reservations, counts, stayTypes } = await getReservations(filters);
+  const status = filters.status;
   const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
   return (
@@ -50,6 +63,81 @@ export default async function ReservationsPage({ searchParams }: ReservationsPag
         </Link>
       </header>
 
+      <form className="admin-card grid gap-4 p-4 md:grid-cols-2 xl:grid-cols-[minmax(15rem,1fr)_repeat(3,minmax(10rem,0.4fr))_auto_auto]">
+        {status !== 'all' ? <input type="hidden" name="status" value={status} /> : null}
+        <label className="relative block">
+          <span className="sr-only">Search reservations</span>
+          <Search
+            aria-hidden="true"
+            className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-admin-muted"
+          />
+          <input
+            type="search"
+            name="search"
+            defaultValue={filters.search}
+            placeholder="Guest, member, site, or booking ID"
+            className="h-11 w-full rounded-lg border border-admin-border bg-white pl-10 pr-3 text-sm text-forest-900"
+          />
+        </label>
+        <label>
+          <span className="sr-only">Stay type</span>
+          <select
+            name="stayType"
+            defaultValue={filters.stayTypeId}
+            className="h-11 w-full rounded-lg border border-admin-border bg-white px-3 text-sm text-forest-900"
+          >
+            <option value="">All stay types</option>
+            {stayTypes.map((stayType) => (
+              <option key={stayType.id} value={stayType.id}>
+                {stayType.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          <span className="sr-only">Arrival date</span>
+          <input
+            type="date"
+            name="arrivalDate"
+            defaultValue={filters.arrivalDate}
+            className="h-11 w-full rounded-lg border border-admin-border bg-white px-3 text-sm text-forest-900"
+          />
+        </label>
+        <label>
+          <span className="sr-only">Payment status</span>
+          <select
+            name="paymentStatus"
+            defaultValue={filters.paymentStatus}
+            className="h-11 w-full rounded-lg border border-admin-border bg-white px-3 text-sm capitalize text-forest-900"
+          >
+            <option value="">All payment statuses</option>
+            {RESERVATION_PAYMENT_STATUSES.map((paymentStatus) => (
+              <option key={paymentStatus} value={paymentStatus}>
+                {paymentStatus.replaceAll('-', ' ')}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button
+          type="submit"
+          className="h-11 rounded-lg border border-admin-sidebar px-5 text-sm font-bold text-admin-sidebar hover:bg-admin-sidebar hover:text-white"
+        >
+          Apply
+        </button>
+        <Link
+          href={statusHref(status, {
+            status,
+            stayTypeId: '',
+            arrivalDate: '',
+            paymentStatus: '',
+            search: '',
+          })}
+          className="grid h-11 place-items-center px-2 text-sm font-semibold text-admin-muted hover:text-admin-accent"
+        >
+          Clear
+        </Link>
+      </form>
+
       <nav
         aria-label="Reservation status"
         className="flex overflow-x-auto border-b border-admin-border"
@@ -59,7 +147,7 @@ export default async function ReservationsPage({ searchParams }: ReservationsPag
           return (
             <Link
               key={tab}
-              href={tab === 'all' ? '/admin/reservations' : `/admin/reservations?status=${tab}`}
+              href={statusHref(tab, filters)}
               aria-current={active ? 'page' : undefined}
               className={`inline-flex min-w-max items-center gap-2 border-b-2 px-4 py-3 text-sm font-semibold ${
                 active
