@@ -244,7 +244,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 ### Phase 4 — Reservations, Calendar, Resort Map
 
-- [ ] Build Reservations list page with status tabs (All/Pending/Confirmed/Checked In/Completed/Cancelled)
+- [x] Build Reservations list page with status tabs (All/Pending/Confirmed/Checked In/Completed/Cancelled)
 - [ ] Build Reservations filters (stay type, arrival date, payment status) + search
 - [ ] Build New Reservation form (guest/member lookup-or-create, stay type, site, dates, guest count)
 - [ ] Build Reservation detail side panel (Booking Summary/Stay Details/Payment Summary/Internal Notes)
