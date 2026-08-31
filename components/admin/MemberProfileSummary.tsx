@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { MemberStatusEditor } from '@/components/admin/MemberStatusEditor';
 import { MemberPartyLinks } from '@/components/admin/MemberPartyLinks';
+import { getTierRules } from '@/lib/memberTierRules';
 import type { MemberProfile } from '@/server/members/getMemberProfile';
 
 type MemberProfileSummaryProps = {
@@ -37,6 +38,7 @@ function Detail({ icon: Icon, label, value }: { icon: typeof Mail; label: string
 }
 
 export function MemberProfileSummary({ member }: MemberProfileSummaryProps) {
+  const tierRules = getTierRules(member.membershipTier);
   const primaryVehicle = member.vehicles[0];
   const vehicleLabel = primaryVehicle
     ? [primaryVehicle.year, primaryVehicle.make, primaryVehicle.model].filter(Boolean).join(' ') ||
@@ -61,6 +63,13 @@ export function MemberProfileSummary({ member }: MemberProfileSummaryProps) {
                 month: 'short',
                 year: 'numeric',
               })}
+            </p>
+            <p className="mt-1 text-xs font-semibold text-admin-success">
+              {tierRules.permanentSpaceAssignment
+                ? 'Permanent space eligible'
+                : tierRules.dayFeeExempt
+                  ? 'Day-fee exempt'
+                  : 'Standard stay fees apply'}
             </p>
           </div>
         </div>
