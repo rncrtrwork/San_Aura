@@ -8,6 +8,7 @@ import {
   ShieldPlus,
   UserRound,
 } from 'lucide-react';
+import { MemberStatusEditor } from '@/components/admin/MemberStatusEditor';
 import type { MemberProfile } from '@/server/members/getMemberProfile';
 
 type MemberProfileSummaryProps = {
@@ -62,15 +63,22 @@ export function MemberProfileSummary({ member }: MemberProfileSummaryProps) {
             </p>
           </div>
         </div>
-        <span
-          className={`rounded-full px-3 py-1.5 text-xs font-bold capitalize ${
-            member.status === 'active'
-              ? 'bg-admin-success/10 text-admin-success'
-              : 'bg-cream-alt text-admin-muted'
-          }`}
-        >
-          {member.status}
-        </span>
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <span
+            className={`rounded-full px-3 py-1.5 text-xs font-bold capitalize ${
+              member.status === 'active'
+                ? 'bg-admin-success/10 text-admin-success'
+                : 'bg-cream-alt text-admin-muted'
+            }`}
+          >
+            {member.status}
+          </span>
+          <MemberStatusEditor
+            memberId={member.id}
+            initialStatus={member.status}
+            initialRenewalMonth={member.renewalMonth}
+          />
+        </div>
       </div>
       <div className="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
         <Detail icon={Mail} label="Email" value={member.email || 'Not provided'} />
