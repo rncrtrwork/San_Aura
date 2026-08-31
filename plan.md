@@ -211,7 +211,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Define `MediaAsset`, `Album` schemas
 - [x] Define `FAQItem`, `ResortRule`, `Policy` schemas
 - [x] Define `Page`, section sub-schemas (hero/richText/timeline/CTA/gallery)
-- [ ] Define `PropertySettings` singleton schema
+- [x] Define `PropertySettings` singleton schema
 - [ ] Define `Waitlist` schema
 - [ ] Write seed script for initial Admin user + default PropertySettings
 
