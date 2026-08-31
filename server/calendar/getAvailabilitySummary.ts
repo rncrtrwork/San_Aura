@@ -5,6 +5,7 @@ import { SITE_TYPES, Site, type SiteType } from '@/models/Site';
 export type AvailabilitySummaryItem = {
   type: SiteType;
   available: number;
+  occupied: number;
   total: number;
 };
 
@@ -34,6 +35,9 @@ export async function getAvailabilitySummary(date: Date): Promise<AvailabilitySu
         site.status !== 'blocked' &&
         !reservedSiteIds.has(site._id.toString()),
     ).length;
-    return { type, available, total: matchingSites.length };
+    const occupied = matchingSites.filter((site) =>
+      reservedSiteIds.has(site._id.toString()),
+    ).length;
+    return { type, available, occupied, total: matchingSites.length };
   });
 }

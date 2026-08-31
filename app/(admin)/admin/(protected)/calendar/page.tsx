@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { AvailabilitySummary } from '@/components/admin/AvailabilitySummary';
 import { CalendarMonthGrid } from '@/components/admin/CalendarMonthGrid';
 import { CalendarTimeline, CalendarWeekGrid } from '@/components/admin/CalendarRangeViews';
+import { OccupancyDonut } from '@/components/admin/OccupancyDonut';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getAvailabilitySummary } from '@/server/calendar/getAvailabilitySummary';
 import {
@@ -143,8 +144,9 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
             <CalendarTimeline startDate={date} reservations={reservations} />
           )}
         </div>
-        <aside>
+        <aside className="space-y-6">
           <AvailabilitySummary date={date} items={availability} />
+          <OccupancyDonut items={availability} />
         </aside>
       </div>
     </div>

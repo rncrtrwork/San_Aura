@@ -255,7 +255,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build Calendar Week and Timeline view toggles
 - [x] Build day-cell popover (Arrivals/Departures/Occupancy quick view + "View Day" link)
 - [x] Build Availability Summary sidebar widget (available counts by site type)
-- [ ] Build Occupancy donut widget on Calendar page
+- [x] Build Occupancy donut widget on Calendar page
 - [ ] Build Waitlist sidebar list + "Review Waitlist" flow
 - [ ] Build "Block Dates" action (creates a maintenance/blocked Site-date range)
 - [ ] Build Resort Map page: static base map with clickable site markers
