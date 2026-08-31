@@ -70,13 +70,13 @@ export async function getOverviewMetrics(now = new Date()): Promise<OverviewMetr
     revenueThisWeekResult,
     revenuePreviousWeekResult,
   ] = await Promise.all([
-    Site.countDocuments({ active: true, status: { $ne: 'blocked' } }),
-    Reservation.countDocuments({
+    Site.countDocuments({ active: true, status: { $nin: ['blocked', 'maintenance'] } }),
+    Reservation.distinct('siteRef', {
       checkIn: { $lte: now },
       checkOut: { $gt: now },
       status: { $in: activeReservationStatuses },
     }),
-    Reservation.countDocuments({
+    Reservation.distinct('siteRef', {
       checkIn: { $lte: lastWeekMoment },
       checkOut: { $gt: lastWeekMoment },
       status: { $in: activeReservationStatuses },
@@ -113,9 +113,9 @@ export async function getOverviewMetrics(now = new Date()): Promise<OverviewMetr
   ]);
 
   const occupancyPercent =
-    activeSiteCount === 0 ? 0 : Math.round((occupiedNow / activeSiteCount) * 100);
+    activeSiteCount === 0 ? 0 : Math.round((occupiedNow.length / activeSiteCount) * 100);
   const previousOccupancyPercent =
-    activeSiteCount === 0 ? 0 : Math.round((occupiedLastWeek / activeSiteCount) * 100);
+    activeSiteCount === 0 ? 0 : Math.round((occupiedLastWeek.length / activeSiteCount) * 100);
   const revenueThisWeek = revenueThisWeekResult[0]?.total ?? 0;
   const revenuePreviousWeek = revenuePreviousWeekResult[0]?.total ?? 0;
 
