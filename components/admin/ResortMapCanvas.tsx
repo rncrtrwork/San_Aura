@@ -1,10 +1,25 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import type { SiteStatus } from '@/models/Site';
 import type { ResortMapSite } from '@/server/sites/getResortMapSites';
 
 type ResortMapCanvasProps = {
   sites: ResortMapSite[];
   selectedSiteId?: string;
+};
+
+const statusStyles: Record<SiteStatus, string> = {
+  available: 'bg-admin-success',
+  occupied: 'bg-admin-accent',
+  maintenance: 'bg-admin-danger',
+  blocked: 'bg-admin-muted',
+};
+
+const statusLabels: Record<SiteStatus, string> = {
+  available: 'Available',
+  occupied: 'Occupied',
+  maintenance: 'Maintenance',
+  blocked: 'Blocked',
 };
 
 export function ResortMapCanvas({ sites, selectedSiteId }: ResortMapCanvasProps) {
@@ -24,9 +39,9 @@ export function ResortMapCanvas({ sites, selectedSiteId }: ResortMapCanvasProps)
           <Link
             key={site.id}
             href={`/admin/resort-map?site=${site.id}`}
-            aria-label={`Open ${site.code}`}
-            title={site.code}
-            className={`absolute z-10 grid size-7 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-white bg-admin-sidebar text-[9px] font-extrabold text-white shadow-md transition-transform hover:z-20 hover:scale-125 focus:z-20 focus:scale-125 focus:outline-none focus:ring-2 focus:ring-admin-accent focus:ring-offset-2 ${
+            aria-label={`Open ${site.code}, ${statusLabels[site.status]}`}
+            title={`${site.code} · ${statusLabels[site.status]}`}
+            className={`absolute z-10 grid size-7 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-white text-[9px] font-extrabold text-white shadow-md transition-transform hover:z-20 hover:scale-125 focus:z-20 focus:scale-125 focus:outline-none focus:ring-2 focus:ring-admin-accent focus:ring-offset-2 ${statusStyles[site.status]} ${
               selectedSiteId === site.id ? 'ring-4 ring-admin-accent ring-offset-2' : ''
             }`}
             style={{ left: `${site.x}%`, top: `${site.y}%` }}
@@ -39,6 +54,17 @@ export function ResortMapCanvas({ sites, selectedSiteId }: ResortMapCanvasProps)
             Add active sites to place markers on the map.
           </div>
         ) : null}
+        <div className="absolute bottom-3 right-3 z-20 flex flex-wrap gap-3 rounded-lg bg-white/95 px-4 py-2 text-[11px] font-semibold text-forest-900 shadow-lg">
+          {(Object.keys(statusLabels) as SiteStatus[]).map((status) => (
+            <span key={status} className="inline-flex items-center gap-1.5">
+              <span
+                className={`size-2.5 rounded-full ${statusStyles[status]}`}
+                aria-hidden="true"
+              />
+              {statusLabels[status]}
+            </span>
+          ))}
+        </div>
       </div>
     </section>
   );
