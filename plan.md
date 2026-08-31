@@ -217,15 +217,15 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 ### Phase 2 — Admin Shell & Overview Dashboard
 
-- [ ] Build admin sidebar nav (Overview/Reservations/Calendar/Events/Stays & Rates/Resort Map/Gallery/FAQ & Rules/Content/Settings) with active-state highlighting
-- [ ] Build topbar global search input (wire to Members/Reservations/Sites search endpoint stub)
-- [ ] Build notifications bell UI (static list first, wired in Phase 10)
-- [ ] Build Overview KPI cards: Occupancy %, Arrivals Today, Departures Today, Revenue This Week (data-driven from Reservation/Payment)
-- [ ] Build 14-Day Occupancy chart (Cabins/RV/Tent lines) fed by Reservation date-range query
-- [ ] Build "Today's Tasks" list (static checklist model first — housekeeping/inspection/event/review tasks)
-- [ ] Build "Upcoming Arrivals" table on Overview (next N reservations by check-in date)
-- [ ] Build "Recent Activity" feed on Overview reading from ActivityLog
-- [ ] Add persistent "Privacy First — Photography is not permitted on the property" banner component (reused across Overview/Gallery/FAQ)
+- [x] Build admin sidebar nav (Overview/Reservations/Calendar/Events/Stays & Rates/Resort Map/Gallery/FAQ & Rules/Content/Settings) with active-state highlighting
+- [x] Build topbar global search input (wire to Members/Reservations/Sites search endpoint stub)
+- [x] Build notifications bell UI (static list first, wired in Phase 10)
+- [x] Build Overview KPI cards: Occupancy %, Arrivals Today, Departures Today, Revenue This Week (data-driven from Reservation/Payment)
+- [x] Build 14-Day Occupancy chart (Cabins/RV/Tent lines) fed by Reservation date-range query
+- [x] Build "Today's Tasks" list (static checklist model first — housekeeping/inspection/event/review tasks)
+- [x] Build "Upcoming Arrivals" table on Overview (next N reservations by check-in date)
+- [x] Build "Recent Activity" feed on Overview reading from ActivityLog
+- [x] Add persistent "Privacy First — Photography is not permitted on the property" banner component (reused across Overview/Gallery/FAQ)
 
 ### Phase 3 — Members Module
 
