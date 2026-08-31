@@ -115,7 +115,11 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     name: stayType.name,
     slug: stayType.slug,
     siteType: stayType.siteType,
+    baseRate: stayType.baseRate,
+    weekendRate: stayType.weekendRate,
+    extraGuestFee: stayType.extraGuestFee,
     minimumStay: stayType.minimumStay,
+    cleaningFee: stayType.cleaningFee,
     active: stayType.active,
   };
   stayType.set(validation.data);
@@ -130,7 +134,11 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       name: stayType.name,
       slug: stayType.slug,
       siteType: stayType.siteType,
+      baseRate: stayType.baseRate,
+      weekendRate: stayType.weekendRate,
+      extraGuestFee: stayType.extraGuestFee,
       minimumStay: stayType.minimumStay,
+      cleaningFee: stayType.cleaningFee,
       active: stayType.active,
     },
   });

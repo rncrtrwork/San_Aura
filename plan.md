@@ -274,7 +274,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build monthly Rate Calendar grid with weekday/weekend rate coloring
 - [x] Build "Manage Seasons" flow (create/edit named date-range rate overrides)
 - [x] Build Add-ons table (name/description/type/price/status) with add/edit/deactivate
-- [ ] Wire "Save Rates" to persist Season/StayType changes + ActivityLog entry
+- [x] Wire "Save Rates" to persist Season/StayType changes + ActivityLog entry
 
 ### Phase 6 — Events
 

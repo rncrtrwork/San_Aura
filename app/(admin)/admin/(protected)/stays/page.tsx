@@ -32,7 +32,8 @@ export default async function StaysPage({ searchParams }: StaysPageProps) {
   const shouldLoadStayTypes =
     activeTab === 'stay-types' || activeTab === 'rate-plans' || activeTab === 'availability-rules';
   const stayTypes = shouldLoadStayTypes ? await getStayTypes() : [];
-  const seasons = activeTab === 'availability-rules' ? await getSeasons() : [];
+  const seasons =
+    activeTab === 'rate-plans' || activeTab === 'availability-rules' ? await getSeasons() : [];
   const addons = activeTab === 'add-ons' ? await getAddons() : [];
 
   return (
@@ -74,7 +75,7 @@ export default async function StaysPage({ searchParams }: StaysPageProps) {
           ) : activeTab === 'rate-plans' ? (
             <>
               <RateEditorPanel stayTypes={stayTypes} />
-              <MonthlyRateCalendar stayTypes={stayTypes} month={requestedMonth} />
+              <MonthlyRateCalendar stayTypes={stayTypes} seasons={seasons} month={requestedMonth} />
             </>
           ) : activeTab === 'availability-rules' ? (
             <ManageSeasonsFlow seasons={seasons} stayTypes={stayTypes} />

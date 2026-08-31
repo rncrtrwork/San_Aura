@@ -1,8 +1,10 @@
 import Link from 'next/link';
+import type { AdminSeason } from '@/lib/seasons';
 import { stayTypeLabels, type AdminStayType } from '@/lib/stayTypes';
 
 type MonthlyRateCalendarProps = {
   stayTypes: AdminStayType[];
+  seasons: AdminSeason[];
   month: string | null;
 };
 
@@ -66,11 +68,38 @@ function isWeekend(date: Date): boolean {
   return day === 5 || day === 6;
 }
 
-function displayRate(stayType: AdminStayType, weekend: boolean): string {
-  return currencyFormatter.format(weekend ? stayType.weekendRate : stayType.baseRate);
+function dateKey(date: Date): string {
+  return date.toISOString().slice(0, 10);
 }
 
-export function MonthlyRateCalendar({ stayTypes, month }: MonthlyRateCalendarProps) {
+function effectiveRate(
+  stayType: AdminStayType,
+  seasons: AdminSeason[],
+  date: Date,
+  weekend: boolean,
+): { amount: number; seasonName: string | null } {
+  const key = dateKey(date);
+  const season = seasons.find(
+    (item) =>
+      item.active &&
+      item.startsOn <= key &&
+      item.endsOn >= key &&
+      item.rateOverrides.some((override) => override.stayTypeId === stayType.id),
+  );
+  const override = season?.rateOverrides.find((item) => item.stayTypeId === stayType.id);
+  return {
+    amount: override
+      ? weekend
+        ? override.weekendRate
+        : override.baseRate
+      : weekend
+        ? stayType.weekendRate
+        : stayType.baseRate,
+    seasonName: season?.name ?? null,
+  };
+}
+
+export function MonthlyRateCalendar({ stayTypes, seasons, month }: MonthlyRateCalendarProps) {
   const calendarMonth = parseCalendarMonth(month);
   const days = daysForMonth(calendarMonth);
   const previousMonth = monthKey(addMonths(calendarMonth, -1));
@@ -137,17 +166,13 @@ export function MonthlyRateCalendar({ stayTypes, month }: MonthlyRateCalendarPro
                 </div>
                 <div className="mt-3 space-y-1.5">
                   {stayTypes.map((stayType) => (
-                    <div
+                    <RateCalendarPrice
                       key={stayType.id}
-                      className="flex items-center justify-between gap-3 rounded-md bg-white px-2.5 py-1.5 text-xs"
-                    >
-                      <span className="truncate font-semibold text-admin-muted">
-                        {stayTypeLabels[stayType.siteType]}
-                      </span>
-                      <span className="font-bold text-forest-900">
-                        {displayRate(stayType, weekend)}
-                      </span>
-                    </div>
+                      date={date}
+                      seasons={seasons}
+                      stayType={stayType}
+                      weekend={weekend}
+                    />
                   ))}
                 </div>
               </article>
@@ -156,5 +181,34 @@ export function MonthlyRateCalendar({ stayTypes, month }: MonthlyRateCalendarPro
         </div>
       )}
     </section>
+  );
+}
+
+function RateCalendarPrice({
+  date,
+  seasons,
+  stayType,
+  weekend,
+}: {
+  date: Date;
+  seasons: AdminSeason[];
+  stayType: AdminStayType;
+  weekend: boolean;
+}) {
+  const rate = effectiveRate(stayType, seasons, date, weekend);
+  return (
+    <div className="rounded-md bg-white px-2.5 py-1.5 text-xs">
+      <div className="flex items-center justify-between gap-3">
+        <span className="truncate font-semibold text-admin-muted">
+          {stayTypeLabels[stayType.siteType]}
+        </span>
+        <span className="font-bold text-forest-900">{currencyFormatter.format(rate.amount)}</span>
+      </div>
+      {rate.seasonName ? (
+        <p className="mt-1 truncate text-[11px] font-semibold text-admin-accent">
+          {rate.seasonName}
+        </p>
+      ) : null}
+    </div>
   );
 }
