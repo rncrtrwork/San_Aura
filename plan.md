@@ -182,7 +182,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 ### Phase 0 — Project Scaffolding
 
 - [x] Initialize Next.js + TypeScript project, add ESLint/Prettier config
-- [ ] Set up folder structure (`/app/(public)`, `/app/(admin)`, `/app/(member)`, `/lib`, `/models`, `/server`)
+- [x] Set up folder structure (`/app/(public)`, `/app/(admin)`, `/app/(member)`, `/lib`, `/models`, `/server`)
 - [ ] Add MongoDB connection helper with cached connection for serverless (`/lib/db.ts`)
 - [ ] Add Cloudinary SDK config helper (`/lib/cloudinary.ts`), reading keys from env
 - [ ] Create `.env.example` listing `MONGODB_URI`, `CLOUDINARY_CLOUD_NAME/API_KEY/API_SECRET`, `SESSION_SECRET`, `SMTP_*`
