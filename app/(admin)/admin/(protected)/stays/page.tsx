@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { RateEditorPanel } from '@/components/admin/RateEditorPanel';
 import { StayTypeCards } from '@/components/admin/StayTypeCards';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getStayTypes } from '@/server/stays/getStayTypes';
@@ -21,7 +22,8 @@ export default async function StaysPage({ searchParams }: StaysPageProps) {
   const requestedTab = (await searchParams).tab;
   const activeTab = tabs.some((tab) => tab.id === requestedTab) ? requestedTab : 'stay-types';
   const activeLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'Stay Types';
-  const stayTypes = activeTab === 'stay-types' ? await getStayTypes() : [];
+  const shouldLoadStayTypes = activeTab === 'stay-types' || activeTab === 'rate-plans';
+  const stayTypes = shouldLoadStayTypes ? await getStayTypes() : [];
 
   return (
     <div className="space-y-6">
@@ -59,6 +61,8 @@ export default async function StaysPage({ searchParams }: StaysPageProps) {
         <div className="mt-5">
           {activeTab === 'stay-types' ? (
             <StayTypeCards stayTypes={stayTypes} />
+          ) : activeTab === 'rate-plans' ? (
+            <RateEditorPanel stayTypes={stayTypes} />
           ) : (
             <p className="text-sm text-admin-muted">
               {activeLabel} management will appear in this workspace.
