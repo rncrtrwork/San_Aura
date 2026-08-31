@@ -225,7 +225,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build "Today's Tasks" list (static checklist model first — housekeeping/inspection/event/review tasks)
 - [x] Build "Upcoming Arrivals" table on Overview (next N reservations by check-in date)
 - [x] Build "Recent Activity" feed on Overview reading from ActivityLog
-- [ ] Add persistent "Privacy First — Photography is not permitted on the property" banner component (reused across Overview/Gallery/FAQ)
+- [x] Add persistent "Privacy First — Photography is not permitted on the property" banner component (reused across Overview/Gallery/FAQ)
 
 ### Phase 3 — Members Module
 
