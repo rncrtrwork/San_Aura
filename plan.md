@@ -253,7 +253,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Enforce checkout-by-noon / key-return-by-11am rule as a display reminder on checkout-day reservations
 - [x] Build Calendar page (Month view) rendering Reservation bars by site/date range
 - [x] Build Calendar Week and Timeline view toggles
-- [ ] Build day-cell popover (Arrivals/Departures/Occupancy quick view + "View Day" link)
+- [x] Build day-cell popover (Arrivals/Departures/Occupancy quick view + "View Day" link)
 - [ ] Build Availability Summary sidebar widget (available counts by site type)
 - [ ] Build Occupancy donut widget on Calendar page
 - [ ] Build Waitlist sidebar list + "Review Waitlist" flow

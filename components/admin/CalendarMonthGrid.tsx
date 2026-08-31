@@ -54,6 +54,12 @@ export function CalendarMonthGrid({ month, reservations }: CalendarMonthGridProp
             const checkOut = new Date(reservation.checkOut);
             return checkIn < dayEnd && checkOut > dayStart;
           });
+          const arrivals = reservations.filter(
+            (reservation) => dateKey(new Date(reservation.checkIn)) === key,
+          ).length;
+          const departures = reservations.filter(
+            (reservation) => dateKey(new Date(reservation.checkOut)) === key,
+          ).length;
           const inMonth = day.getMonth() === monthNumber - 1;
           return (
             <article
@@ -73,6 +79,33 @@ export function CalendarMonthGrid({ month, reservations }: CalendarMonthGridProp
                   </span>
                 ) : null}
               </div>
+              <details className="mt-2 rounded-md border border-admin-border bg-white/80 text-xs">
+                <summary className="cursor-pointer list-none px-2 py-1.5 font-semibold text-admin-muted hover:text-forest-900">
+                  Day details
+                </summary>
+                <div className="grid grid-cols-3 gap-1 border-t border-admin-border px-2 py-2 text-center">
+                  <div>
+                    <strong className="block text-sm text-forest-900">{arrivals}</strong>
+                    <span className="text-[10px] text-admin-muted">Arrivals</span>
+                  </div>
+                  <div>
+                    <strong className="block text-sm text-forest-900">{departures}</strong>
+                    <span className="text-[10px] text-admin-muted">Departures</span>
+                  </div>
+                  <div>
+                    <strong className="block text-sm text-forest-900">
+                      {dayReservations.length}
+                    </strong>
+                    <span className="text-[10px] text-admin-muted">Occupied</span>
+                  </div>
+                  <Link
+                    href={`/admin/calendar?view=week&month=${month}&date=${key}`}
+                    className="col-span-3 mt-1 rounded bg-admin-sidebar px-2 py-1.5 font-semibold text-white"
+                  >
+                    View Day
+                  </Link>
+                </div>
+              </details>
               <div className="mt-2 space-y-1">
                 {dayReservations.slice(0, 3).map((reservation) => (
                   <Link
