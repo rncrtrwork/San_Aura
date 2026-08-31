@@ -1,12 +1,21 @@
 import { model, models, Schema, type Model, type Types } from 'mongoose';
+import {
+  LEDGER_ENTRY_KINDS,
+  PAYMENT_METHODS,
+  PAYMENT_TYPES,
+  type LedgerEntryKind,
+  type PaymentMethod,
+  type PaymentType,
+} from '@/lib/paymentOptions';
 
-export const PAYMENT_TYPES = ['dues', 'electric', 'day-fee', 'cabin', 'rv', 'addon'] as const;
-export const PAYMENT_METHODS = ['cash', 'check', 'paypal-external', 'manual-adjustment'] as const;
-export const LEDGER_ENTRY_KINDS = ['charge', 'payment', 'credit'] as const;
-
-export type PaymentType = (typeof PAYMENT_TYPES)[number];
-export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
-export type LedgerEntryKind = (typeof LEDGER_ENTRY_KINDS)[number];
+export {
+  LEDGER_ENTRY_KINDS,
+  PAYMENT_METHODS,
+  PAYMENT_TYPES,
+  type LedgerEntryKind,
+  type PaymentMethod,
+  type PaymentType,
+} from '@/lib/paymentOptions';
 
 export type AppliesToPeriod = {
   start: Date;

@@ -1,18 +1,17 @@
 import { model, models, Schema, type Model, type Types } from 'mongoose';
+import {
+  DOCUMENT_OWNER_TYPES,
+  DOCUMENT_TYPES,
+  type DocumentOwnerType,
+  type DocumentType,
+} from '@/lib/documentOptions';
 
-export const DOCUMENT_TYPES = [
-  'photoId',
-  'insurance',
-  'petRabies',
-  'waiverGeneral',
-  'waiverPet',
-  'vehicleProof',
-] as const;
-
-export const DOCUMENT_OWNER_TYPES = ['Member', 'Guest'] as const;
-
-export type DocumentType = (typeof DOCUMENT_TYPES)[number];
-export type DocumentOwnerType = (typeof DOCUMENT_OWNER_TYPES)[number];
+export {
+  DOCUMENT_OWNER_TYPES,
+  DOCUMENT_TYPES,
+  type DocumentOwnerType,
+  type DocumentType,
+} from '@/lib/documentOptions';
 
 export type DocumentRecord = {
   ownerType: DocumentOwnerType;

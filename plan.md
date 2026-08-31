@@ -229,18 +229,18 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 ### Phase 3 — Members Module
 
-- [ ] Build Members list page (search/filter by tier/status/renewal month)
-- [ ] Build Member creation form (name, contact, phone, vehicle, tier, status, renewal month, emergency contact)
-- [ ] Build Member detail view: profile summary + tabs (Documents/Payments/Electric/Notes)
-- [ ] Build Document upload UI (Cloudinary upload widget) tagged by type (ID/insurance/pet rabies/waiver general/waiver pet/vehicle proof)
-- [ ] Build Document expiry tracking (insurance/rabies) with "renews on" indicator
-- [ ] Build Member payment history table (reads Payment collection filtered by member)
-- [ ] Build "Add Payment" manual-entry form (amount/type/method/date/appliesToPeriod)
-- [ ] Build Member status/renewal-month editor with ActivityLog entry on change
-- [ ] Build staff-only Notes tab (visibly marked "Staff Only", excluded from any member-portal serializer)
-- [ ] Build party-linking UI ("checked in with") — search + link other Member/Guest records
-- [ ] Wire membership tier rules (permanent space assignment for 2850/2000/500, day-fee exemption for 1250) into a shared `getTierRules()` helper
-- [ ] Add Members API route tests for tier-rule resolution
+- [x] Build Members list page (search/filter by tier/status/renewal month)
+- [x] Build Member creation form (name, contact, phone, vehicle, tier, status, renewal month, emergency contact)
+- [x] Build Member detail view: profile summary + tabs (Documents/Payments/Electric/Notes)
+- [x] Build Document upload UI (Cloudinary upload widget) tagged by type (ID/insurance/pet rabies/waiver general/waiver pet/vehicle proof)
+- [x] Build Document expiry tracking (insurance/rabies) with "renews on" indicator
+- [x] Build Member payment history table (reads Payment collection filtered by member)
+- [x] Build "Add Payment" manual-entry form (amount/type/method/date/appliesToPeriod)
+- [x] Build Member status/renewal-month editor with ActivityLog entry on change
+- [x] Build staff-only Notes tab (visibly marked "Staff Only", excluded from any member-portal serializer)
+- [x] Build party-linking UI ("checked in with") — search + link other Member/Guest records
+- [x] Wire membership tier rules (permanent space assignment for 2850/2000/500, day-fee exemption for 1250) into a shared `getTierRules()` helper
+- [x] Add Members API route tests for tier-rule resolution
 
 ### Phase 4 — Reservations, Calendar, Resort Map
 
