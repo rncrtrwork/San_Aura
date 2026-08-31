@@ -260,7 +260,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build "Block Dates" action (creates a maintenance/blocked Site-date range)
 - [x] Build Resort Map page: static base map with clickable site markers
 - [x] Wire site marker color state to `Site.status` (available/occupied/maintenance/blocked)
-- [ ] Build site detail side panel (status, stay dates if occupied, amenities, length, next availability, maintenance note)
+- [x] Build site detail side panel (status, stay dates if occupied, amenities, length, next availability, maintenance note)
 - [ ] Build "Block Site" and "View Reservation" actions from the map panel
 - [ ] Build Site Summary counts widget (Available/Occupied/Maintenance/Blocked) on Resort Map
 - [ ] Build "Edit Map" mode for repositioning/adding site markers (admin-only)

@@ -1,6 +1,8 @@
 import { ResortMapCanvas } from '@/components/admin/ResortMapCanvas';
+import { SiteDetailPanel } from '@/components/admin/SiteDetailPanel';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getResortMapSites } from '@/server/sites/getResortMapSites';
+import { getResortMapSiteDetail } from '@/server/sites/getResortMapSiteDetail';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,7 +14,10 @@ export default async function ResortMapPage({ searchParams }: ResortMapPageProps
   await requirePagePermission('sites.read');
   const selectedSite = (await searchParams).site;
   const selectedSiteId = typeof selectedSite === 'string' ? selectedSite : undefined;
-  const sites = await getResortMapSites();
+  const [sites, siteDetail] = await Promise.all([
+    getResortMapSites(),
+    getResortMapSiteDetail(selectedSiteId),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -28,6 +33,7 @@ export default async function ResortMapPage({ searchParams }: ResortMapPageProps
       <div className="overflow-x-auto pb-2">
         <ResortMapCanvas sites={sites} selectedSiteId={selectedSiteId} />
       </div>
+      {siteDetail ? <SiteDetailPanel site={siteDetail} /> : null}
     </div>
   );
 }
