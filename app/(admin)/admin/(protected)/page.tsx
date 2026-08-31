@@ -1,5 +1,7 @@
 import { BedDouble, CircleDollarSign, LogOut, Luggage } from 'lucide-react';
 import { KpiCard } from '@/components/admin/KpiCard';
+import { OccupancyChart } from '@/components/admin/OccupancyChart';
+import { getOccupancySeries } from '@/server/dashboard/getOccupancySeries';
 import { getOverviewMetrics } from '@/server/dashboard/getOverviewMetrics';
 
 export const dynamic = 'force-dynamic';
@@ -9,7 +11,7 @@ export default function AdminPage() {
 }
 
 async function AdminOverview() {
-  const metrics = await getOverviewMetrics();
+  const [metrics, occupancy] = await Promise.all([getOverviewMetrics(), getOccupancySeries()]);
   const currency = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -56,6 +58,7 @@ async function AdminOverview() {
           icon={CircleDollarSign}
         />
       </section>
+      <OccupancyChart data={occupancy} />
     </div>
   );
 }
