@@ -1,19 +1,14 @@
-import { Bell, ExternalLink, Settings } from 'lucide-react';
+import { ExternalLink, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { GlobalSearch } from './GlobalSearch';
+import { NotificationsMenu } from './NotificationsMenu';
 
 export function AdminTopbar() {
   return (
     <header className="sticky top-0 z-30 flex min-h-20 items-center gap-4 border-b border-admin-border bg-admin-surface/95 px-5 backdrop-blur lg:px-8">
       <GlobalSearch />
       <div className="ml-auto flex items-center gap-2 sm:gap-4">
-        <button
-          type="button"
-          aria-label="Open notifications"
-          className="grid size-11 place-items-center rounded-lg text-forest-900 transition-colors hover:bg-black/5"
-        >
-          <Bell aria-hidden="true" className="size-5" strokeWidth={1.7} />
-        </button>
+        <NotificationsMenu />
         <Link
           href="/"
           target="_blank"
