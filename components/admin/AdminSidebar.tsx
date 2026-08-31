@@ -12,6 +12,7 @@ import {
   Settings,
   Sparkles,
   TicketCheck,
+  Users,
   type LucideIcon,
 } from 'lucide-react';
 import Image from 'next/image';
@@ -26,6 +27,7 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { label: 'Overview', href: '/admin', icon: Gauge },
+  { label: 'Members', href: '/admin/members', icon: Users },
   { label: 'Reservations', href: '/admin/reservations', icon: TicketCheck },
   { label: 'Calendar', href: '/admin/calendar', icon: CalendarDays },
   { label: 'Events', href: '/admin/events', icon: Sparkles },
