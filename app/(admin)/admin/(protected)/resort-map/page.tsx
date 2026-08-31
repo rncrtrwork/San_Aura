@@ -1,5 +1,6 @@
 import { ResortMapCanvas } from '@/components/admin/ResortMapCanvas';
 import { SiteDetailPanel } from '@/components/admin/SiteDetailPanel';
+import { SiteSummary } from '@/components/admin/SiteSummary';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getResortMapSites } from '@/server/sites/getResortMapSites';
 import { getResortMapSiteDetail } from '@/server/sites/getResortMapSiteDetail';
@@ -30,6 +31,7 @@ export default async function ResortMapPage({ searchParams }: ResortMapPageProps
           Select a site marker to inspect its current inventory record.
         </p>
       </header>
+      <SiteSummary sites={sites} />
       <div className="overflow-x-auto pb-2">
         <ResortMapCanvas sites={sites} selectedSiteId={selectedSiteId} />
       </div>
