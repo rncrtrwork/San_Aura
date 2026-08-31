@@ -1,5 +1,6 @@
 import { Ruler, TentTree, X, Zap } from 'lucide-react';
 import Link from 'next/link';
+import { SiteMapActions } from '@/components/admin/SiteMapActions';
 import type { SiteStatus } from '@/models/Site';
 import type { ResortMapSiteDetail } from '@/server/sites/getResortMapSiteDetail';
 
@@ -143,6 +144,11 @@ export function SiteDetailPanel({ site }: SiteDetailPanelProps) {
               {site.maintenanceNote || 'No maintenance note recorded.'}
             </p>
           </section>
+          <SiteMapActions
+            siteId={site.id}
+            status={site.status}
+            reservationId={site.currentReservationId}
+          />
         </div>
       </section>
     </div>
