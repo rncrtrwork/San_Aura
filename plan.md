@@ -258,7 +258,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build Occupancy donut widget on Calendar page
 - [x] Build Waitlist sidebar list + "Review Waitlist" flow
 - [x] Build "Block Dates" action (creates a maintenance/blocked Site-date range)
-- [ ] Build Resort Map page: static base map with clickable site markers
+- [x] Build Resort Map page: static base map with clickable site markers
 - [ ] Wire site marker color state to `Site.status` (available/occupied/maintenance/blocked)
 - [ ] Build site detail side panel (status, stay dates if occupied, amenities, length, next availability, maintenance note)
 - [ ] Build "Block Site" and "View Reservation" actions from the map panel
