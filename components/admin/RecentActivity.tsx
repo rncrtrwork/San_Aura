@@ -1,4 +1,4 @@
-import { Activity, FilePenLine, LogIn, Plus, Send, Trash2 } from 'lucide-react';
+import { Activity, FilePenLine, LogIn, MailCheck, Plus, Send, Trash2 } from 'lucide-react';
 import type { RecentActivity as RecentActivityEntry } from '@/server/dashboard/getRecentActivity';
 
 type RecentActivityProps = {
@@ -12,6 +12,7 @@ const actionLabels = {
   'status-change': 'changed the status of',
   publish: 'published',
   login: 'signed in to',
+  send: 'sent a confirmation for',
 } satisfies Record<RecentActivityEntry['action'], string>;
 
 const actionIcons = {
@@ -21,6 +22,7 @@ const actionIcons = {
   'status-change': Activity,
   publish: Send,
   login: LogIn,
+  send: MailCheck,
 } satisfies Record<RecentActivityEntry['action'], typeof Activity>;
 
 function formatEntityType(entityType: RecentActivityEntry['entityType']): string {

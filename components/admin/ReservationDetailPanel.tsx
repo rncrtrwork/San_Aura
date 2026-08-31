@@ -2,6 +2,7 @@ import { CalendarDays, CircleDollarSign, MapPin, StickyNote, UserRound, X } from
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import type { ReservationDetail } from '@/server/reservations/getReservationDetail';
+import { ReservationActions } from '@/components/admin/ReservationActions';
 
 type ReservationDetailPanelProps = {
   reservation: ReservationDetail;
@@ -57,6 +58,7 @@ export function ReservationDetailPanel({ reservation, closeHref }: ReservationDe
             <X aria-hidden="true" className="size-5" />
           </Link>
         </header>
+        <ReservationActions reservationId={reservation.id} />
         <Section title="Booking Summary" icon={UserRound}>
           <dl className="grid grid-cols-2 gap-4 text-sm">
             <div>

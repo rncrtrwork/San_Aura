@@ -248,7 +248,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build Reservations filters (stay type, arrival date, payment status) + search
 - [x] Build New Reservation form (guest/member lookup-or-create, stay type, site, dates, guest count)
 - [x] Build Reservation detail side panel (Booking Summary/Stay Details/Payment Summary/Internal Notes)
-- [ ] Wire "Send Confirmation" action (email stub using SMTP config)
+- [x] Wire "Send Confirmation" action (email stub using SMTP config)
 - [ ] Wire "Check In" action (updates status, enforces check-in time from PropertySettings)
 - [ ] Enforce checkout-by-noon / key-return-by-11am rule as a display reminder on checkout-day reservations
 - [ ] Build Calendar page (Month view) rendering Reservation bars by site/date range
