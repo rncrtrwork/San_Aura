@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { readStaffSession, STAFF_SESSION_COOKIE } from '@/server/auth/session';
 
-export async function middleware(request: NextRequest): Promise<NextResponse> {
+export async function proxy(request: NextRequest): Promise<NextResponse> {
   const loginPath = '/admin/login';
   const isLoginPath = request.nextUrl.pathname === loginPath;
   const token = request.cookies.get(STAFF_SESSION_COOKIE)?.value;

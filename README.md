@@ -4,7 +4,7 @@ Modern public website, staff administration system, and member portal for Sun Au
 
 ## Requirements
 
-- Node.js 20
+- Node.js 20.9 or newer
 - npm 10 or newer
 - MongoDB instance or MongoDB Atlas cluster
 - Cloudinary account
