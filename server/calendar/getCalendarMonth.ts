@@ -1,7 +1,7 @@
 import { connectToDatabase } from '@/lib/db';
 import { Guest } from '@/models/Guest';
 import { Member } from '@/models/Member';
-import { Reservation } from '@/models/Reservation';
+import { Reservation, type ReservationStatus } from '@/models/Reservation';
 import { Site } from '@/models/Site';
 
 export type CalendarReservation = {
@@ -10,7 +10,7 @@ export type CalendarReservation = {
   siteCode: string;
   checkIn: string;
   checkOut: string;
-  status: string;
+  status: ReservationStatus;
 };
 
 export function parseCalendarMonth(value: string | string[] | undefined, now = new Date()): string {
@@ -21,10 +21,17 @@ export function parseCalendarMonth(value: string | string[] | undefined, now = n
 }
 
 export async function getCalendarMonth(month: string): Promise<CalendarReservation[]> {
-  await connectToDatabase();
   const [year, monthNumber] = month.split('-').map(Number);
   const rangeStart = new Date(year, monthNumber - 1, 1);
   const rangeEnd = new Date(year, monthNumber, 1);
+  return getCalendarRange(rangeStart, rangeEnd);
+}
+
+export async function getCalendarRange(
+  rangeStart: Date,
+  rangeEnd: Date,
+): Promise<CalendarReservation[]> {
+  await connectToDatabase();
   const reservations = await Reservation.find({
     checkIn: { $lt: rangeEnd },
     checkOut: { $gt: rangeStart },
