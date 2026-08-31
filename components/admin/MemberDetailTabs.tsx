@@ -42,6 +42,11 @@ export function MemberDetailTabs({ memberId, activeTab, children }: MemberDetail
             >
               <Icon aria-hidden="true" className="size-4" />
               {label}
+              {id === 'notes' ? (
+                <span className="rounded-full bg-admin-accent/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-admin-accent">
+                  Staff Only
+                </span>
+              ) : null}
             </Link>
           );
         })}

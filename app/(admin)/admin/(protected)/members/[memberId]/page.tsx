@@ -8,10 +8,12 @@ import {
 } from '@/components/admin/MemberDetailTabs';
 import { MemberProfileSummary } from '@/components/admin/MemberProfileSummary';
 import { MemberDocumentsPanel } from '@/components/admin/MemberDocumentsPanel';
+import { MemberNotesPanel } from '@/components/admin/MemberNotesPanel';
 import { MemberPaymentsPanel } from '@/components/admin/MemberPaymentsPanel';
 import { getMemberDocuments } from '@/server/members/getMemberDocuments';
 import { getMemberProfile } from '@/server/members/getMemberProfile';
 import { getMemberPayments } from '@/server/members/getMemberPayments';
+import { getMemberStaffNotes } from '@/server/members/getMemberStaffNotes';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,6 +36,7 @@ export default async function MemberDetailPage({ params, searchParams }: MemberD
   const activeTab = parseTab((await searchParams).tab);
   const documents = activeTab === 'documents' ? await getMemberDocuments(memberId) : [];
   const payments = activeTab === 'payments' ? await getMemberPayments(memberId) : [];
+  const staffNotes = activeTab === 'notes' ? await getMemberStaffNotes(memberId) : '';
 
   return (
     <div className="space-y-6">
@@ -52,6 +55,8 @@ export default async function MemberDetailPage({ params, searchParams }: MemberD
           <MemberDocumentsPanel memberId={member.id} initialDocuments={documents} />
         ) : activeTab === 'payments' ? (
           <MemberPaymentsPanel memberId={member.id} payments={payments} />
+        ) : activeTab === 'notes' ? (
+          <MemberNotesPanel memberId={member.id} initialNotes={staffNotes} />
         ) : undefined}
       </MemberDetailTabs>
     </div>
