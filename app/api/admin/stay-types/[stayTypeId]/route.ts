@@ -1,10 +1,16 @@
 import { Types } from 'mongoose';
 import { NextResponse, type NextRequest } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
-import type { StayTypeStatusUpdateRequest, StayTypeStatusUpdateResponse } from '@/lib/stayTypes';
+import type {
+  StayTypeMutationRequest,
+  StayTypeMutationResponse,
+  StayTypeStatusUpdateRequest,
+  StayTypeStatusUpdateResponse,
+} from '@/lib/stayTypes';
 import { StayType } from '@/models/StayType';
 import { logActivity } from '@/server/activity/logActivity';
 import { authorizeRequest } from '@/server/auth/authorization';
+import { validateStayTypeMutation } from '@/server/stays/stayTypeValidation';
 
 export const runtime = 'nodejs';
 
@@ -19,6 +25,12 @@ function validateStatusUpdate(body: StayTypeStatusUpdateRequest): string | null 
   return null;
 }
 
+function isStatusOnlyUpdate(
+  body: StayTypeMutationRequest | StayTypeStatusUpdateRequest,
+): body is StayTypeStatusUpdateRequest {
+  return 'active' in body && !('name' in body);
+}
+
 export async function PATCH(request: NextRequest, context: RouteContext) {
   const authorization = await authorizeRequest(request, 'sites.write');
   if (!authorization.authorized) return authorization.response;
@@ -31,9 +43,9 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     );
   }
 
-  let body: StayTypeStatusUpdateRequest;
+  let body: StayTypeMutationRequest | StayTypeStatusUpdateRequest;
   try {
-    body = (await request.json()) as StayTypeStatusUpdateRequest;
+    body = (await request.json()) as StayTypeMutationRequest | StayTypeStatusUpdateRequest;
   } catch {
     return NextResponse.json<StayTypeStatusUpdateResponse>(
       { message: 'Request body must be valid JSON.' },
@@ -41,16 +53,10 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     );
   }
 
-  const validationMessage = validateStatusUpdate(body);
-  if (validationMessage) {
-    return NextResponse.json<StayTypeStatusUpdateResponse>(
-      { message: validationMessage },
-      { status: 400 },
-    );
-  }
-
   await connectToDatabase();
-  const stayType = await StayType.findById(stayTypeId).select('active name');
+  const stayType = await StayType.findById(stayTypeId).select(
+    'name slug siteType description amenities baseRate weekendRate extraGuestFee minimumStay cleaningFee active',
+  );
   if (!stayType) {
     return NextResponse.json<StayTypeStatusUpdateResponse>(
       { message: 'Stay type not found.' },
@@ -58,22 +64,76 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     );
   }
 
-  const beforeActive = stayType.active;
-  if (beforeActive !== body.active) {
-    stayType.active = body.active;
-    await stayType.save();
-    await logActivity({
-      actorId: authorization.staff.userId,
-      action: 'status-change',
-      entityType: 'StayType',
-      entityId: stayType._id,
-      beforeSnapshot: { active: beforeActive },
-      afterSnapshot: { active: stayType.active },
+  if (isStatusOnlyUpdate(body)) {
+    const validationMessage = validateStatusUpdate(body);
+    if (validationMessage) {
+      return NextResponse.json<StayTypeStatusUpdateResponse>(
+        { message: validationMessage },
+        { status: 400 },
+      );
+    }
+
+    const beforeActive = stayType.active;
+    if (beforeActive !== body.active) {
+      stayType.active = body.active;
+      await stayType.save();
+      await logActivity({
+        actorId: authorization.staff.userId,
+        action: 'status-change',
+        entityType: 'StayType',
+        entityId: stayType._id,
+        beforeSnapshot: { active: beforeActive },
+        afterSnapshot: { active: stayType.active },
+      });
+    }
+
+    return NextResponse.json<StayTypeStatusUpdateResponse>({
+      message: `${stayType.name} ${stayType.active ? 'activated' : 'deactivated'}.`,
+      active: stayType.active,
     });
   }
 
-  return NextResponse.json<StayTypeStatusUpdateResponse>({
-    message: `${stayType.name} ${stayType.active ? 'activated' : 'deactivated'}.`,
-    active: stayType.active,
+  const validation = validateStayTypeMutation(body);
+  if (!validation.valid) {
+    return NextResponse.json<StayTypeMutationResponse>(
+      { message: validation.message },
+      { status: 400 },
+    );
+  }
+  const duplicate = await StayType.exists({
+    _id: { $ne: stayType._id },
+    slug: validation.data.slug,
   });
+  if (duplicate) {
+    return NextResponse.json<StayTypeMutationResponse>(
+      { message: 'A stay type with this slug already exists.' },
+      { status: 409 },
+    );
+  }
+
+  const beforeSnapshot = {
+    name: stayType.name,
+    slug: stayType.slug,
+    siteType: stayType.siteType,
+    minimumStay: stayType.minimumStay,
+    active: stayType.active,
+  };
+  stayType.set(validation.data);
+  await stayType.save();
+  await logActivity({
+    actorId: authorization.staff.userId,
+    action: beforeSnapshot.active !== stayType.active ? 'status-change' : 'update',
+    entityType: 'StayType',
+    entityId: stayType._id,
+    beforeSnapshot,
+    afterSnapshot: {
+      name: stayType.name,
+      slug: stayType.slug,
+      siteType: stayType.siteType,
+      minimumStay: stayType.minimumStay,
+      active: stayType.active,
+    },
+  });
+
+  return NextResponse.json<StayTypeMutationResponse>({ message: 'Stay type updated.' });
 }
