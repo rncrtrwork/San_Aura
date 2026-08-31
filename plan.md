@@ -268,7 +268,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 ### Phase 5 — Stays & Rates
 
 - [x] Build Stays & Rates page shell with tabs (Stay Types/Rate Plans/Availability Rules/Add-ons)
-- [ ] Build Stay Type cards (Cabins/RV/Tent) showing unit count, amenities, minimum stay, active toggle
+- [x] Build Stay Type cards (Cabins/RV/Tent) showing unit count, amenities, minimum stay, active toggle
 - [ ] Build "Add Stay Type" and "Edit" forms
 - [ ] Build Rate editor panel (base rate, weekend rate, extra guest fee, minimum stay, cleaning fee)
 - [ ] Build monthly Rate Calendar grid with weekday/weekend rate coloring
