@@ -11,17 +11,16 @@ export type AuthorizedStaff = {
   email: string;
 };
 
-type ProtectedRouteHandler<RouteContext extends object> = (
+type ProtectedRouteHandler = (
   request: NextRequest,
-  context: RouteContext,
   staff: AuthorizedStaff,
 ) => Promise<NextResponse>;
 
-export function requirePermission<RouteContext extends object = object>(
+export function requirePermission(
   permission: Permission,
-  handler: ProtectedRouteHandler<RouteContext>,
-): (request: NextRequest, context: RouteContext) => Promise<NextResponse> {
-  return async (request, context) => {
+  handler: ProtectedRouteHandler,
+): (request: NextRequest) => Promise<NextResponse> {
+  return async (request) => {
     const token = request.cookies.get(STAFF_SESSION_COOKIE)?.value;
     const session = token ? await readStaffSession(token) : null;
 
@@ -43,7 +42,7 @@ export function requirePermission<RouteContext extends object = object>(
       return NextResponse.json({ message: 'Insufficient permissions' }, { status: 403 });
     }
 
-    return handler(request, context, {
+    return handler(request, {
       userId: session.userId,
       roleId: session.roleId,
       email: session.email,
