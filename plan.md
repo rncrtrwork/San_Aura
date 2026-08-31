@@ -240,7 +240,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build staff-only Notes tab (visibly marked "Staff Only", excluded from any member-portal serializer)
 - [x] Build party-linking UI ("checked in with") — search + link other Member/Guest records
 - [x] Wire membership tier rules (permanent space assignment for 2850/2000/500, day-fee exemption for 1250) into a shared `getTierRules()` helper
-- [ ] Add Members API route tests for tier-rule resolution
+- [x] Add Members API route tests for tier-rule resolution
 
 ### Phase 4 — Reservations, Calendar, Resort Map
 
