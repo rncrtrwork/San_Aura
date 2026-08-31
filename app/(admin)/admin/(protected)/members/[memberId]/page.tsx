@@ -14,6 +14,7 @@ import { getMemberDocuments } from '@/server/members/getMemberDocuments';
 import { getMemberProfile } from '@/server/members/getMemberProfile';
 import { getMemberPayments } from '@/server/members/getMemberPayments';
 import { getMemberStaffNotes } from '@/server/members/getMemberStaffNotes';
+import { requirePagePermission } from '@/server/auth/pageAuthorization';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,6 +29,7 @@ function parseTab(value: string | string[] | undefined): MemberDetailTab {
 }
 
 export default async function MemberDetailPage({ params, searchParams }: MemberDetailPageProps) {
+  await requirePagePermission('members.read');
   const { memberId } = await params;
   const member = await getMemberProfile(memberId);
   if (!member) {
@@ -35,7 +37,8 @@ export default async function MemberDetailPage({ params, searchParams }: MemberD
   }
   const activeTab = parseTab((await searchParams).tab);
   const documents = activeTab === 'documents' ? await getMemberDocuments(memberId) : [];
-  const payments = activeTab === 'payments' ? await getMemberPayments(memberId) : [];
+  const paymentHistory =
+    activeTab === 'payments' ? await getMemberPayments(memberId) : { payments: [], balance: 0 };
   const staffNotes = activeTab === 'notes' ? await getMemberStaffNotes(memberId) : '';
 
   return (
@@ -54,7 +57,11 @@ export default async function MemberDetailPage({ params, searchParams }: MemberD
         {activeTab === 'documents' ? (
           <MemberDocumentsPanel memberId={member.id} initialDocuments={documents} />
         ) : activeTab === 'payments' ? (
-          <MemberPaymentsPanel memberId={member.id} payments={payments} />
+          <MemberPaymentsPanel
+            memberId={member.id}
+            payments={paymentHistory.payments}
+            balance={paymentHistory.balance}
+          />
         ) : activeTab === 'notes' ? (
           <MemberNotesPanel memberId={member.id} initialNotes={staffNotes} />
         ) : undefined}

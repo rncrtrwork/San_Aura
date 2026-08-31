@@ -5,6 +5,7 @@ import type { MemberPaymentItem } from '@/server/members/getMemberPayments';
 type MemberPaymentsPanelProps = {
   memberId: string;
   payments: MemberPaymentItem[];
+  balance: number;
 };
 
 const typeLabels: Record<MemberPaymentItem['type'], string> = {
@@ -23,14 +24,8 @@ const methodLabels: Record<MemberPaymentItem['method'], string> = {
   'manual-adjustment': 'Manual adjustment',
 };
 
-export function MemberPaymentsPanel({ memberId, payments }: MemberPaymentsPanelProps) {
+export function MemberPaymentsPanel({ memberId, payments, balance }: MemberPaymentsPanelProps) {
   const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
-  const balance = payments.reduce((total, payment) => {
-    if (payment.entryKind === 'charge') {
-      return total + payment.amount;
-    }
-    return total - payment.amount;
-  }, 0);
 
   return (
     <div className="p-5 sm:p-6">
@@ -46,7 +41,8 @@ export function MemberPaymentsPanel({ memberId, payments }: MemberPaymentsPanelP
               Current balance
             </p>
             <p className={`font-bold ${balance > 0 ? 'text-admin-danger' : 'text-admin-success'}`}>
-              {currency.format(Math.abs(balance))} {balance > 0 ? 'due' : 'credit'}
+              {currency.format(Math.abs(balance))}{' '}
+              {balance > 0 ? 'due' : balance < 0 ? 'credit' : 'settled'}
             </p>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { Search, UserPlus, Users } from 'lucide-react';
 import Link from 'next/link';
 import { MEMBERSHIP_TIERS, MEMBER_STATUSES } from '@/models/Member';
+import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getMembers, parseMemberFilters } from '@/server/members/getMembers';
 
 export const dynamic = 'force-dynamic';
@@ -16,6 +17,7 @@ function monthName(month: number): string {
 }
 
 export default async function MembersPage({ searchParams }: MembersPageProps) {
+  await requirePagePermission('members.read');
   const filters = parseMemberFilters(await searchParams);
   const { members, total } = await getMembers(filters);
 

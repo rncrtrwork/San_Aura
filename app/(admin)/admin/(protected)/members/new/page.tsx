@@ -1,8 +1,10 @@
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { MemberCreateForm } from '@/components/admin/MemberCreateForm';
+import { requirePagePermission } from '@/server/auth/pageAuthorization';
 
-export default function NewMemberPage() {
+export default async function NewMemberPage() {
+  await requirePagePermission('members.write');
   return (
     <div className="space-y-6">
       <header>
