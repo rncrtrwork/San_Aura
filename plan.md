@@ -206,7 +206,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Define `Reservation` schema
 - [x] Define `Payment` schema
 - [x] Define `ElectricReading` schema
-- [ ] Define `StayType`, `Season`, `Addon` schemas
+- [x] Define `StayType`, `Season`, `Addon` schemas
 - [ ] Define `Event`, `EventRegistration` schemas
 - [ ] Define `MediaAsset`, `Album` schemas
 - [ ] Define `FAQItem`, `ResortRule`, `Policy` schemas
