@@ -1,9 +1,11 @@
 import Link from 'next/link';
+import { AddonsTable } from '@/components/admin/AddonsTable';
 import { ManageSeasonsFlow } from '@/components/admin/ManageSeasonsFlow';
 import { MonthlyRateCalendar } from '@/components/admin/MonthlyRateCalendar';
 import { RateEditorPanel } from '@/components/admin/RateEditorPanel';
 import { StayTypeCards } from '@/components/admin/StayTypeCards';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
+import { getAddons } from '@/server/stays/getAddons';
 import { getSeasons } from '@/server/stays/getSeasons';
 import { getStayTypes } from '@/server/stays/getStayTypes';
 
@@ -31,6 +33,7 @@ export default async function StaysPage({ searchParams }: StaysPageProps) {
     activeTab === 'stay-types' || activeTab === 'rate-plans' || activeTab === 'availability-rules';
   const stayTypes = shouldLoadStayTypes ? await getStayTypes() : [];
   const seasons = activeTab === 'availability-rules' ? await getSeasons() : [];
+  const addons = activeTab === 'add-ons' ? await getAddons() : [];
 
   return (
     <div className="space-y-6">
@@ -75,6 +78,8 @@ export default async function StaysPage({ searchParams }: StaysPageProps) {
             </>
           ) : activeTab === 'availability-rules' ? (
             <ManageSeasonsFlow seasons={seasons} stayTypes={stayTypes} />
+          ) : activeTab === 'add-ons' ? (
+            <AddonsTable addons={addons} />
           ) : (
             <p className="text-sm text-admin-muted">
               {activeLabel} management will appear in this workspace.

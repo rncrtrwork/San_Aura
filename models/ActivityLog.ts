@@ -1,6 +1,7 @@
 import { model, models, Schema, type Model, type Types } from 'mongoose';
 
 export const ACTIVITY_ENTITY_TYPES = [
+  'Addon',
   'Member',
   'Document',
   'Guest',
