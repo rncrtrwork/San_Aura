@@ -4,6 +4,8 @@ import { AvailabilitySummary } from '@/components/admin/AvailabilitySummary';
 import { CalendarMonthGrid } from '@/components/admin/CalendarMonthGrid';
 import { CalendarTimeline, CalendarWeekGrid } from '@/components/admin/CalendarRangeViews';
 import { OccupancyDonut } from '@/components/admin/OccupancyDonut';
+import { WaitlistReviewPanel } from '@/components/admin/WaitlistReviewPanel';
+import { WaitlistSidebar } from '@/components/admin/WaitlistSidebar';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getAvailabilitySummary } from '@/server/calendar/getAvailabilitySummary';
 import {
@@ -11,6 +13,7 @@ import {
   getCalendarRange,
   parseCalendarMonth,
 } from '@/server/calendar/getCalendarMonth';
+import { getWaitlistOverview } from '@/server/calendar/getWaitlistOverview';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,6 +22,7 @@ type CalendarPageProps = {
     month?: string | string[];
     view?: string | string[];
     date?: string | string[];
+    waitlist?: string | string[];
   }>;
 };
 
@@ -64,9 +68,11 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
   const rangeStart = new Date(`${date}T00:00:00`);
   const rangeEnd = new Date(rangeStart);
   rangeEnd.setDate(rangeEnd.getDate() + rangeLength);
-  const [reservations, availability] = await Promise.all([
+  const selectedWaitlist = typeof params.waitlist === 'string' ? params.waitlist : undefined;
+  const [reservations, availability, waitlist] = await Promise.all([
     view === 'month' ? getCalendarMonth(month) : getCalendarRange(rangeStart, rangeEnd),
     getAvailabilitySummary(rangeStart),
+    getWaitlistOverview(selectedWaitlist),
   ]);
   const [year, monthNumber] = month.split('-').map(Number);
   const label =
@@ -83,6 +89,12 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
     view === 'month'
       ? `/admin/calendar?month=${shiftMonth(month, 1)}`
       : `/admin/calendar?view=${view}&month=${month}&date=${shiftDate(date, rangeLength)}`;
+  const calendarQuery = new URLSearchParams({ month });
+  if (view !== 'month') {
+    calendarQuery.set('view', view);
+    calendarQuery.set('date', date);
+  }
+  const calendarHref = `/admin/calendar?${calendarQuery.toString()}`;
 
   return (
     <div className="space-y-6">
@@ -147,8 +159,12 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
         <aside className="space-y-6">
           <AvailabilitySummary date={date} items={availability} />
           <OccupancyDonut items={availability} />
+          <WaitlistSidebar items={waitlist.items} baseQuery={calendarQuery.toString()} />
         </aside>
       </div>
+      {waitlist.selected ? (
+        <WaitlistReviewPanel entry={waitlist.selected} closeHref={calendarHref} />
+      ) : null}
     </div>
   );
 }
