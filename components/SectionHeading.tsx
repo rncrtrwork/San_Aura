@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { ArrowRight } from './icons';
 
 type Props = { title: string; linkLabel?: string; href?: string; centered?: boolean };
@@ -11,13 +12,13 @@ export function SectionHeading({ title, linkLabel, href = '#', centered = false 
         {title}
       </h2>
       {linkLabel && (
-        <button
-          type="button"
+        <Link
+          href={href}
           className="group mb-1 flex shrink-0 items-center gap-3 text-[10px] font-semibold uppercase tracking-[.08em] text-forest-900"
         >
           <span className="hidden sm:inline">{linkLabel}</span>
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-        </button>
+        </Link>
       )}
     </div>
   );

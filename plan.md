@@ -193,27 +193,27 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 ### Phase 1 — Data Models, Auth, RBAC
 
-- [ ] Define `Role` schema + seed script for Admin/Front Desk/Content Editor/Maintenance
-- [ ] Define `User` (staff) schema with password hashing (bcrypt)
-- [ ] Build staff login page + session/JWT issuance
-- [ ] Build auth middleware for `/admin/*` routes (redirect unauthenticated to login)
-- [ ] Build RBAC permission-check middleware/helper (`requirePermission('members.write')`)
-- [ ] Define `ActivityLog` schema + shared `logActivity()` service
-- [ ] Define `Member` schema
-- [ ] Define `Guest` schema
-- [ ] Define `Document` schema (polymorphic owner)
-- [ ] Define `Site` schema
-- [ ] Define `Reservation` schema
-- [ ] Define `Payment` schema
-- [ ] Define `ElectricReading` schema
-- [ ] Define `StayType`, `Season`, `Addon` schemas
-- [ ] Define `Event`, `EventRegistration` schemas
-- [ ] Define `MediaAsset`, `Album` schemas
-- [ ] Define `FAQItem`, `ResortRule`, `Policy` schemas
-- [ ] Define `Page`, section sub-schemas (hero/richText/timeline/CTA/gallery)
-- [ ] Define `PropertySettings` singleton schema
-- [ ] Define `Waitlist` schema
-- [ ] Write seed script for initial Admin user + default PropertySettings
+- [x] Define `Role` schema + seed script for Admin/Front Desk/Content Editor/Maintenance
+- [x] Define `User` (staff) schema with password hashing (bcrypt)
+- [x] Build staff login page + session/JWT issuance
+- [x] Build auth middleware for `/admin/*` routes (redirect unauthenticated to login)
+- [x] Build RBAC permission-check middleware/helper (`requirePermission('members.write')`)
+- [x] Define `ActivityLog` schema + shared `logActivity()` service
+- [x] Define `Member` schema
+- [x] Define `Guest` schema
+- [x] Define `Document` schema (polymorphic owner)
+- [x] Define `Site` schema
+- [x] Define `Reservation` schema
+- [x] Define `Payment` schema
+- [x] Define `ElectricReading` schema
+- [x] Define `StayType`, `Season`, `Addon` schemas
+- [x] Define `Event`, `EventRegistration` schemas
+- [x] Define `MediaAsset`, `Album` schemas
+- [x] Define `FAQItem`, `ResortRule`, `Policy` schemas
+- [x] Define `Page`, section sub-schemas (hero/richText/timeline/CTA/gallery)
+- [x] Define `PropertySettings` singleton schema
+- [x] Define `Waitlist` schema
+- [x] Write seed script for initial Admin user + default PropertySettings
 
 ### Phase 2 — Admin Shell & Overview Dashboard
 
