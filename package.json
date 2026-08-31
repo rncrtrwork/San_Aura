@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "seed:roles": "tsx scripts/seed-roles.ts"
+    "seed:roles": "tsx scripts/seed-roles.ts",
+    "seed:initial": "tsx scripts/seed-initial-data.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

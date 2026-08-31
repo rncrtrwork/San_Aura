@@ -20,13 +20,19 @@ Modern public website, staff administration system, and member portal for Sun Au
 
 2. Copy `.env.example` to `.env.local` and provide the required credentials.
 
-3. Start the development server:
+3. Seed roles, the initial administrator, and property defaults:
+
+   ```bash
+   npm run seed:initial
+   ```
+
+4. Start the development server:
 
    ```bash
    npm run dev
    ```
 
-4. Open `http://localhost:3000` for the public site, `/admin` for staff administration,
+5. Open `http://localhost:3000` for the public site, `/admin` for staff administration,
    or `/member` for the member portal.
 
 ## Quality checks
