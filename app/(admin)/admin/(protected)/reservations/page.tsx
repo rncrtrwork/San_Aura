@@ -2,6 +2,8 @@ import { CalendarRange, Plus, Search } from 'lucide-react';
 import Link from 'next/link';
 import { RESERVATION_PAYMENT_STATUSES, RESERVATION_STATUSES } from '@/models/Reservation';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
+import { ReservationDetailPanel } from '@/components/admin/ReservationDetailPanel';
+import { getReservationDetail } from '@/server/reservations/getReservationDetail';
 import {
   getReservations,
   parseReservationFilters,
@@ -26,6 +28,12 @@ function statusHref(status: ReservationStatusFilter, filters: ReservationListFil
   return query ? `/admin/reservations?${query}` : '/admin/reservations';
 }
 
+function detailHref(reservationId: string, filters: ReservationListFilters): string {
+  const href = new URL(statusHref(filters.status, filters), 'http://localhost');
+  href.searchParams.set('reservation', reservationId);
+  return `${href.pathname}${href.search}`;
+}
+
 const statusLabels: Record<ReservationStatusFilter, string> = {
   all: 'All',
   pending: 'Pending',
@@ -37,8 +45,14 @@ const statusLabels: Record<ReservationStatusFilter, string> = {
 
 export default async function ReservationsPage({ searchParams }: ReservationsPageProps) {
   await requirePagePermission('reservations.read');
-  const filters = parseReservationFilters(await searchParams);
+  const resolvedSearchParams = await searchParams;
+  const filters = parseReservationFilters(resolvedSearchParams);
   const { reservations, counts, stayTypes } = await getReservations(filters);
+  const selectedReservationId =
+    typeof resolvedSearchParams.reservation === 'string' ? resolvedSearchParams.reservation : '';
+  const selectedReservation = selectedReservationId
+    ? await getReservationDetail(selectedReservationId)
+    : null;
   const status = filters.status;
   const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
@@ -205,7 +219,12 @@ export default async function ReservationsPage({ searchParams }: ReservationsPag
                 {reservations.map((reservation) => (
                   <tr key={reservation.id} className="transition-colors hover:bg-cream-alt/40">
                     <td className="px-5 py-4 sm:pl-6">
-                      <p className="font-semibold text-forest-900">{reservation.ownerName}</p>
+                      <Link
+                        href={detailHref(reservation.id, filters)}
+                        className="font-semibold text-forest-900 hover:text-admin-accent"
+                      >
+                        {reservation.ownerName}
+                      </Link>
                       <p className="mt-0.5 text-xs text-admin-muted">
                         {reservation.ownerType} · {reservation.guestsCount} guests
                       </p>
@@ -246,6 +265,12 @@ export default async function ReservationsPage({ searchParams }: ReservationsPag
           </div>
         )}
       </section>
+      {selectedReservation ? (
+        <ReservationDetailPanel
+          reservation={selectedReservation}
+          closeHref={statusHref(status, filters)}
+        />
+      ) : null}
     </div>
   );
 }
