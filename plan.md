@@ -201,7 +201,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Define `ActivityLog` schema + shared `logActivity()` service
 - [x] Define `Member` schema
 - [x] Define `Guest` schema
-- [ ] Define `Document` schema (polymorphic owner)
+- [x] Define `Document` schema (polymorphic owner)
 - [ ] Define `Site` schema
 - [ ] Define `Reservation` schema
 - [ ] Define `Payment` schema
