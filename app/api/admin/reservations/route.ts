@@ -6,6 +6,7 @@ import { Guest } from '@/models/Guest';
 import { Member } from '@/models/Member';
 import { Reservation } from '@/models/Reservation';
 import { Site } from '@/models/Site';
+import { SiteBlock } from '@/models/SiteBlock';
 import { StayType } from '@/models/StayType';
 import { logActivity } from '@/server/activity/logActivity';
 import { requirePermission } from '@/server/auth/authorization';
@@ -107,7 +108,7 @@ export const POST = requirePermission('reservations.write', async (request, staf
   const checkIn = parseDate(body.checkIn)!;
   const checkOut = parseDate(body.checkOut)!;
   await connectToDatabase();
-  const [stayType, site, conflict] = await Promise.all([
+  const [stayType, site, conflict, blocked] = await Promise.all([
     StayType.findOne({ _id: body.stayTypeId, active: true }).lean(),
     Site.findOne({
       _id: body.siteId,
@@ -119,6 +120,11 @@ export const POST = requirePermission('reservations.write', async (request, staf
       checkIn: { $lt: checkOut },
       checkOut: { $gt: checkIn },
       status: { $in: ['pending', 'confirmed', 'checked-in'] },
+    }),
+    SiteBlock.exists({
+      siteRef: body.siteId,
+      startDate: { $lt: checkOut },
+      endDate: { $gt: checkIn },
     }),
   ]);
   if (!stayType || !site || stayType.siteType !== site.type) {
@@ -134,7 +140,7 @@ export const POST = requirePermission('reservations.write', async (request, staf
       { status: 400 },
     );
   }
-  if (conflict) {
+  if (conflict || blocked) {
     return NextResponse.json<ReservationCreateResponse>(
       { message: 'The selected site is not available for those dates.' },
       { status: 409 },

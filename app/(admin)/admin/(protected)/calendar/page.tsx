@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { AvailabilitySummary } from '@/components/admin/AvailabilitySummary';
+import { BlockDatesAction } from '@/components/admin/BlockDatesAction';
 import { CalendarMonthGrid } from '@/components/admin/CalendarMonthGrid';
 import { CalendarTimeline, CalendarWeekGrid } from '@/components/admin/CalendarRangeViews';
 import { OccupancyDonut } from '@/components/admin/OccupancyDonut';
@@ -8,6 +9,7 @@ import { WaitlistReviewPanel } from '@/components/admin/WaitlistReviewPanel';
 import { WaitlistSidebar } from '@/components/admin/WaitlistSidebar';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getAvailabilitySummary } from '@/server/calendar/getAvailabilitySummary';
+import { getBlockDateOptions } from '@/server/calendar/getBlockDateOptions';
 import {
   getCalendarMonth,
   getCalendarRange,
@@ -69,10 +71,11 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
   const rangeEnd = new Date(rangeStart);
   rangeEnd.setDate(rangeEnd.getDate() + rangeLength);
   const selectedWaitlist = typeof params.waitlist === 'string' ? params.waitlist : undefined;
-  const [reservations, availability, waitlist] = await Promise.all([
+  const [reservations, availability, waitlist, blockDateSites] = await Promise.all([
     view === 'month' ? getCalendarMonth(month) : getCalendarRange(rangeStart, rangeEnd),
     getAvailabilitySummary(rangeStart),
     getWaitlistOverview(selectedWaitlist),
+    getBlockDateOptions(),
   ]);
   const [year, monthNumber] = month.split('-').map(Number);
   const label =
@@ -123,29 +126,32 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
           </Link>
         </div>
       </header>
-      <nav
-        className="inline-flex rounded-lg border border-admin-border bg-white p-1"
-        aria-label="Calendar views"
-      >
-        {(['month', 'week', 'timeline'] as const).map((option) => (
-          <Link
-            key={option}
-            href={
-              option === 'month'
-                ? `/admin/calendar?month=${month}`
-                : `/admin/calendar?view=${option}&month=${month}&date=${date}`
-            }
-            aria-current={view === option ? 'page' : undefined}
-            className={`rounded-md px-4 py-2 text-sm font-semibold capitalize ${
-              view === option
-                ? 'bg-admin-sidebar text-white'
-                : 'text-admin-muted hover:text-forest-900'
-            }`}
-          >
-            {option}
-          </Link>
-        ))}
-      </nav>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <nav
+          className="inline-flex rounded-lg border border-admin-border bg-white p-1"
+          aria-label="Calendar views"
+        >
+          {(['month', 'week', 'timeline'] as const).map((option) => (
+            <Link
+              key={option}
+              href={
+                option === 'month'
+                  ? `/admin/calendar?month=${month}`
+                  : `/admin/calendar?view=${option}&month=${month}&date=${date}`
+              }
+              aria-current={view === option ? 'page' : undefined}
+              className={`rounded-md px-4 py-2 text-sm font-semibold capitalize ${
+                view === option
+                  ? 'bg-admin-sidebar text-white'
+                  : 'text-admin-muted hover:text-forest-900'
+              }`}
+            >
+              {option}
+            </Link>
+          ))}
+        </nav>
+        <BlockDatesAction sites={blockDateSites} defaultDate={date} />
+      </div>
       <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_18rem]">
         <div className="overflow-x-auto">
           {view === 'month' ? (

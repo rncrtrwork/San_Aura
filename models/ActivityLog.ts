@@ -15,6 +15,7 @@ export const ACTIVITY_ENTITY_TYPES = [
   'Page',
   'PropertySettings',
   'Site',
+  'SiteBlock',
   'Waitlist',
   'StaffUser',
   'Role',
