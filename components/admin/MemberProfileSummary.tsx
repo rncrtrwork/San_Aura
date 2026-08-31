@@ -9,6 +9,7 @@ import {
   UserRound,
 } from 'lucide-react';
 import { MemberStatusEditor } from '@/components/admin/MemberStatusEditor';
+import { MemberPartyLinks } from '@/components/admin/MemberPartyLinks';
 import type { MemberProfile } from '@/server/members/getMemberProfile';
 
 type MemberProfileSummaryProps = {
@@ -101,6 +102,7 @@ export function MemberProfileSummary({ member }: MemberProfileSummaryProps) {
           }
         />
       </div>
+      <MemberPartyLinks memberId={member.id} initialLinks={member.partyLinks} />
     </section>
   );
 }

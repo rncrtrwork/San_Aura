@@ -238,7 +238,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build "Add Payment" manual-entry form (amount/type/method/date/appliesToPeriod)
 - [x] Build Member status/renewal-month editor with ActivityLog entry on change
 - [x] Build staff-only Notes tab (visibly marked "Staff Only", excluded from any member-portal serializer)
-- [ ] Build party-linking UI ("checked in with") — search + link other Member/Guest records
+- [x] Build party-linking UI ("checked in with") — search + link other Member/Guest records
 - [ ] Wire membership tier rules (permanent space assignment for 2850/2000/500, day-fee exemption for 1250) into a shared `getTierRules()` helper
 - [ ] Add Members API route tests for tier-rule resolution
 
