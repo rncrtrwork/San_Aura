@@ -194,7 +194,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 ### Phase 1 — Data Models, Auth, RBAC
 
 - [x] Define `Role` schema + seed script for Admin/Front Desk/Content Editor/Maintenance
-- [ ] Define `User` (staff) schema with password hashing (bcrypt)
+- [x] Define `User` (staff) schema with password hashing (bcrypt)
 - [ ] Build staff login page + session/JWT issuance
 - [ ] Build auth middleware for `/admin/*` routes (redirect unauthenticated to login)
 - [ ] Build RBAC permission-check middleware/helper (`requirePermission('members.write')`)
