@@ -1,6 +1,7 @@
 import { BedDouble, CircleDollarSign, LogOut, Luggage } from 'lucide-react';
 import { KpiCard } from '@/components/admin/KpiCard';
 import { OccupancyChart } from '@/components/admin/OccupancyChart';
+import { TodaysTasks } from '@/components/admin/TodaysTasks';
 import { getOccupancySeries } from '@/server/dashboard/getOccupancySeries';
 import { getOverviewMetrics } from '@/server/dashboard/getOverviewMetrics';
 
@@ -59,6 +60,9 @@ async function AdminOverview() {
         />
       </section>
       <OccupancyChart data={occupancy} />
+      <div className="grid gap-6 xl:grid-cols-2">
+        <TodaysTasks />
+      </div>
     </div>
   );
 }
