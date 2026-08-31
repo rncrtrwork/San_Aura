@@ -246,7 +246,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 - [x] Build Reservations list page with status tabs (All/Pending/Confirmed/Checked In/Completed/Cancelled)
 - [x] Build Reservations filters (stay type, arrival date, payment status) + search
-- [ ] Build New Reservation form (guest/member lookup-or-create, stay type, site, dates, guest count)
+- [x] Build New Reservation form (guest/member lookup-or-create, stay type, site, dates, guest count)
 - [ ] Build Reservation detail side panel (Booking Summary/Stay Details/Payment Summary/Internal Notes)
 - [ ] Wire "Send Confirmation" action (email stub using SMTP config)
 - [ ] Wire "Check In" action (updates status, enforces check-in time from PropertySettings)
