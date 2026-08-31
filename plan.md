@@ -271,7 +271,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build Stay Type cards (Cabins/RV/Tent) showing unit count, amenities, minimum stay, active toggle
 - [x] Build "Add Stay Type" and "Edit" forms
 - [x] Build Rate editor panel (base rate, weekend rate, extra guest fee, minimum stay, cleaning fee)
-- [ ] Build monthly Rate Calendar grid with weekday/weekend rate coloring
+- [x] Build monthly Rate Calendar grid with weekday/weekend rate coloring
 - [ ] Build "Manage Seasons" flow (create/edit named date-range rate overrides)
 - [ ] Build Add-ons table (name/description/type/price/status) with add/edit/deactivate
 - [ ] Wire "Save Rates" to persist Season/StayType changes + ActivityLog entry

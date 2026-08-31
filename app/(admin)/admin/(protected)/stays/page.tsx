@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { MonthlyRateCalendar } from '@/components/admin/MonthlyRateCalendar';
 import { RateEditorPanel } from '@/components/admin/RateEditorPanel';
 import { StayTypeCards } from '@/components/admin/StayTypeCards';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
@@ -14,12 +15,14 @@ const tabs = [
 ] as const;
 
 type StaysPageProps = {
-  searchParams: Promise<{ tab?: string | string[] }>;
+  searchParams: Promise<{ tab?: string | string[]; month?: string | string[] }>;
 };
 
 export default async function StaysPage({ searchParams }: StaysPageProps) {
   await requirePagePermission('sites.read');
-  const requestedTab = (await searchParams).tab;
+  const params = await searchParams;
+  const requestedTab = params.tab;
+  const requestedMonth = typeof params.month === 'string' ? params.month : null;
   const activeTab = tabs.some((tab) => tab.id === requestedTab) ? requestedTab : 'stay-types';
   const activeLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'Stay Types';
   const shouldLoadStayTypes = activeTab === 'stay-types' || activeTab === 'rate-plans';
@@ -62,7 +65,10 @@ export default async function StaysPage({ searchParams }: StaysPageProps) {
           {activeTab === 'stay-types' ? (
             <StayTypeCards stayTypes={stayTypes} />
           ) : activeTab === 'rate-plans' ? (
-            <RateEditorPanel stayTypes={stayTypes} />
+            <>
+              <RateEditorPanel stayTypes={stayTypes} />
+              <MonthlyRateCalendar stayTypes={stayTypes} month={requestedMonth} />
+            </>
           ) : (
             <p className="text-sm text-admin-muted">
               {activeLabel} management will appear in this workspace.
