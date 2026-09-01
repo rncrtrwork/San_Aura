@@ -35,7 +35,7 @@ type PageListItemLean = {
       showOnNavigation: boolean;
       items: { year: string; title: string; description: string }[];
     } | null;
-    cta?: { heading: string } | null;
+    cta?: { heading: string; body: string; buttonLabel: string; buttonUrl: string } | null;
     gallery?: { heading: string } | null;
   }[];
 };
@@ -98,6 +98,14 @@ function sectionDetail(
           })),
         }
       : null,
+    cta: section.cta
+      ? {
+          heading: section.cta.heading,
+          body: section.cta.body,
+          buttonLabel: section.cta.buttonLabel,
+          buttonUrl: section.cta.buttonUrl,
+        }
+      : null,
   };
 }
 
@@ -129,7 +137,7 @@ export async function getContentOverview(
   const activeSlug = parseContentPageSlug(params.page);
   const storedPages = await Page.find({ slug: { $in: [...CONTENT_PAGE_SLUGS] } })
     .select(
-      'slug title navLabel publishStatus lastEditedAt sections.key sections.type sections.active sections.hero.imageRef sections.hero.eyebrow sections.hero.heading sections.hero.body sections.richText.body sections.timeline.sectionLabel sections.timeline.backgroundColor sections.timeline.layout sections.timeline.showOnNavigation sections.timeline.items sections.cta.heading sections.gallery.heading',
+      'slug title navLabel publishStatus lastEditedAt sections.key sections.type sections.active sections.hero.imageRef sections.hero.eyebrow sections.hero.heading sections.hero.body sections.richText.body sections.timeline.sectionLabel sections.timeline.backgroundColor sections.timeline.layout sections.timeline.showOnNavigation sections.timeline.items sections.cta.heading sections.cta.body sections.cta.buttonLabel sections.cta.buttonUrl sections.gallery.heading',
     )
     .lean<PageListItemLean[]>();
   const pagesBySlug = new Map(storedPages.map((page) => [page.slug, page]));

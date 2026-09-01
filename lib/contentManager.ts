@@ -74,10 +74,18 @@ export type ContentTimelineSection = {
   items: ContentTimelineItem[];
 };
 
+export type ContentCtaSection = {
+  heading: string;
+  body: string;
+  buttonLabel: string;
+  buttonUrl: string;
+};
+
 export type ContentSectionDetail = ContentSectionSummary & {
   hero: ContentHeroSection | null;
   richText: ContentRichTextSection | null;
   timeline: ContentTimelineSection | null;
+  cta: ContentCtaSection | null;
 };
 
 export type HeroSectionMutationRequest = {
@@ -102,6 +110,15 @@ export type TimelineSectionMutationRequest = {
   layout: 'alternating' | 'stacked';
   showOnNavigation: boolean;
   items: ContentTimelineItem[];
+  active: boolean;
+};
+
+export type CtaSectionMutationRequest = {
+  sectionKey: string;
+  heading: string;
+  body: string;
+  buttonLabel: string;
+  buttonUrl: string;
   active: boolean;
 };
 

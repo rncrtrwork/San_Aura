@@ -10,6 +10,7 @@ import {
   validateContentSectionOrder,
   validateContentSectionStatus,
 } from '@/server/content/sectionValidation';
+import { validateCtaSection } from '@/server/content/ctaSectionValidation';
 import { validateHeroSection } from '@/server/content/heroSectionValidation';
 import { validateRichTextSection } from '@/server/content/richTextSectionValidation';
 import { validateTimelineSection } from '@/server/content/timelineSectionValidation';
@@ -191,4 +192,33 @@ test('timeline section validation preserves layout controls', () => {
     assert.equal(result.data.layout, 'stacked');
     assert.equal(result.data.showOnNavigation, false);
   }
+});
+
+test('cta section validation accepts relative button links', () => {
+  const result = validateCtaSection({
+    sectionKey: 'Booking CTA',
+    heading: 'Ready to visit?',
+    body: 'Send the office your preferred dates.',
+    buttonLabel: 'Book a Stay',
+    buttonUrl: '/reservations',
+    active: true,
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.sectionKey, 'booking-cta');
+  }
+});
+
+test('cta section validation rejects unsafe button links', () => {
+  const result = validateCtaSection({
+    sectionKey: '',
+    heading: 'Ready to visit?',
+    body: '',
+    buttonLabel: 'Book a Stay',
+    buttonUrl: 'javascript:alert(1)',
+    active: true,
+  });
+
+  assert.equal(result.valid, false);
 });

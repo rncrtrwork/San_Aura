@@ -1,4 +1,5 @@
 import { FileText, Layers3 } from 'lucide-react';
+import { CtaSectionEditor } from '@/components/admin/CtaSectionEditor';
 import { HeroSectionEditor } from '@/components/admin/HeroSectionEditor';
 import { PageSectionList } from '@/components/admin/PageSectionList';
 import { RichTextSectionEditor } from '@/components/admin/RichTextSectionEditor';
@@ -176,6 +177,12 @@ export default async function ContentPage({ searchParams }: ContentPageProps) {
 
           <TimelineSectionEditor
             key={`timeline-${overview.selectedPage.slug}-${overview.selectedSection?.key ?? 'new'}`}
+            pageSlug={overview.selectedPage.slug}
+            selectedSection={overview.selectedSection}
+          />
+
+          <CtaSectionEditor
+            key={`cta-${overview.selectedPage.slug}-${overview.selectedSection?.key ?? 'new'}`}
             pageSlug={overview.selectedPage.slug}
             selectedSection={overview.selectedSection}
           />

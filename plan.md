@@ -319,7 +319,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build Rich Text section editor
 - [x] Build Timeline section editor: Section Label + repeatable Year/Title/Description items with Add Item
 - [x] Build Timeline layout controls (Background color, Layout alternating/stacked, Show on navigation)
-- [ ] Build CTA section editor
+- [x] Build CTA section editor
 - [ ] Build "Add Section" picker (choose section type to append to a page)
 - [ ] Build "Add Page" flow (creates new `Page` doc with slug)
 - [ ] Build autosave-draft behavior + "Draft changes" indicator in header
