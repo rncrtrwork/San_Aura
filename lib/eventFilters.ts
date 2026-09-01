@@ -16,8 +16,10 @@ export type EventListItem = {
   location: string;
   capacity: number | null;
   registrationRequired: boolean;
+  description: string;
   registrationsCount: number;
   imageUrl: string;
+  imagePublicId: string;
   status: EventStatus;
   featureOnHomepage: boolean;
   sendReminder: boolean;
