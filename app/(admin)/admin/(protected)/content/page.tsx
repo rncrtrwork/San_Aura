@@ -1,9 +1,11 @@
 import { FileText, Layers3 } from 'lucide-react';
+import { AddSectionPicker } from '@/components/admin/AddSectionPicker';
 import { CtaSectionEditor } from '@/components/admin/CtaSectionEditor';
 import { HeroSectionEditor } from '@/components/admin/HeroSectionEditor';
 import { PageSectionList } from '@/components/admin/PageSectionList';
 import { RichTextSectionEditor } from '@/components/admin/RichTextSectionEditor';
 import { TimelineSectionEditor } from '@/components/admin/TimelineSectionEditor';
+import { parseContentEditorSectionType } from '@/lib/contentManager';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getContentOverview } from '@/server/content/getContentOverview';
 
@@ -27,7 +29,10 @@ export default async function ContentPage({ searchParams }: ContentPageProps) {
   await requirePagePermission('content.read');
   const params = await searchParams;
   const selectedSectionKey = typeof params.section === 'string' ? params.section : '';
+  const requestedSectionType = parseContentEditorSectionType(params.sectionType);
   const overview = await getContentOverview(params);
+  const selectedEditorType = parseContentEditorSectionType(overview.selectedSection?.type);
+  const activeEditorType = selectedEditorType ?? requestedSectionType ?? 'hero';
 
   return (
     <div className="space-y-6">
@@ -163,29 +168,43 @@ export default async function ContentPage({ searchParams }: ContentPageProps) {
             selectedSectionKey={selectedSectionKey}
           />
 
-          <HeroSectionEditor
-            key={`hero-${overview.selectedPage.slug}-${overview.selectedSection?.key ?? 'new'}`}
+          <AddSectionPicker
             pageSlug={overview.selectedPage.slug}
-            selectedSection={overview.selectedSection}
+            activeType={activeEditorType}
+            editingSectionKey={selectedSectionKey}
           />
 
-          <RichTextSectionEditor
-            key={`rich-text-${overview.selectedPage.slug}-${overview.selectedSection?.key ?? 'new'}`}
-            pageSlug={overview.selectedPage.slug}
-            selectedSection={overview.selectedSection}
-          />
+          {activeEditorType === 'hero' ? (
+            <HeroSectionEditor
+              key={`hero-${overview.selectedPage.slug}-${overview.selectedSection?.key ?? 'new'}`}
+              pageSlug={overview.selectedPage.slug}
+              selectedSection={overview.selectedSection}
+            />
+          ) : null}
 
-          <TimelineSectionEditor
-            key={`timeline-${overview.selectedPage.slug}-${overview.selectedSection?.key ?? 'new'}`}
-            pageSlug={overview.selectedPage.slug}
-            selectedSection={overview.selectedSection}
-          />
+          {activeEditorType === 'richText' ? (
+            <RichTextSectionEditor
+              key={`rich-text-${overview.selectedPage.slug}-${overview.selectedSection?.key ?? 'new'}`}
+              pageSlug={overview.selectedPage.slug}
+              selectedSection={overview.selectedSection}
+            />
+          ) : null}
 
-          <CtaSectionEditor
-            key={`cta-${overview.selectedPage.slug}-${overview.selectedSection?.key ?? 'new'}`}
-            pageSlug={overview.selectedPage.slug}
-            selectedSection={overview.selectedSection}
-          />
+          {activeEditorType === 'timeline' ? (
+            <TimelineSectionEditor
+              key={`timeline-${overview.selectedPage.slug}-${overview.selectedSection?.key ?? 'new'}`}
+              pageSlug={overview.selectedPage.slug}
+              selectedSection={overview.selectedSection}
+            />
+          ) : null}
+
+          {activeEditorType === 'cta' ? (
+            <CtaSectionEditor
+              key={`cta-${overview.selectedPage.slug}-${overview.selectedSection?.key ?? 'new'}`}
+              pageSlug={overview.selectedPage.slug}
+              selectedSection={overview.selectedSection}
+            />
+          ) : null}
         </section>
       </div>
     </div>

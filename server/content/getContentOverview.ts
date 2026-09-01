@@ -146,9 +146,9 @@ export async function getContentOverview(
   const selectedPageSource = pagesBySlug.get(selectedPage.slug);
   const requestedSectionKey = typeof params.section === 'string' ? params.section : '';
   const selectedSectionSource =
-    selectedPageSource?.sections?.find((section) => section.key === requestedSectionKey) ??
-    selectedPageSource?.sections?.[0] ??
-    null;
+    requestedSectionKey && selectedPageSource?.sections
+      ? (selectedPageSource.sections.find((section) => section.key === requestedSectionKey) ?? null)
+      : null;
 
   return {
     activeSlug,

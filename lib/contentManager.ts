@@ -1,5 +1,6 @@
 import type { PagePublishStatus, PageSectionType } from '@/models/Page';
 
+export const CONTENT_EDITOR_SECTION_TYPES = ['hero', 'richText', 'timeline', 'cta'] as const;
 export const CONTENT_PAGE_SLUGS = [
   'home',
   'our-story',
@@ -10,6 +11,7 @@ export const CONTENT_PAGE_SLUGS = [
 ] as const;
 
 export type ContentPageSlug = (typeof CONTENT_PAGE_SLUGS)[number];
+export type ContentEditorSectionType = (typeof CONTENT_EDITOR_SECTION_TYPES)[number];
 
 export type ContentPageListItem = {
   slug: ContentPageSlug;
@@ -147,4 +149,11 @@ export function parseContentPageSlug(value: string | string[] | undefined): Cont
 
 export function isContentPageSlug(value: string): value is ContentPageSlug {
   return CONTENT_PAGE_SLUGS.some((entry) => entry === value);
+}
+
+export function parseContentEditorSectionType(
+  value: string | string[] | undefined,
+): ContentEditorSectionType | null {
+  const sectionType = typeof value === 'string' ? value : '';
+  return CONTENT_EDITOR_SECTION_TYPES.find((entry) => entry === sectionType) ?? null;
 }

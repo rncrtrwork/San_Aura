@@ -4,6 +4,7 @@ import {
   CONTENT_PAGE_DEFAULTS,
   CONTENT_PAGE_SLUGS,
   isContentPageSlug,
+  parseContentEditorSectionType,
   parseContentPageSlug,
 } from '@/lib/contentManager';
 import {
@@ -41,6 +42,13 @@ test('content page defaults include the required shell pages', () => {
 test('content page slug guard narrows valid page slugs', () => {
   assert.equal(isContentPageSlug('contact'), true);
   assert.equal(isContentPageSlug('book-online'), false);
+});
+
+test('content editor section parser accepts implemented editor types', () => {
+  assert.equal(parseContentEditorSectionType('hero'), 'hero');
+  assert.equal(parseContentEditorSectionType('richText'), 'richText');
+  assert.equal(parseContentEditorSectionType('gallery'), null);
+  assert.equal(parseContentEditorSectionType(['hero']), null);
 });
 
 test('content section order validation accepts unique keys', () => {
