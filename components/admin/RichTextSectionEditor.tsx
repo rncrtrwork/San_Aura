@@ -40,6 +40,13 @@ export function RichTextSectionEditor({ pageSlug, selectedSection }: RichTextSec
     setBody(`${body.slice(0, start)}${replacement}${body.slice(end)}`);
   }
 
+  function focusStayedInsideEditor(
+    nextTarget: EventTarget | null,
+    currentTarget: HTMLElement,
+  ): boolean {
+    return nextTarget instanceof Node && currentTarget.contains(nextTarget);
+  }
+
   async function saveRichTextSection() {
     setSaving(true);
     setError('');
@@ -73,7 +80,14 @@ export function RichTextSectionEditor({ pageSlug, selectedSection }: RichTextSec
   }
 
   return (
-    <section className="mt-6 rounded-xl border border-admin-border bg-white p-5">
+    <section
+      onBlur={(event) => {
+        if (!focusStayedInsideEditor(event.relatedTarget, event.currentTarget) && body.trim()) {
+          void saveRichTextSection();
+        }
+      }}
+      className="mt-6 rounded-xl border border-admin-border bg-white p-5"
+    >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-admin-accent">

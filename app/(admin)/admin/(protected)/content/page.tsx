@@ -45,6 +45,23 @@ export default async function ContentPage({ searchParams }: ContentPageProps) {
         <p className="mt-2 max-w-2xl text-sm text-admin-muted">
           Manage public website pages, draft content, navigation labels, and section structure.
         </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <span
+            className={`rounded-full px-3 py-1 text-xs font-bold ${
+              overview.selectedPage.publishStatus === 'draft'
+                ? 'bg-admin-accent text-white'
+                : 'bg-admin-success/10 text-admin-success'
+            }`}
+          >
+            {overview.selectedPage.publishStatus === 'draft' ? 'Draft changes' : 'Published'}
+          </span>
+          <span className="rounded-full bg-cream-alt px-3 py-1 text-xs font-bold text-admin-muted">
+            Last edited:{' '}
+            {overview.selectedPage.lastEditedAt
+              ? dateFormatter.format(new Date(overview.selectedPage.lastEditedAt))
+              : 'Not created'}
+          </span>
+        </div>
       </header>
 
       <div className="grid items-start gap-6 xl:grid-cols-[20rem_minmax(0,1fr)]">

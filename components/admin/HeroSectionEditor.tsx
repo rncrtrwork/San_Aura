@@ -159,6 +159,13 @@ export function HeroSectionEditor({ pageSlug, selectedSection }: HeroSectionEdit
     }
   }
 
+  function focusStayedInsideEditor(
+    nextTarget: EventTarget | null,
+    currentTarget: HTMLElement,
+  ): boolean {
+    return nextTarget instanceof Node && currentTarget.contains(nextTarget);
+  }
+
   async function saveHeroSection() {
     setSaving(true);
     setError('');
@@ -193,7 +200,14 @@ export function HeroSectionEditor({ pageSlug, selectedSection }: HeroSectionEdit
   }
 
   return (
-    <section className="mt-6 rounded-xl border border-admin-border bg-cream-alt/70 p-5">
+    <section
+      onBlur={(event) => {
+        if (!focusStayedInsideEditor(event.relatedTarget, event.currentTarget) && heading.trim()) {
+          void saveHeroSection();
+        }
+      }}
+      className="mt-6 rounded-xl border border-admin-border bg-cream-alt/70 p-5"
+    >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-admin-accent">

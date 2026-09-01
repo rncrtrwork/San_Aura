@@ -59,6 +59,23 @@ export function TimelineSectionEditor({ pageSlug, selectedSection }: TimelineSec
     );
   }
 
+  function focusStayedInsideEditor(
+    nextTarget: EventTarget | null,
+    currentTarget: HTMLElement,
+  ): boolean {
+    return nextTarget instanceof Node && currentTarget.contains(nextTarget);
+  }
+
+  function timelineReady(): boolean {
+    return (
+      Boolean(sectionLabel.trim()) &&
+      items.some((item) => item.year.trim() || item.title.trim() || item.description.trim()) &&
+      items
+        .filter((item) => item.year.trim() || item.title.trim() || item.description.trim())
+        .every((item) => item.year.trim() && item.title.trim() && item.description.trim())
+    );
+  }
+
   async function saveTimelineSection() {
     setSaving(true);
     setError('');
@@ -94,7 +111,14 @@ export function TimelineSectionEditor({ pageSlug, selectedSection }: TimelineSec
   }
 
   return (
-    <section className="mt-6 rounded-xl border border-admin-border bg-cream-alt/70 p-5">
+    <section
+      onBlur={(event) => {
+        if (!focusStayedInsideEditor(event.relatedTarget, event.currentTarget) && timelineReady()) {
+          void saveTimelineSection();
+        }
+      }}
+      className="mt-6 rounded-xl border border-admin-border bg-cream-alt/70 p-5"
+    >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-admin-accent">
@@ -247,7 +271,7 @@ export function TimelineSectionEditor({ pageSlug, selectedSection }: TimelineSec
         <button
           type="button"
           onClick={() => void saveTimelineSection()}
-          disabled={saving || !sectionLabel.trim()}
+          disabled={saving || !timelineReady()}
           className="inline-flex h-11 items-center gap-2 rounded-lg bg-admin-sidebar px-4 text-sm font-bold text-white hover:bg-admin-sidebar-active disabled:cursor-not-allowed disabled:opacity-60"
         >
           {saving ? (

@@ -31,6 +31,17 @@ export function CtaSectionEditor({ pageSlug, selectedSection }: CtaSectionEditor
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
 
+  function focusStayedInsideEditor(
+    nextTarget: EventTarget | null,
+    currentTarget: HTMLElement,
+  ): boolean {
+    return nextTarget instanceof Node && currentTarget.contains(nextTarget);
+  }
+
+  function ctaReady(): boolean {
+    return Boolean(heading.trim() && buttonLabel.trim() && buttonUrl.trim());
+  }
+
   async function saveCtaSection() {
     setSaving(true);
     setError('');
@@ -65,7 +76,14 @@ export function CtaSectionEditor({ pageSlug, selectedSection }: CtaSectionEditor
   }
 
   return (
-    <section className="mt-6 rounded-xl border border-admin-border bg-white p-5">
+    <section
+      onBlur={(event) => {
+        if (!focusStayedInsideEditor(event.relatedTarget, event.currentTarget) && ctaReady()) {
+          void saveCtaSection();
+        }
+      }}
+      className="mt-6 rounded-xl border border-admin-border bg-white p-5"
+    >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-admin-accent">
@@ -145,7 +163,7 @@ export function CtaSectionEditor({ pageSlug, selectedSection }: CtaSectionEditor
       <button
         type="button"
         onClick={() => void saveCtaSection()}
-        disabled={saving || !heading.trim() || !buttonLabel.trim() || !buttonUrl.trim()}
+        disabled={saving || !ctaReady()}
         className="mt-5 inline-flex h-11 items-center gap-2 rounded-lg bg-admin-sidebar px-4 text-sm font-bold text-white hover:bg-admin-sidebar-active disabled:cursor-not-allowed disabled:opacity-60"
       >
         {saving ? (
