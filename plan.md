@@ -347,7 +347,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build Home page rendering CMS sections (hero, rich text, CTA, etc.)
 - [x] Build Our Story / History page rendering the Timeline section
 - [x] Build First Visit / Reservations info page
-- [ ] Build Events public page (list of published, non-past events; registration form wired to Phase 6 API)
+- [x] Build Events public page (list of published, non-past events; registration form wired to Phase 6 API)
 - [ ] Build FAQ public page (grouped by category, Featured FAQs pinned to top)
 - [ ] Build Resort Rules & Policies public pages
 - [ ] Build Resort Map public page (read-only version of the Site status map, no admin actions)
