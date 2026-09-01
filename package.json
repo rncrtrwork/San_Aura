@@ -15,6 +15,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "seed:roles": "tsx scripts/seed-roles.ts",
+    "seed:history": "tsx scripts/seed-history-page.ts",
     "seed:initial": "tsx scripts/seed-initial-data.ts"
   },
   "dependencies": {

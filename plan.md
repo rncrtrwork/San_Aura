@@ -325,7 +325,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build autosave-draft behavior + "Draft changes" indicator in header
 - [x] Build Preview Website action (renders draft content in an isolated preview route)
 - [x] Build Publish action (flips `publishStatus` to published, snapshots to ActivityLog)
-- [ ] Seed the dedicated **History** page with the Timeline section per the client's explicit request
+- [x] Seed the dedicated **History** page with the Timeline section per the client's explicit request
 
 ### Phase 10 — Settings, Staff & Roles, Activity Log
 

@@ -9,6 +9,7 @@ import {
   parseContentEditorSectionType,
   parseContentPageSlug,
 } from '@/lib/contentManager';
+import { historyPageSeedMetadata, historyTimelineSection } from '@/server/content/historyPageSeed';
 import {
   validateContentSectionOrder,
   validateContentSectionStatus,
@@ -309,4 +310,19 @@ test('content publish snapshot summarizes active draft sections', () => {
   assert.equal(snapshot.activeSectionCount, 2);
   assert.deepEqual(snapshot.sectionTypes, ['hero', 'timeline', 'cta']);
   assert.deepEqual(snapshot.activeSectionKeys, ['hero-history', 'history-timeline']);
+});
+
+test('history page seed creates a dedicated active timeline section', () => {
+  const metadata = historyPageSeedMetadata();
+  const section = historyTimelineSection();
+
+  assert.equal(metadata.slug, 'history');
+  assert.equal(metadata.publishStatus, 'draft');
+  assert.equal(section.key, 'history-timeline');
+  assert.equal(section.type, 'timeline');
+  assert.equal(section.active, true);
+  assert.equal(section.timeline?.layout, 'alternating');
+  assert.equal(section.timeline?.showOnNavigation, true);
+  assert.equal(section.timeline?.items.length, 5);
+  assert.equal(section.timeline?.items[0].year, '1930s');
 });
