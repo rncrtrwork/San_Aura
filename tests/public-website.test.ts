@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { isValidMemberEmail, normalizeMemberEmail } from '@/lib/memberAuth';
+import { memberBalanceLabel, memberRenewalMonthLabel } from '@/lib/memberPortal';
 import { publicAddressLines, publicMailtoHref, publicTelHref } from '@/lib/publicContact';
 import {
   calculatePublicReservationTotal,
@@ -293,4 +294,11 @@ test('member auth normalizes and validates member email input', () => {
   assert.equal(normalizeMemberEmail(' Member@Example.COM '), 'member@example.com');
   assert.equal(isValidMemberEmail('member@example.com'), true);
   assert.equal(isValidMemberEmail('member'), false);
+});
+
+test('member portal dashboard helpers format balance and renewal month', () => {
+  assert.equal(memberBalanceLabel(125), '$125.00 due');
+  assert.equal(memberBalanceLabel(-40), '$40.00 credit');
+  assert.equal(memberRenewalMonthLabel(7), 'July');
+  assert.equal(memberRenewalMonthLabel(13), 'Not set');
 });

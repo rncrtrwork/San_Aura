@@ -362,7 +362,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 ### Phase 12 — Member Self-Service Portal
 
 - [x] Build member auth (email + password or magic link) separate from staff auth
-- [ ] Build member dashboard: current balance, membership type, status, renewal month
+- [x] Build member dashboard: current balance, membership type, status, renewal month
 - [ ] Build member "Payment History" tab (Payments filtered to that member, no staff notes)
 - [ ] Build member "Electric Billing" tab (ElectricReading + resulting charges history)
 - [ ] Build member "Documents on File" tab (list of Document types with status/expiry, read-only — no upload in MVP)
