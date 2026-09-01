@@ -8,6 +8,7 @@ import {
   UsersRound,
 } from 'lucide-react';
 import { BookingDefaultsForm } from '@/components/admin/BookingDefaultsForm';
+import { NotificationsSettingsForm } from '@/components/admin/NotificationsSettingsForm';
 import { OperatingSeasonForm } from '@/components/admin/OperatingSeasonForm';
 import { PropertyDetailsForm } from '@/components/admin/PropertyDetailsForm';
 import { PrivacySafetyForm } from '@/components/admin/PrivacySafetyForm';
@@ -181,6 +182,8 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
               <BookingDefaultsForm booking={overview.booking} />
               <PrivacySafetyForm privacy={overview.privacy} />
             </>
+          ) : overview.activeTab === 'notifications' ? (
+            <NotificationsSettingsForm notifications={overview.notifications} />
           ) : (
             <div className="mt-6 rounded-xl border border-admin-border bg-white p-5">
               <p className="text-sm font-bold text-forest-900">

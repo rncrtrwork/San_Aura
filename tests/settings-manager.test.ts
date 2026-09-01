@@ -3,11 +3,14 @@ import { test } from 'node:test';
 import {
   SETTINGS_TAB_DEFINITIONS,
   SETTINGS_TABS,
+  enabledNotificationCount,
+  NOTIFICATION_SETTING_DEFINITIONS,
   parseSettingsTab,
   privacyPolicySummaryText,
   settingsTabHref,
 } from '@/lib/settingsManager';
 import { validateBookingSettings } from '@/server/settings/bookingValidation';
+import { validateNotificationSettings } from '@/server/settings/notificationValidation';
 import { validateOperatingSettings } from '@/server/settings/operatingValidation';
 import { validatePropertySettings } from '@/server/settings/propertyValidation';
 import { validatePrivacySettings } from '@/server/settings/privacyValidation';
@@ -166,4 +169,30 @@ test('privacy policy summary reflects booking visibility', () => {
     }),
     'Photography is not permitted on the property and video recording is not permitted on the property. Guests will see this privacy notice during booking.',
   );
+});
+
+test('notification settings validation accepts MVP alert toggles', () => {
+  const result = validateNotificationSettings({
+    newReservation: true,
+    cancellation: false,
+    paymentRecorded: true,
+    arrivalReminder: true,
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(enabledNotificationCount(result.data), 3);
+  }
+});
+
+test('notification settings validation rejects missing boolean toggles', () => {
+  assert.equal(validateNotificationSettings({ newReservation: true }).valid, false);
+});
+
+test('notification labels use payment recorded wording for MVP', () => {
+  const paymentDefinition = NOTIFICATION_SETTING_DEFINITIONS.find(
+    (definition) => definition.key === 'paymentRecorded',
+  );
+
+  assert.equal(paymentDefinition?.label, 'Payment Recorded');
 });

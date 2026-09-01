@@ -15,6 +15,18 @@ export type SettingsTabDefinition = {
   description: string;
 };
 
+export type NotificationSettingKey =
+  | 'newReservation'
+  | 'cancellation'
+  | 'paymentRecorded'
+  | 'arrivalReminder';
+
+export type NotificationSettingDefinition = {
+  key: NotificationSettingKey;
+  label: string;
+  description: string;
+};
+
 export const SETTINGS_TAB_DEFINITIONS: readonly SettingsTabDefinition[] = [
   {
     id: 'property',
@@ -47,6 +59,31 @@ export const SETTINGS_TAB_DEFINITIONS: readonly SettingsTabDefinition[] = [
     description: 'External services and future connection readiness.',
   },
 ] as const;
+
+export const NOTIFICATION_SETTING_DEFINITIONS: readonly NotificationSettingDefinition[] = [
+  {
+    key: 'newReservation',
+    label: 'New Reservation',
+    description: 'Alert staff when a reservation request or booking is created.',
+  },
+  {
+    key: 'cancellation',
+    label: 'Cancellation',
+    description: 'Alert staff when a reservation is cancelled.',
+  },
+  {
+    key: 'paymentRecorded',
+    label: 'Payment Recorded',
+    description: 'MVP-safe replacement for payment-failed alerts until payment processing exists.',
+  },
+  {
+    key: 'arrivalReminder',
+    label: 'Arrival Reminder',
+    description: 'Remind staff about upcoming arrivals and check-in preparation.',
+  },
+] as const;
+
+export type NotificationSettingsMutationRequest = Record<NotificationSettingKey, boolean>;
 
 export type SettingsOverview = {
   activeTab: SettingsTab;
@@ -90,6 +127,7 @@ export type SettingsOverview = {
   notifications: {
     enabledCount: number;
     totalCount: number;
+    values: NotificationSettingsMutationRequest;
   };
   payments: {
     paypalMeConfigured: boolean;
@@ -155,6 +193,11 @@ export type PrivacySettingsMutationResponse = {
   privacy?: SettingsOverview['privacy'];
 };
 
+export type NotificationSettingsMutationResponse = {
+  message?: string;
+  notifications?: SettingsOverview['notifications'];
+};
+
 export function privacyPolicySummaryText(privacy: SettingsOverview['privacy']): string {
   const rules: string[] = [];
   if (privacy.photographyProhibited) {
@@ -170,6 +213,10 @@ export function privacyPolicySummaryText(privacy: SettingsOverview['privacy']): 
     : 'This notice is retained internally and hidden during booking.';
 
   return `${policy} ${bookingNotice}`;
+}
+
+export function enabledNotificationCount(values: NotificationSettingsMutationRequest): number {
+  return NOTIFICATION_SETTING_DEFINITIONS.filter((definition) => values[definition.key]).length;
 }
 
 export function parseSettingsTab(value: string | string[] | undefined): SettingsTab {

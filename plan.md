@@ -334,7 +334,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build Operating Season section (open year-round toggle, tax rate, currency, date format)
 - [x] Build Booking Defaults form (cancellation window, deposit requirement, minimum age, default minimum stay)
 - [x] Build Privacy & Safety toggles (photography prohibited, video prohibited, show privacy notice at booking) + live Privacy Policy Summary preview text
-- [ ] Build Notifications toggle list (New Reservation/Cancellation/Payment Failed/Arrival Reminder) — flag Payment Failed as N/A copy until Phase-2 payments exist, or repurpose as "Payment Recorded"
+- [x] Build Notifications toggle list (New Reservation/Cancellation/Payment Failed/Arrival Reminder) — flag Payment Failed as N/A copy until Phase-2 payments exist, or repurpose as "Payment Recorded"
 - [ ] Build Staff Access summary table (Role/Permission count) linking to "Manage Roles"
 - [ ] Build Manage Roles modal/page: permission checklist editor per role
 - [ ] Build Staff user management (invite/deactivate staff, assign role) — likely under Staff & Roles tab

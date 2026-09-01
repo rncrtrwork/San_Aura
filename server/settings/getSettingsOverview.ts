@@ -1,5 +1,10 @@
 import { connectToDatabase } from '@/lib/db';
-import { parseSettingsTab, type SettingsOverview } from '@/lib/settingsManager';
+import {
+  enabledNotificationCount,
+  NOTIFICATION_SETTING_DEFINITIONS,
+  parseSettingsTab,
+  type SettingsOverview,
+} from '@/lib/settingsManager';
 import { PropertySettings, type PropertySettingsDocument } from '@/models/PropertySettings';
 import { Role } from '@/models/Role';
 import { User } from '@/models/User';
@@ -10,12 +15,6 @@ type SettingsQueryParams = Record<string, string | string[] | undefined>;
 function addressLine(settings: Pick<PropertySettingsDocument, 'address'>): string {
   const { address } = settings;
   return `${address.street}, ${address.city}, ${address.state} ${address.postalCode}`;
-}
-
-function enabledNotificationCount(
-  settings: Pick<PropertySettingsDocument, 'notifications'>,
-): number {
-  return Object.values(settings.notifications).filter(Boolean).length;
 }
 
 export async function getSettingsOverview(params: SettingsQueryParams): Promise<SettingsOverview> {
@@ -67,8 +66,14 @@ export async function getSettingsOverview(params: SettingsQueryParams): Promise<
       showPrivacyNoticeAtBooking: settings.privacy.showPrivacyNoticeAtBooking,
     },
     notifications: {
-      enabledCount: enabledNotificationCount(settings),
-      totalCount: Object.keys(settings.notifications).length,
+      enabledCount: enabledNotificationCount(settings.notifications),
+      totalCount: NOTIFICATION_SETTING_DEFINITIONS.length,
+      values: {
+        newReservation: settings.notifications.newReservation,
+        cancellation: settings.notifications.cancellation,
+        paymentRecorded: settings.notifications.paymentRecorded,
+        arrivalReminder: settings.notifications.arrivalReminder,
+      },
     },
     payments: {
       paypalMeConfigured: Boolean(settings.paypalMeUrl),
