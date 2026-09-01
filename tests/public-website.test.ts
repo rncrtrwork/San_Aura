@@ -14,6 +14,7 @@ import {
 } from '@/lib/publicManagedContent';
 import { publicMapStatusSummary, type PublicMapSite } from '@/lib/publicMap';
 import { publicSeoFields } from '@/lib/publicSeo';
+import { PUBLIC_WEBSITE_REDIRECTS } from '@/lib/publicRedirects';
 import { publicStartingRateLabel } from '@/lib/publicStays';
 import { publicNavigationItems, publicPageHref } from '@/lib/publicWebsite';
 
@@ -262,5 +263,27 @@ test('public SEO fields prefer CMS seo fields over fallbacks', () => {
       title: 'Modern Resort Website',
       description: 'CMS-powered resort website description.',
     },
+  );
+});
+
+test('public redirect map preserves legacy Weebly URLs as 301s', () => {
+  assert.equal(
+    PUBLIC_WEBSITE_REDIRECTS.every((redirect) => redirect.statusCode === 301),
+    true,
+  );
+  assert.deepEqual(
+    PUBLIC_WEBSITE_REDIRECTS.filter((redirect) =>
+      [
+        '/index.html',
+        '/book-your-reservations-online.html',
+        '/frequently-asked-questions.html',
+        '/rules-and-safety-information.html',
+        '/map-of-sun-aura-resort.html',
+        '/images-of-sun-aura.html',
+        '/camping-fees-and-rental-prices.html',
+        '/about-sun-aura.html',
+      ].includes(redirect.source),
+    ).map((redirect) => redirect.destination),
+    ['/', '/book', '/faq', '/rules', '/resort-map', '/gallery', '/stays-and-rates', '/our-story'],
   );
 });
