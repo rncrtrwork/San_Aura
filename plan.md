@@ -296,7 +296,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build Approval Status + "Publish to website" toggle logic — enforce that publish requires `approved: true`
 - [x] Add manual "no people" confirmation checkbox required at upload/approval time as a lightweight enforcement step for the privacy policy
 - [x] Build Album management (Create Album, assign media, nested albums e.g. "Stay Types > Cabins")
-- [ ] Build "Archived" and tab views (All Media/Homepage Gallery/Stay Types/Events/Map Assets/Archived)
+- [x] Build "Archived" and tab views (All Media/Homepage Gallery/Stay Types/Events/Map Assets/Archived)
 - [ ] Wire persistent Privacy First banner on Gallery page
 
 ### Phase 8 — FAQ & Rules Manager

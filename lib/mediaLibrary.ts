@@ -10,12 +10,22 @@ import {
 export const MEDIA_TYPE_FILTERS = ['all', 'image', 'video', 'document'] as const;
 export const MEDIA_APPROVAL_FILTERS = ['all', ...MEDIA_APPROVAL_STATUSES] as const;
 export const MEDIA_USAGE_FILTERS = ['all', ...MEDIA_USAGE_TYPES] as const;
+export const MEDIA_LIBRARY_VIEWS = [
+  'all',
+  'homepage',
+  'stayType',
+  'event',
+  'mapAsset',
+  'archived',
+] as const;
 
 export type MediaTypeFilter = (typeof MEDIA_TYPE_FILTERS)[number];
 export type MediaApprovalFilter = (typeof MEDIA_APPROVAL_FILTERS)[number];
 export type MediaUsageFilter = (typeof MEDIA_USAGE_FILTERS)[number];
+export type MediaLibraryView = (typeof MEDIA_LIBRARY_VIEWS)[number];
 
 export type MediaLibraryFilters = {
+  view: MediaLibraryView;
   search: string;
   mediaType: MediaTypeFilter;
   albumId: string;

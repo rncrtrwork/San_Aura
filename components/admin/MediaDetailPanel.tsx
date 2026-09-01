@@ -28,6 +28,7 @@ const usageLabels: Record<MediaUsage, string> = {
 
 function closeHref(filters: MediaLibraryFilters): string {
   const params = new URLSearchParams();
+  if (filters.view !== 'all') params.set('view', filters.view);
   if (filters.mediaType !== 'all') params.set('mediaType', filters.mediaType);
   if (filters.search) params.set('search', filters.search);
   if (filters.albumId) params.set('albumId', filters.albumId);

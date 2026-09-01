@@ -1,5 +1,6 @@
 import { Types } from 'mongoose';
 import {
+  MEDIA_LIBRARY_VIEWS,
   type MediaAlbumOption,
   type MediaLibraryFilters,
   type MediaLibraryResult,
@@ -53,6 +54,8 @@ type MediaQuery = {
   $or?: MediaSearchField[];
 };
 
+const USAGE_VIEWS: MediaUsage[] = ['homepage', 'stayType', 'event', 'mapAsset'];
+
 function firstValue(params: Record<string, string | string[] | undefined>, key: string): string {
   const value = params[key];
   return typeof value === 'string' ? value.trim() : '';
@@ -72,8 +75,10 @@ export function parseMediaLibraryFilters(
   const mediaType = firstValue(params, 'mediaType');
   const usage = firstValue(params, 'usage');
   const approvalStatus = firstValue(params, 'approvalStatus');
+  const view = firstValue(params, 'view');
 
   return {
+    view: MEDIA_LIBRARY_VIEWS.find((entry) => entry === view) ?? 'all',
     search: firstValue(params, 'search').slice(0, 120),
     mediaType:
       mediaType === 'image' || mediaType === 'video' || mediaType === 'document'
@@ -86,13 +91,15 @@ export function parseMediaLibraryFilters(
 }
 
 function buildMediaQuery(filters: MediaLibraryFilters): MediaQuery {
-  const query: MediaQuery = { archived: false };
+  const query: MediaQuery = { archived: filters.view === 'archived' };
+  const viewUsage = USAGE_VIEWS.find((entry) => entry === filters.view);
 
   if (filters.mediaType === 'image') query.mimeType = /^image\//;
   if (filters.mediaType === 'video') query.mimeType = /^video\//;
   if (filters.mediaType === 'document') query.mimeType = { $not: /^(image|video)\// };
   if (filters.albumId) query.albumRef = new Types.ObjectId(filters.albumId);
-  if (filters.usage !== 'all') query.usage = filters.usage;
+  if (viewUsage) query.usage = viewUsage;
+  if (!viewUsage && filters.usage !== 'all') query.usage = filters.usage;
   if (filters.approvalStatus !== 'all') query.approvalStatus = filters.approvalStatus;
   if (filters.search) {
     const search = new RegExp(escapeRegex(filters.search), 'i');

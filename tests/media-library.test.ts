@@ -36,6 +36,7 @@ test('media library filters accept known filter values', () => {
   });
 
   assert.deepEqual(filters, {
+    view: 'all',
     search: 'cabins',
     mediaType: 'image',
     albumId: '64f5f5f5f5f5f5f5f5f5f5f5',
@@ -53,12 +54,21 @@ test('media library filters fall back when values are invalid', () => {
   });
 
   assert.deepEqual(filters, {
+    view: 'all',
     search: '',
     mediaType: 'all',
     albumId: '',
     usage: 'all',
     approvalStatus: 'all',
   });
+});
+
+test('media library filters accept usage and archived tab views', () => {
+  const homepage = parseMediaLibraryFilters({ view: 'homepage' });
+  const archived = parseMediaLibraryFilters({ view: 'archived' });
+
+  assert.equal(homepage.view, 'homepage');
+  assert.equal(archived.view, 'archived');
 });
 
 test('media mime type classification groups image, video, and document assets', () => {

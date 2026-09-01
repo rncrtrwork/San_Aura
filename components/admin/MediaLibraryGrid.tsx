@@ -35,6 +35,7 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
 function mediaDetailHref(mediaId: string, filters: MediaLibraryFilters): string {
   const params = new URLSearchParams();
   params.set('media', mediaId);
+  if (filters.view !== 'all') params.set('view', filters.view);
   if (filters.mediaType !== 'all') params.set('mediaType', filters.mediaType);
   if (filters.search) params.set('search', filters.search);
   if (filters.albumId) params.set('albumId', filters.albumId);

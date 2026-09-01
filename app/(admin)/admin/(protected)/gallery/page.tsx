@@ -1,9 +1,9 @@
+import { AlbumManagementPanel } from '@/components/admin/AlbumManagementPanel';
 import { MediaDetailPanel } from '@/components/admin/MediaDetailPanel';
 import { MediaLibraryGrid } from '@/components/admin/MediaLibraryGrid';
 import { MediaUploadPanel } from '@/components/admin/MediaUploadPanel';
-import { AlbumManagementPanel } from '@/components/admin/AlbumManagementPanel';
 import { Search } from 'lucide-react';
-import type { MediaLibraryFilters, MediaTypeFilter } from '@/lib/mediaLibrary';
+import type { MediaLibraryFilters, MediaLibraryView, MediaTypeFilter } from '@/lib/mediaLibrary';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getMediaLibrary, parseMediaLibraryFilters } from '@/server/media/getMediaLibrary';
 
@@ -35,12 +35,34 @@ const approvalLabels = {
   rejected: 'Rejected',
 } as const;
 
+const viewLabels: Record<MediaLibraryView, string> = {
+  all: 'All Media',
+  homepage: 'Homepage Gallery',
+  stayType: 'Stay Types',
+  event: 'Events',
+  mapAsset: 'Map Assets',
+  archived: 'Archived',
+};
+
 function galleryHref(mediaType: MediaTypeFilter, filters: MediaLibraryFilters): string {
   const params = new URLSearchParams();
+  if (filters.view !== 'all') params.set('view', filters.view);
   if (mediaType !== 'all') params.set('mediaType', mediaType);
   if (filters.search) params.set('search', filters.search);
   if (filters.albumId) params.set('albumId', filters.albumId);
   if (filters.usage !== 'all') params.set('usage', filters.usage);
+  if (filters.approvalStatus !== 'all') params.set('approvalStatus', filters.approvalStatus);
+  const query = params.toString();
+  return query ? `/admin/gallery?${query}` : '/admin/gallery';
+}
+
+function galleryViewHref(view: MediaLibraryView, filters: MediaLibraryFilters): string {
+  const params = new URLSearchParams();
+  if (view !== 'all') params.set('view', view);
+  if (filters.mediaType !== 'all') params.set('mediaType', filters.mediaType);
+  if (filters.search) params.set('search', filters.search);
+  if (filters.albumId) params.set('albumId', filters.albumId);
+  if (filters.usage !== 'all' && view === 'all') params.set('usage', filters.usage);
   if (filters.approvalStatus !== 'all') params.set('approvalStatus', filters.approvalStatus);
   const query = params.toString();
   return query ? `/admin/gallery?${query}` : '/admin/gallery';
@@ -54,6 +76,14 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
   const filters = parseMediaLibraryFilters(params);
   const { media, albums } = await getMediaLibrary(filters);
   const mediaTypes: MediaTypeFilter[] = ['all', 'image', 'video', 'document'];
+  const libraryViews: MediaLibraryView[] = [
+    'all',
+    'homepage',
+    'stayType',
+    'event',
+    'mapAsset',
+    'archived',
+  ];
   const selectedMedia = media.find((asset) => asset.id === selectedMediaId) ?? null;
 
   return (
@@ -72,7 +102,28 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
 
       <AlbumManagementPanel albums={albums} />
 
+      <nav aria-label="Media library views" className="admin-card flex overflow-x-auto p-2">
+        {libraryViews.map((view) => {
+          const active = view === filters.view;
+          return (
+            <a
+              key={view}
+              href={galleryViewHref(view, filters)}
+              aria-current={active ? 'page' : undefined}
+              className={`inline-flex min-w-max rounded-lg px-4 py-2 text-sm font-bold ${
+                active
+                  ? 'bg-admin-sidebar text-white'
+                  : 'text-admin-muted hover:bg-cream-alt hover:text-forest-900'
+              }`}
+            >
+              {viewLabels[view]}
+            </a>
+          );
+        })}
+      </nav>
+
       <form className="admin-card grid gap-4 p-4 lg:grid-cols-[minmax(14rem,1.4fr)_repeat(3,minmax(11rem,1fr))_auto]">
+        {filters.view !== 'all' ? <input type="hidden" name="view" value={filters.view} /> : null}
         {filters.mediaType !== 'all' ? (
           <input type="hidden" name="mediaType" value={filters.mediaType} />
         ) : null}
