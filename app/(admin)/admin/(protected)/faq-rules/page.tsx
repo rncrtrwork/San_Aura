@@ -1,4 +1,5 @@
 import { CircleHelp, FileText, Scale } from 'lucide-react';
+import { FaqCategoryTree } from '@/components/admin/FaqCategoryTree';
 import { FAQ_RULE_TABS, type FaqRuleTab } from '@/lib/faqRules';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getFaqRulesOverview } from '@/server/faqRules/getFaqRulesOverview';
@@ -78,26 +79,30 @@ export default async function FaqRulesPage({ searchParams }: FaqRulesPageProps) 
         })}
       </nav>
 
-      <section className="admin-card p-6" aria-labelledby="faq-rules-section-heading">
-        <span className="grid size-12 place-items-center rounded-full bg-cream-alt text-admin-accent">
-          <ActiveIcon aria-hidden="true" className="size-5" />
-        </span>
-        <h2 id="faq-rules-section-heading" className="mt-4 font-serif text-3xl text-forest-900">
-          {tabLabels[overview.activeTab]}
-        </h2>
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-admin-muted">
-          {tabDescriptions[overview.activeTab]}
-        </p>
-        <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          {FAQ_RULE_TABS.map((tab) => (
-            <div key={tab} className="rounded-xl border border-admin-border bg-white p-4">
-              <p className="text-sm font-semibold text-admin-muted">{tabLabels[tab]}</p>
-              <p className="mt-2 font-serif text-4xl text-forest-900">{overview.counts[tab]}</p>
-              <p className="mt-1 text-xs text-admin-muted">Current items</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <div className="grid items-start gap-6 xl:grid-cols-[20rem_minmax(0,1fr)]">
+        <FaqCategoryTree tab={overview.activeTab} categories={overview.categories} />
+
+        <section className="admin-card p-6" aria-labelledby="faq-rules-section-heading">
+          <span className="grid size-12 place-items-center rounded-full bg-cream-alt text-admin-accent">
+            <ActiveIcon aria-hidden="true" className="size-5" />
+          </span>
+          <h2 id="faq-rules-section-heading" className="mt-4 font-serif text-3xl text-forest-900">
+            {tabLabels[overview.activeTab]}
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-admin-muted">
+            {tabDescriptions[overview.activeTab]}
+          </p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+            {FAQ_RULE_TABS.map((tab) => (
+              <div key={tab} className="rounded-xl border border-admin-border bg-white p-4">
+                <p className="text-sm font-semibold text-admin-muted">{tabLabels[tab]}</p>
+                <p className="mt-2 font-serif text-4xl text-forest-900">{overview.counts[tab]}</p>
+                <p className="mt-1 text-xs text-admin-muted">Current items</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

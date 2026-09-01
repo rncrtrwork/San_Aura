@@ -302,7 +302,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 ### Phase 8 — FAQ & Rules Manager
 
 - [x] Build FAQ & Rules page shell with tabs (FAQ/Resort Rules/Policies) and item counts
-- [ ] Build left-side category tree (Reservations/Arrival & Check-in/During Your Stay/Privacy/Pets/etc.) with drag-reorder
+- [x] Build left-side category tree (Reservations/Arrival & Check-in/During Your Stay/Privacy/Pets/etc.) with drag-reorder
 - [ ] Build "Add FAQ Item" flow (question, category, slug, rich-text answer, related links, display order)
 - [ ] Build rich text editor toolbar for the Answer field
 - [ ] Build Publishing panel (status draft/published, SEO title + char counter, meta description + char counter, Featured FAQ toggle)
