@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { publicAddressLines, publicMailtoHref, publicTelHref } from '@/lib/publicContact';
 import { groupedPublicFaqItems, type PublicFaqItem } from '@/lib/publicFaq';
 import { groupedPublicGalleryAssets, type PublicGalleryAsset } from '@/lib/publicGallery';
 import {
@@ -177,4 +178,30 @@ test('public gallery assets group by album with resort highlights fallback', () 
 test('public stay starting rates render guest-friendly labels', () => {
   assert.equal(publicStartingRateLabel(125), 'From $125 / night');
   assert.equal(publicStartingRateLabel(0), 'Rate available on request');
+});
+
+test('public contact helpers render address and contact links', () => {
+  const contact = {
+    resortName: 'Sun Aura Resort',
+    address: {
+      street: '3449 East State Road 10',
+      city: 'Lake Village',
+      state: 'Indiana',
+      postalCode: '46349',
+      country: 'United States',
+    },
+    phone: '(219) 345-2000',
+    email: 'hello@example.com',
+    checkInTime: '14:00',
+    checkOutTime: '12:00',
+    keyReturnTime: '11:00',
+  };
+
+  assert.deepEqual(publicAddressLines(contact), [
+    '3449 East State Road 10',
+    'Lake Village, Indiana 46349',
+    'United States',
+  ]);
+  assert.equal(publicTelHref(contact.phone), 'tel:2193452000');
+  assert.equal(publicMailtoHref(contact.email), 'mailto:hello@example.com');
 });

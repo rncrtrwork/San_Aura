@@ -353,7 +353,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build Resort Map public page (read-only version of the Site status map, no admin actions)
 - [x] Build Gallery public page (approved + `publishToWebsite: true` media only, grouped by album)
 - [x] Build Stays & Rates public page (stay type cards + starting rates pulled from `StayType`)
-- [ ] Build Contact page (property info from `PropertySettings`)
+- [x] Build Contact page (property info from `PropertySettings`)
 - [ ] Build "Book a Stay" public flow: date/site-type search → availability check against `Site`/`Reservation` → reservation request submission (no payment capture — creates a `pending` Reservation for staff to confirm)
 - [ ] Wire SEO metadata (title/meta description) per page from CMS fields
 - [ ] Add responsive/mobile QA pass across all public pages
