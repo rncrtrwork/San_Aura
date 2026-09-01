@@ -31,3 +31,25 @@ export type FaqCategoryReorderResponse = {
   updatedCount?: number;
   message?: string;
 };
+
+export type FaqRelatedLinkInput = {
+  label: string;
+  url: string;
+};
+
+export type FaqItemCreateRequest = {
+  category: string;
+  question: string;
+  slug: string;
+  answer: string;
+  relatedLinks: FaqRelatedLinkInput[];
+  displayOrder: number;
+};
+
+export type FaqItemCreateResponse = {
+  item?: {
+    id: string;
+    question: string;
+  };
+  message?: string;
+};

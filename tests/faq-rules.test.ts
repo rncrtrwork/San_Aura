@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { parseFaqRuleTab } from '@/lib/faqRules';
 import { validateFaqCategoryReorder } from '@/server/faqRules/categoryValidation';
+import { validateFaqItemCreate } from '@/server/faqRules/faqItemValidation';
 
 test('faq rules tab parser accepts known tabs', () => {
   assert.equal(parseFaqRuleTab('faq'), 'faq');
@@ -31,6 +32,35 @@ test('faq category reorder validation rejects invalid tabs', () => {
   const result = validateFaqCategoryReorder({
     tab: 'faq',
     categories: [],
+  });
+
+  assert.equal(result.valid, false);
+});
+
+test('faq item validation accepts a complete draft item', () => {
+  const result = validateFaqItemCreate({
+    category: 'Reservations',
+    question: 'What time is check-in?',
+    slug: '',
+    answer: '<p>Check-in begins at 2 PM.</p>',
+    relatedLinks: [{ label: 'Rates', url: 'https://sunauraresort.net/rates' }],
+    displayOrder: 10,
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.slug, 'what-time-is-check-in');
+  }
+});
+
+test('faq item validation rejects incomplete related links', () => {
+  const result = validateFaqItemCreate({
+    category: 'Reservations',
+    question: 'What time is check-in?',
+    slug: '',
+    answer: 'Check-in begins at 2 PM.',
+    relatedLinks: [{ label: 'Rates', url: 'not-a-url' }],
+    displayOrder: 10,
   });
 
   assert.equal(result.valid, false);
