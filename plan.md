@@ -349,7 +349,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build First Visit / Reservations info page
 - [x] Build Events public page (list of published, non-past events; registration form wired to Phase 6 API)
 - [x] Build FAQ public page (grouped by category, Featured FAQs pinned to top)
-- [ ] Build Resort Rules & Policies public pages
+- [x] Build Resort Rules & Policies public pages
 - [ ] Build Resort Map public page (read-only version of the Site status map, no admin actions)
 - [ ] Build Gallery public page (approved + `publishToWebsite: true` media only, grouped by album)
 - [ ] Build Stays & Rates public page (stay type cards + starting rates pulled from `StayType`)

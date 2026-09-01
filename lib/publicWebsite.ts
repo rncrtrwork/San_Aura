@@ -40,6 +40,8 @@ export const PUBLIC_DEFAULT_NAVIGATION: PublicNavigationItem[] = [
   { slug: 'history', label: 'History', href: '/history' },
   { slug: 'first-visit', label: 'First Visit', href: '/first-visit' },
   { slug: 'faq', label: 'FAQ', href: '/faq' },
+  { slug: 'rules', label: 'Rules', href: '/rules' },
+  { slug: 'policies', label: 'Policies', href: '/policies' },
   { slug: 'contact', label: 'Contact', href: '/contact' },
 ];
 

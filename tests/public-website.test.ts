@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { groupedPublicFaqItems, type PublicFaqItem } from '@/lib/publicFaq';
+import {
+  groupedPublicManagedContentItems,
+  type PublicManagedContentItem,
+} from '@/lib/publicManagedContent';
 import { publicNavigationItems, publicPageHref } from '@/lib/publicWebsite';
 
 test('public page href keeps home at the root path', () => {
@@ -87,5 +91,37 @@ test('public FAQ grouping pins featured items and preserves category groups', ()
   assert.deepEqual(
     page.categories.map((category) => category.category),
     ['Privacy', 'Arrival'],
+  );
+});
+
+const managedItems: PublicManagedContentItem[] = [
+  {
+    id: 'quiet-hours',
+    category: 'During Your Stay',
+    title: 'Quiet hours',
+    body: '<p>Keep shared spaces restful.</p>',
+    relatedLinks: [],
+    displayOrder: 2,
+  },
+  {
+    id: 'photos',
+    category: 'Privacy',
+    title: 'No photos or video',
+    body: '<p>Photography is prohibited.</p>',
+    relatedLinks: [],
+    displayOrder: 1,
+  },
+];
+
+test('public managed content groups published rules and policies by display order', () => {
+  const page = groupedPublicManagedContentItems(managedItems);
+
+  assert.deepEqual(
+    page.categories.map((category) => category.category),
+    ['Privacy', 'During Your Stay'],
+  );
+  assert.deepEqual(
+    page.categories.flatMap((category) => category.items.map((item) => item.id)),
+    ['photos', 'quiet-hours'],
   );
 });
