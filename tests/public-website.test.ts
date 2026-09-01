@@ -5,6 +5,7 @@ import {
   groupedPublicManagedContentItems,
   type PublicManagedContentItem,
 } from '@/lib/publicManagedContent';
+import { publicMapStatusSummary, type PublicMapSite } from '@/lib/publicMap';
 import { publicNavigationItems, publicPageHref } from '@/lib/publicWebsite';
 
 test('public page href keeps home at the root path', () => {
@@ -124,4 +125,19 @@ test('public managed content groups published rules and policies by display orde
     page.categories.flatMap((category) => category.items.map((item) => item.id)),
     ['photos', 'quiet-hours'],
   );
+});
+
+const mapSites: PublicMapSite[] = [
+  { id: 'one', code: 'Cabin 1', type: 'cabin', status: 'available', x: 10, y: 20 },
+  { id: 'two', code: 'RV 2', type: 'rv', status: 'occupied', x: 20, y: 30 },
+  { id: 'three', code: 'Tent 3', type: 'tent', status: 'available', x: 30, y: 40 },
+];
+
+test('public map status summary counts read-only site states', () => {
+  assert.deepEqual(publicMapStatusSummary(mapSites), {
+    available: 2,
+    occupied: 1,
+    maintenance: 0,
+    blocked: 0,
+  });
 });
