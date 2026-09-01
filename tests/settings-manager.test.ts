@@ -6,6 +6,7 @@ import {
   parseSettingsTab,
   settingsTabHref,
 } from '@/lib/settingsManager';
+import { validatePropertySettings } from '@/server/settings/propertyValidation';
 
 test('settings tabs include the required administration sections', () => {
   assert.deepEqual(SETTINGS_TABS, [
@@ -30,4 +31,54 @@ test('settings tab parser falls back to property', () => {
 test('settings tab hrefs keep property as the canonical base route', () => {
   assert.equal(settingsTabHref('property'), '/admin/settings');
   assert.equal(settingsTabHref('notifications'), '/admin/settings?tab=notifications');
+});
+
+test('property settings validation accepts complete property details', () => {
+  const result = validatePropertySettings({
+    resortName: 'Sun Aura Resort',
+    logoUrl: 'https://res.cloudinary.com/demo/image/upload/sun-aura/settings/logo.png',
+    logoPublicId: 'sun-aura/settings/logo',
+    address: {
+      street: '3449 East State Road 10',
+      city: 'Lake Village',
+      state: 'Indiana',
+      postalCode: '46349',
+      country: 'United States',
+    },
+    phone: '219-345-2000',
+    email: 'SUN@EXAMPLE.COM',
+    timezone: 'America/Chicago',
+    checkInTime: '14:00',
+    checkOutTime: '12:00',
+    keyReturnTime: '11:00',
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.email, 'sun@example.com');
+  }
+});
+
+test('property settings validation rejects invalid uploads and times', () => {
+  assert.equal(
+    validatePropertySettings({
+      resortName: 'Sun Aura Resort',
+      logoUrl: 'javascript:alert(1)',
+      logoPublicId: 'sun-aura/settings/logo',
+      address: {
+        street: '3449 East State Road 10',
+        city: 'Lake Village',
+        state: 'Indiana',
+        postalCode: '46349',
+        country: 'United States',
+      },
+      phone: '219-345-2000',
+      email: 'sun@example.com',
+      timezone: 'America/Chicago',
+      checkInTime: '14:00',
+      checkOutTime: 'bad',
+      keyReturnTime: '11:00',
+    }).valid,
+    false,
+  );
 });

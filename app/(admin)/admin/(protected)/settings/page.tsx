@@ -7,6 +7,7 @@ import {
   ShieldCheck,
   UsersRound,
 } from 'lucide-react';
+import { PropertyDetailsForm } from '@/components/admin/PropertyDetailsForm';
 import { SETTINGS_TAB_DEFINITIONS, settingsTabHref, type SettingsTab } from '@/lib/settingsManager';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getSettingsOverview } from '@/server/settings/getSettingsOverview';
@@ -166,6 +167,20 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
               controls, notifications, staff roles, activity log, and MVP payments.
             </p>
           </div>
+
+          {overview.activeTab === 'property' ? (
+            <PropertyDetailsForm property={overview.property} booking={overview.booking} />
+          ) : (
+            <div className="mt-6 rounded-xl border border-admin-border bg-white p-5">
+              <p className="text-sm font-bold text-forest-900">
+                {activeDefinition.label} form is queued next.
+              </p>
+              <p className="mt-2 text-sm leading-6 text-admin-muted">
+                Phase 10 builds each settings area one focused task at a time after this shared
+                shell.
+              </p>
+            </div>
+          )}
         </section>
       </div>
     </div>

@@ -52,15 +52,25 @@ export type SettingsOverview = {
   activeTab: SettingsTab;
   property: {
     resortName: string;
+    logoUrl: string;
+    logoPublicId: string;
     email: string;
     phone: string;
     timezone: string;
+    address: {
+      street: string;
+      city: string;
+      state: string;
+      postalCode: string;
+      country: string;
+    };
     addressLine: string;
     logoConfigured: boolean;
   };
   booking: {
     checkInTime: string;
     checkOutTime: string;
+    keyReturnTime: string;
     cancellationWindowDays: number;
     depositRequirementPercent: number;
     minimumAge: number;
@@ -88,6 +98,30 @@ export type SettingsOverview = {
     activeStaffCount: number;
     roleCount: number;
   };
+};
+
+export type PropertySettingsMutationRequest = {
+  resortName: string;
+  logoUrl: string;
+  logoPublicId: string;
+  address: {
+    street: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+  };
+  phone: string;
+  email: string;
+  timezone: string;
+  checkInTime: string;
+  checkOutTime: string;
+  keyReturnTime: string;
+};
+
+export type PropertySettingsMutationResponse = {
+  message?: string;
+  property?: SettingsOverview['property'] & SettingsOverview['booking'];
 };
 
 export function parseSettingsTab(value: string | string[] | undefined): SettingsTab {
