@@ -382,7 +382,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 ### Phase 14 — QA, Hardening, Deployment, Launch
 
-- [ ] Write integration tests for auth/RBAC boundaries (staff routes, member-portal data boundary)
+- [x] Write integration tests for auth/RBAC boundaries (staff routes, member-portal data boundary)
 - [ ] Load-test the Calendar/Resort Map queries against realistic data volume (187 sites × season)
 - [ ] Accessibility pass (labels, contrast, keyboard nav) on public site and admin
 - [ ] Set up MongoDB Atlas production cluster + backups
