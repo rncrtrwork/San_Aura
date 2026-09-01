@@ -367,7 +367,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build member "Electric Billing" tab (ElectricReading + resulting charges history)
 - [x] Build member "Documents on File" tab (list of Document types with status/expiry, read-only — no upload in MVP)
 - [x] Build member "Emergency Contact" and "Membership Info" read-only display
-- [ ] Enforce field-level exclusion of `staffNotes` in the member-portal API serializer + add a regression test
+- [x] Enforce field-level exclusion of `staffNotes` in the member-portal API serializer + add a regression test
 - [ ] Build "Request update" contact-staff action (simple message/ticket to admin, no self-edit of official records in MVP)
 
 ### Phase 13 — Electric Billing / Ledger
