@@ -289,15 +289,15 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 ### Phase 7 — Gallery / Media Manager
 
-- [ ] Build Gallery grid page with filters (Media Type/Album/Usage/Approval Status) and search
-- [ ] Wire Cloudinary upload widget for "Upload Media" (multi-file)
-- [ ] Build media detail side panel (Alt Text, Caption, Album, Focal Point picker, Usage list, File Details)
-- [ ] Build bulk-select toolbar (Approve/Unapprove/Add to Album/Archive/Delete)
-- [ ] Build Approval Status + "Publish to website" toggle logic — enforce that publish requires `approved: true`
-- [ ] Add manual "no people" confirmation checkbox required at upload/approval time as a lightweight enforcement step for the privacy policy
-- [ ] Build Album management (Create Album, assign media, nested albums e.g. "Stay Types > Cabins")
-- [ ] Build "Archived" and tab views (All Media/Homepage Gallery/Stay Types/Events/Map Assets/Archived)
-- [ ] Wire persistent Privacy First banner on Gallery page
+- [x] Build Gallery grid page with filters (Media Type/Album/Usage/Approval Status) and search
+- [x] Wire Cloudinary upload widget for "Upload Media" (multi-file)
+- [x] Build media detail side panel (Alt Text, Caption, Album, Focal Point picker, Usage list, File Details)
+- [x] Build bulk-select toolbar (Approve/Unapprove/Add to Album/Archive/Delete)
+- [x] Build Approval Status + "Publish to website" toggle logic — enforce that publish requires `approved: true`
+- [x] Add manual "no people" confirmation checkbox required at upload/approval time as a lightweight enforcement step for the privacy policy
+- [x] Build Album management (Create Album, assign media, nested albums e.g. "Stay Types > Cabins")
+- [x] Build "Archived" and tab views (All Media/Homepage Gallery/Stay Types/Events/Map Assets/Archived)
+- [x] Wire persistent Privacy First banner on Gallery page
 
 ### Phase 8 — FAQ & Rules Manager
 
