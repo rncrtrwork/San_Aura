@@ -2,7 +2,7 @@ import { Bolt } from 'lucide-react';
 import { MemberElectricReadingForm } from '@/components/admin/MemberElectricReadingForm';
 import { ELECTRIC_BILLING_MODE_LABELS, memberCurrencyLabel } from '@/lib/memberPortal';
 import type { ElectricReadingSiteOption } from '@/server/electricBilling/getElectricReadingOptions';
-import type { MemberElectricHistory } from '@/server/memberPortal/getMemberElectricHistory';
+import type { MemberElectricHistory } from '@/server/electricBilling/getMemberElectricHistory';
 
 type MemberElectricPanelProps = {
   memberId: string;

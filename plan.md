@@ -377,7 +377,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build admin "Add Meter Reading" form (site/member, meter value, date) computing kWh delta from prior reading
 - [x] Build charge computation on reading save (writes a `Payment`/ledger entry of type `electric`)
 - [x] Build "Prepaid / paid ahead" balance handling (member pays ahead, charges draw down the prepaid balance instead of creating new due amounts)
-- [ ] Build electric usage history view on Member detail (Phase 3) and Member Portal (Phase 12) reusing the same query
+- [x] Build electric usage history view on Member detail (Phase 3) and Member Portal (Phase 12) reusing the same query
 - [ ] Follow up with client to confirm the still-unspecified weekly electric rate before finalizing `resolveBillingMode()` and the fourth membership tier amount ("I feel like I'm forgetting one")
 
 ### Phase 14 — QA, Hardening, Deployment, Launch

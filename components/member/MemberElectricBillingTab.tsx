@@ -3,7 +3,7 @@ import {
   memberCurrencyLabel,
   memberDateLabel,
 } from '@/lib/memberPortal';
-import type { MemberElectricHistory } from '@/server/memberPortal/getMemberElectricHistory';
+import type { MemberElectricHistory } from '@/server/electricBilling/getMemberElectricHistory';
 
 type MemberElectricBillingTabProps = {
   history: MemberElectricHistory;

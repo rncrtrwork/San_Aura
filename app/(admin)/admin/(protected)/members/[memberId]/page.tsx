@@ -12,7 +12,7 @@ import { MemberElectricPanel } from '@/components/admin/MemberElectricPanel';
 import { MemberNotesPanel } from '@/components/admin/MemberNotesPanel';
 import { MemberPaymentsPanel } from '@/components/admin/MemberPaymentsPanel';
 import { getElectricReadingOptions } from '@/server/electricBilling/getElectricReadingOptions';
-import { getMemberElectricHistory } from '@/server/memberPortal/getMemberElectricHistory';
+import { getMemberElectricHistory } from '@/server/electricBilling/getMemberElectricHistory';
 import { getMemberDocuments } from '@/server/members/getMemberDocuments';
 import { getMemberProfile } from '@/server/members/getMemberProfile';
 import { getMemberPayments } from '@/server/members/getMemberPayments';
