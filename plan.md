@@ -289,7 +289,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 ### Phase 7 — Gallery / Media Manager
 
-- [ ] Build Gallery grid page with filters (Media Type/Album/Usage/Approval Status) and search
+- [x] Build Gallery grid page with filters (Media Type/Album/Usage/Approval Status) and search
 - [ ] Wire Cloudinary upload widget for "Upload Media" (multi-file)
 - [ ] Build media detail side panel (Alt Text, Caption, Album, Focal Point picker, Usage list, File Details)
 - [ ] Build bulk-select toolbar (Approve/Unapprove/Add to Album/Archive/Delete)
