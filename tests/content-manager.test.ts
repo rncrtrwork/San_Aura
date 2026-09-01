@@ -16,6 +16,7 @@ import {
 import { validateCtaSection } from '@/server/content/ctaSectionValidation';
 import { validateHeroSection } from '@/server/content/heroSectionValidation';
 import { validateContentPage } from '@/server/content/pageValidation';
+import { contentPagePublishSnapshot } from '@/server/content/pagePublishSnapshot';
 import { validateRichTextSection } from '@/server/content/richTextSectionValidation';
 import { sanitizeRichTextPreviewHtml } from '@/server/content/richTextPreview';
 import { validateTimelineSection } from '@/server/content/timelineSectionValidation';
@@ -288,4 +289,24 @@ test('rich text preview sanitizer strips unsafe markup', () => {
   );
 
   assert.equal(result, '<p>Helloalert(1)<a href="#" target="_blank" rel="noreferrer">link</a></p>');
+});
+
+test('content publish snapshot summarizes active draft sections', () => {
+  const snapshot = contentPagePublishSnapshot({
+    slug: 'history',
+    title: 'History',
+    publishStatus: 'draft',
+    lastEditedAt: new Date('2026-09-01T12:00:00.000Z'),
+    sections: [
+      { key: 'hero-history', type: 'hero', active: true },
+      { key: 'history-timeline', type: 'timeline', active: true },
+      { key: 'footer-cta', type: 'cta', active: false },
+    ],
+  });
+
+  assert.equal(snapshot.slug, 'history');
+  assert.equal(snapshot.sectionCount, 3);
+  assert.equal(snapshot.activeSectionCount, 2);
+  assert.deepEqual(snapshot.sectionTypes, ['hero', 'timeline', 'cta']);
+  assert.deepEqual(snapshot.activeSectionKeys, ['hero-history', 'history-timeline']);
 });

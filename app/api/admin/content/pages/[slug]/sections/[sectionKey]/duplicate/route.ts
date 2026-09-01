@@ -69,7 +69,9 @@ export async function POST(request: NextRequest, context: RouteContext) {
   }
 
   await connectToDatabase();
-  const page = await Page.findOne({ slug }).select('title slug sections lastEditedAt');
+  const page = await Page.findOne({ slug }).select(
+    'title slug sections lastEditedAt publishStatus',
+  );
   const sectionIndex = page?.sections.findIndex((entry) => entry.key === sectionKey) ?? -1;
   const section = sectionIndex >= 0 ? page?.sections[sectionIndex] : null;
   if (!page || !section) {
@@ -82,6 +84,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
   const duplicateKey = `${section.key}-copy-${Date.now()}`.slice(0, 80);
   const duplicate = copySection(section, duplicateKey);
   page.sections.splice(sectionIndex + 1, 0, duplicate);
+  page.publishStatus = 'draft';
   page.lastEditedAt = new Date();
   await page.save();
 

@@ -5,6 +5,7 @@ import { AddSectionPicker } from '@/components/admin/AddSectionPicker';
 import { CtaSectionEditor } from '@/components/admin/CtaSectionEditor';
 import { HeroSectionEditor } from '@/components/admin/HeroSectionEditor';
 import { PageSectionList } from '@/components/admin/PageSectionList';
+import { PublishPageButton } from '@/components/admin/PublishPageButton';
 import { RichTextSectionEditor } from '@/components/admin/RichTextSectionEditor';
 import { TimelineSectionEditor } from '@/components/admin/TimelineSectionEditor';
 import { parseContentEditorSectionType } from '@/lib/contentManager';
@@ -71,6 +72,13 @@ export default async function ContentPage({ searchParams }: ContentPageProps) {
               Preview Website
               <ExternalLink aria-hidden="true" className="size-3.5" />
             </Link>
+          ) : null}
+          {overview.selectedPage.exists ? (
+            <PublishPageButton
+              pageSlug={overview.selectedPage.slug}
+              publishStatus={overview.selectedPage.publishStatus}
+              disabled={overview.selectedPage.sectionCount === 0}
+            />
           ) : null}
         </div>
       </header>

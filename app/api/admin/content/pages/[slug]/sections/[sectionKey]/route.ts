@@ -48,7 +48,9 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
   }
 
   await connectToDatabase();
-  const page = await Page.findOne({ slug }).select('title slug sections lastEditedAt');
+  const page = await Page.findOne({ slug }).select(
+    'title slug sections lastEditedAt publishStatus',
+  );
   const section = page?.sections.find((entry) => entry.key === sectionKey);
   if (!page || !section) {
     return NextResponse.json<ContentSectionMutationResponse>(
@@ -59,6 +61,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
   const beforeActive = section.active;
   section.active = validation.data.active;
+  page.publishStatus = 'draft';
   page.lastEditedAt = new Date();
   await page.save();
 
@@ -90,7 +93,9 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
   }
 
   await connectToDatabase();
-  const page = await Page.findOne({ slug }).select('title slug sections lastEditedAt');
+  const page = await Page.findOne({ slug }).select(
+    'title slug sections lastEditedAt publishStatus',
+  );
   const section = page?.sections.find((entry) => entry.key === sectionKey);
   if (!page || !section) {
     return NextResponse.json<ContentSectionMutationResponse>(
@@ -104,6 +109,7 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
     page.sections.length,
     ...page.sections.filter((entry) => entry.key !== sectionKey),
   );
+  page.publishStatus = 'draft';
   page.lastEditedAt = new Date();
   await page.save();
 

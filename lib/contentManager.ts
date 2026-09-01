@@ -158,6 +158,12 @@ export type ContentPageCreateResponse = {
   message?: string;
 };
 
+export type ContentPagePublishResponse = {
+  message?: string;
+  publishStatus?: PagePublishStatus;
+  lastEditedAt?: string;
+};
+
 export type ContentPreviewMedia = {
   url: string;
   altText: string;

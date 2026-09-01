@@ -47,7 +47,9 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
   }
 
   await connectToDatabase();
-  const page = await Page.findOne({ slug }).select('title slug sections lastEditedAt');
+  const page = await Page.findOne({ slug }).select(
+    'title slug sections lastEditedAt publishStatus',
+  );
   if (!page) {
     return NextResponse.json<ContentSectionOrderResponse>(
       { message: 'Content page not found.' },
@@ -82,6 +84,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       return section ? [section] : [];
     }),
   );
+  page.publishStatus = 'draft';
   page.lastEditedAt = new Date();
   await page.save();
 

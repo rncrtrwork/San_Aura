@@ -79,7 +79,9 @@ export async function POST(request: NextRequest, context: RouteContext) {
   }
 
   await connectToDatabase();
-  const storedPage = await Page.findOne({ slug }).select('slug title sections lastEditedAt');
+  const storedPage = await Page.findOne({ slug }).select(
+    'slug title sections lastEditedAt publishStatus',
+  );
   if (!storedPage && !isContentPageSlug(slug)) {
     return NextResponse.json<ContentSectionMutationResponse>(
       { message: 'Content page not found.' },
@@ -127,6 +129,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
   } else {
     page.sections.push(nextSection);
   }
+  page.publishStatus = 'draft';
   page.lastEditedAt = new Date();
   await page.save();
 
