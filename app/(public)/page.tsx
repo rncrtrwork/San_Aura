@@ -1,35 +1,32 @@
 import { ExploreResort } from '@/components/ExploreResort';
 import { GalleryStrip } from '@/components/GalleryStrip';
-import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
-import { InfoFooterRow } from '@/components/InfoFooterRow';
-import { SiteFooter } from '@/components/SiteFooter';
 import { StayYourWay } from '@/components/StayYourWay';
 import { TrustStrip } from '@/components/TrustStrip';
 import { UpcomingEvents } from '@/components/UpcomingEvents';
+import { PublicCmsSections } from '@/components/public/PublicCmsSections';
+import { getPublicContentPage } from '@/server/public/getPublicContentPage';
+import { getPublicSeoMetadata } from '@/server/public/getPublicSeoMetadata';
 
-export default function Home() {
+export async function generateMetadata() {
+  return getPublicSeoMetadata('home', {
+    title: 'Sun Aura Resort | Northwest Indiana',
+    description: 'A private 300-acre retreat in Northwest Indiana.',
+  });
+}
+
+export default async function Home() {
+  const cmsPage = await getPublicContentPage('home');
+  if (cmsPage) return <PublicCmsSections page={cmsPage} />;
+
   return (
     <>
-      <Header />
-      <main>
-        <Hero />
-        <TrustStrip />
-        <UpcomingEvents />
-        <StayYourWay />
-        <ExploreResort />
-        <GalleryStrip />
-      </main>
-      <div
-        className="bg-cover bg-no-repeat"
-        style={{
-          backgroundImage: "url('/images/footer-bg.png')",
-          backgroundPosition: 'center 100%',
-        }}
-      >
-        <InfoFooterRow />
-        <SiteFooter />
-      </div>
+      <Hero />
+      <TrustStrip />
+      <UpcomingEvents />
+      <StayYourWay />
+      <ExploreResort />
+      <GalleryStrip />
     </>
   );
 }

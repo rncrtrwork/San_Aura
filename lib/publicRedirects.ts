@@ -1,4 +1,10 @@
-const legacyPublicRedirects = [
+export type PublicRedirect = {
+  source: string;
+  destination: string;
+  statusCode: 301;
+};
+
+export const PUBLIC_WEBSITE_REDIRECTS: PublicRedirect[] = [
   { source: '/index.html', destination: '/', statusCode: 301 },
   { source: '/book-your-reservations-online.html', destination: '/book', statusCode: 301 },
   { source: '/frequently-asked-questions.html', destination: '/faq', statusCode: 301 },
@@ -22,12 +28,3 @@ const legacyPublicRedirects = [
   { source: '/our-giant-leg-restored.html', destination: '/history', statusCode: 301 },
   { source: '/new-page.html', destination: '/', statusCode: 301 },
 ];
-
-const nextConfig = {
-  images: { formats: ['image/avif', 'image/webp'] },
-  async redirects() {
-    return legacyPublicRedirects;
-  },
-};
-
-export default nextConfig;

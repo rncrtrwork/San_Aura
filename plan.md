@@ -343,21 +343,21 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 ### Phase 11 — Public Website Rebuild
 
-- [ ] Build public layout (header nav, footer) driven by `Page.navVisibility` from CMS
-- [ ] Build Home page rendering CMS sections (hero, rich text, CTA, etc.)
-- [ ] Build Our Story / History page rendering the Timeline section
-- [ ] Build First Visit / Reservations info page
-- [ ] Build Events public page (list of published, non-past events; registration form wired to Phase 6 API)
-- [ ] Build FAQ public page (grouped by category, Featured FAQs pinned to top)
-- [ ] Build Resort Rules & Policies public pages
-- [ ] Build Resort Map public page (read-only version of the Site status map, no admin actions)
-- [ ] Build Gallery public page (approved + `publishToWebsite: true` media only, grouped by album)
-- [ ] Build Stays & Rates public page (stay type cards + starting rates pulled from `StayType`)
-- [ ] Build Contact page (property info from `PropertySettings`)
-- [ ] Build "Book a Stay" public flow: date/site-type search → availability check against `Site`/`Reservation` → reservation request submission (no payment capture — creates a `pending` Reservation for staff to confirm)
-- [ ] Wire SEO metadata (title/meta description) per page from CMS fields
-- [ ] Add responsive/mobile QA pass across all public pages
-- [ ] Retire/redirect old Weebly URLs to new equivalents (301 map)
+- [x] Build public layout (header nav, footer) driven by `Page.navVisibility` from CMS
+- [x] Build Home page rendering CMS sections (hero, rich text, CTA, etc.)
+- [x] Build Our Story / History page rendering the Timeline section
+- [x] Build First Visit / Reservations info page
+- [x] Build Events public page (list of published, non-past events; registration form wired to Phase 6 API)
+- [x] Build FAQ public page (grouped by category, Featured FAQs pinned to top)
+- [x] Build Resort Rules & Policies public pages
+- [x] Build Resort Map public page (read-only version of the Site status map, no admin actions)
+- [x] Build Gallery public page (approved + `publishToWebsite: true` media only, grouped by album)
+- [x] Build Stays & Rates public page (stay type cards + starting rates pulled from `StayType`)
+- [x] Build Contact page (property info from `PropertySettings`)
+- [x] Build "Book a Stay" public flow: date/site-type search → availability check against `Site`/`Reservation` → reservation request submission (no payment capture — creates a `pending` Reservation for staff to confirm)
+- [x] Wire SEO metadata (title/meta description) per page from CMS fields
+- [x] Add responsive/mobile QA pass across all public pages
+- [x] Retire/redirect old Weebly URLs to new equivalents (301 map)
 
 ### Phase 12 — Member Self-Service Portal
 

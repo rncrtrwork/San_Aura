@@ -36,6 +36,12 @@ body {
 * {
   box-sizing: border-box;
 }
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
 a,
 button,
 input,
