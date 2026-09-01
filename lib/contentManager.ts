@@ -27,6 +27,7 @@ export type ContentOverview = {
   activeSlug: ContentPageSlug;
   pages: ContentPageListItem[];
   selectedPage: ContentPageListItem;
+  selectedSection: ContentSectionDetail | null;
   totalSections: number;
   draftCount: number;
   publishedCount: number;
@@ -46,6 +47,26 @@ export type ContentSectionSummary = {
   type: PageSectionType;
   active: boolean;
   label: string;
+};
+
+export type ContentHeroSection = {
+  imageId: string;
+  eyebrow: string;
+  heading: string;
+  body: string;
+};
+
+export type ContentSectionDetail = ContentSectionSummary & {
+  hero: ContentHeroSection | null;
+};
+
+export type HeroSectionMutationRequest = {
+  sectionKey: string;
+  imageId: string;
+  eyebrow: string;
+  heading: string;
+  body: string;
+  active: boolean;
 };
 
 export type ContentSectionOrderRequest = {

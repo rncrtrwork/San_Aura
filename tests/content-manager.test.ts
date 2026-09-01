@@ -10,6 +10,7 @@ import {
   validateContentSectionOrder,
   validateContentSectionStatus,
 } from '@/server/content/sectionValidation';
+import { validateHeroSection } from '@/server/content/heroSectionValidation';
 
 test('content page parser accepts known CMS pages', () => {
   assert.equal(parseContentPageSlug('history'), 'history');
@@ -61,4 +62,45 @@ test('content section order validation rejects duplicate keys', () => {
 test('content section status validation requires a boolean active state', () => {
   assert.equal(validateContentSectionStatus({ active: true }).valid, true);
   assert.equal(validateContentSectionStatus({}).valid, false);
+});
+
+test('hero section validation accepts H1 copy and optional media id', () => {
+  const result = validateHeroSection({
+    sectionKey: 'Hero Main',
+    imageId: '',
+    eyebrow: 'Welcome',
+    heading: 'A quiet resort getaway',
+    body: 'Relax under the trees.',
+    active: true,
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.sectionKey, 'hero-main');
+  }
+});
+
+test('hero section validation rejects missing H1 copy and invalid image ids', () => {
+  assert.equal(
+    validateHeroSection({
+      sectionKey: '',
+      imageId: '',
+      eyebrow: '',
+      heading: '',
+      body: '',
+      active: true,
+    }).valid,
+    false,
+  );
+  assert.equal(
+    validateHeroSection({
+      sectionKey: '',
+      imageId: 'not-an-object-id',
+      eyebrow: '',
+      heading: 'Valid heading',
+      body: '',
+      active: true,
+    }).valid,
+    false,
+  );
 });

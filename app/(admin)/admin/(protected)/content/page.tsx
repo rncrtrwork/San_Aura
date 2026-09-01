@@ -1,4 +1,5 @@
 import { FileText, Layers3 } from 'lucide-react';
+import { HeroSectionEditor } from '@/components/admin/HeroSectionEditor';
 import { PageSectionList } from '@/components/admin/PageSectionList';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getContentOverview } from '@/server/content/getContentOverview';
@@ -157,6 +158,11 @@ export default async function ContentPage({ searchParams }: ContentPageProps) {
             pageExists={overview.selectedPage.exists}
             sections={overview.selectedPage.sections}
             selectedSectionKey={selectedSectionKey}
+          />
+
+          <HeroSectionEditor
+            pageSlug={overview.selectedPage.slug}
+            selectedSection={overview.selectedSection}
           />
         </section>
       </div>
