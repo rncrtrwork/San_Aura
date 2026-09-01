@@ -6,6 +6,7 @@ import {
   type PaymentMethod,
   type PaymentType,
 } from '@/models/Payment';
+import { getMemberLedgerBalance } from '@/server/members/getMemberLedgerBalance';
 
 export type MemberPaymentItem = {
   id: string;
@@ -31,25 +32,13 @@ export async function getMemberPayments(memberId: string): Promise<MemberPayment
   }
 
   await connectToDatabase();
-  const [payments, balanceResult] = await Promise.all([
+  const [payments, balance] = await Promise.all([
     Payment.find({ memberRef: memberId })
       .select('amount entryKind type method externalReference date appliesToPeriod notes')
       .sort({ date: -1, createdAt: -1 })
       .limit(100)
       .lean(),
-    Payment.aggregate<{ balance: number }>([
-      { $match: { memberRef: new Types.ObjectId(memberId) } },
-      {
-        $group: {
-          _id: null,
-          balance: {
-            $sum: {
-              $cond: [{ $eq: ['$entryKind', 'charge'] }, '$amount', { $multiply: ['$amount', -1] }],
-            },
-          },
-        },
-      },
-    ]),
+    getMemberLedgerBalance(memberId),
   ]);
 
   return {
@@ -65,6 +54,6 @@ export async function getMemberPayments(memberId: string): Promise<MemberPayment
       periodEnd: payment.appliesToPeriod?.end.toISOString() ?? null,
       notes: payment.notes,
     })),
-    balance: balanceResult[0]?.balance ?? 0,
+    balance,
   };
 }
