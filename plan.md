@@ -329,7 +329,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 ### Phase 10 — Settings, Staff & Roles, Activity Log
 
-- [ ] Build Settings page shell with tabs (Property/Booking/Payments/Notifications/Staff & Roles/Integrations)
+- [x] Build Settings page shell with tabs (Property/Booking/Payments/Notifications/Staff & Roles/Integrations)
 - [ ] Build Property Details form (name, logo upload via Cloudinary, address, timezone, phone, email, check-in/out time)
 - [ ] Build Operating Season section (open year-round toggle, tax rate, currency, date format)
 - [ ] Build Booking Defaults form (cancellation window, deposit requirement, minimum age, default minimum stay)
