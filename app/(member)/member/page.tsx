@@ -1,11 +1,13 @@
 import { redirect } from 'next/navigation';
 import { MemberDashboardCards } from '@/components/member/MemberDashboardCards';
+import { MemberElectricBillingTab } from '@/components/member/MemberElectricBillingTab';
 import { MemberLogoutButton } from '@/components/member/MemberLogoutButton';
 import { MemberPaymentHistoryTab } from '@/components/member/MemberPaymentHistoryTab';
 import { MemberPortalTabs } from '@/components/member/MemberPortalTabs';
 import { parseMemberPortalTab } from '@/lib/memberPortal';
 import { requireMemberPageSession } from '@/server/auth/memberAuthorization';
 import { getMemberDashboard } from '@/server/memberPortal/getMemberDashboard';
+import { getMemberElectricHistory } from '@/server/memberPortal/getMemberElectricHistory';
 import { getMemberPayments } from '@/server/members/getMemberPayments';
 
 export const dynamic = 'force-dynamic';
@@ -28,6 +30,8 @@ export default async function MemberPage({ searchParams }: MemberPageProps) {
   }
   const paymentHistory =
     activeTab === 'payments' ? await getMemberPayments(session.memberId) : null;
+  const electricHistory =
+    activeTab === 'electric' ? await getMemberElectricHistory(session.memberId) : null;
 
   return (
     <main className="min-h-screen bg-cream px-6 py-8 text-forest-900 md:px-10">
@@ -47,6 +51,8 @@ export default async function MemberPage({ searchParams }: MemberPageProps) {
         <div className="mt-8">
           {activeTab === 'payments' && paymentHistory ? (
             <MemberPaymentHistoryTab paymentHistory={paymentHistory} />
+          ) : activeTab === 'electric' && electricHistory ? (
+            <MemberElectricBillingTab history={electricHistory} />
           ) : (
             <MemberDashboardCards dashboard={dashboard} />
           )}

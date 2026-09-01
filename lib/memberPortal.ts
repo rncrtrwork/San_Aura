@@ -13,13 +13,14 @@ export type MemberPortalDashboard = {
   balance: number;
 };
 
-export const MEMBER_PORTAL_TABS = ['dashboard', 'payments'] as const;
+export const MEMBER_PORTAL_TABS = ['dashboard', 'payments', 'electric'] as const;
 
 export type MemberPortalTab = (typeof MEMBER_PORTAL_TABS)[number];
 
 export const MEMBER_PORTAL_TAB_DEFINITIONS: Array<{ value: MemberPortalTab; label: string }> = [
   { value: 'dashboard', label: 'Dashboard' },
   { value: 'payments', label: 'Payment History' },
+  { value: 'electric', label: 'Electric Billing' },
 ];
 
 export const MEMBER_STATUS_LABELS: Record<MemberStatus, string> = {
@@ -35,6 +36,13 @@ export const MEMBER_TIER_LABELS: Record<MembershipTier, string> = {
   '1250': '$1,250 Membership',
   '500': '$500 Membership',
 };
+
+export const ELECTRIC_BILLING_MODE_LABELS = {
+  flat25: '$25/day flat',
+  flat15: '$15/day flat',
+  kwh: '$0.25/kWh',
+  weekly: 'Weekly rate',
+} as const;
 
 export function parseMemberPortalTab(value: string | string[] | undefined): MemberPortalTab {
   const tab = typeof value === 'string' ? value : '';
