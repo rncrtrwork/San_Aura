@@ -60,9 +60,24 @@ export type ContentRichTextSection = {
   body: string;
 };
 
+export type ContentTimelineItem = {
+  year: string;
+  title: string;
+  description: string;
+};
+
+export type ContentTimelineSection = {
+  sectionLabel: string;
+  backgroundColor: string;
+  layout: 'alternating' | 'stacked';
+  showOnNavigation: boolean;
+  items: ContentTimelineItem[];
+};
+
 export type ContentSectionDetail = ContentSectionSummary & {
   hero: ContentHeroSection | null;
   richText: ContentRichTextSection | null;
+  timeline: ContentTimelineSection | null;
 };
 
 export type HeroSectionMutationRequest = {
@@ -77,6 +92,16 @@ export type HeroSectionMutationRequest = {
 export type RichTextSectionMutationRequest = {
   sectionKey: string;
   body: string;
+  active: boolean;
+};
+
+export type TimelineSectionMutationRequest = {
+  sectionKey: string;
+  sectionLabel: string;
+  backgroundColor: string;
+  layout: 'alternating' | 'stacked';
+  showOnNavigation: boolean;
+  items: ContentTimelineItem[];
   active: boolean;
 };
 

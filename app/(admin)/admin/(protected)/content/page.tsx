@@ -2,6 +2,7 @@ import { FileText, Layers3 } from 'lucide-react';
 import { HeroSectionEditor } from '@/components/admin/HeroSectionEditor';
 import { PageSectionList } from '@/components/admin/PageSectionList';
 import { RichTextSectionEditor } from '@/components/admin/RichTextSectionEditor';
+import { TimelineSectionEditor } from '@/components/admin/TimelineSectionEditor';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getContentOverview } from '@/server/content/getContentOverview';
 
@@ -169,6 +170,12 @@ export default async function ContentPage({ searchParams }: ContentPageProps) {
 
           <RichTextSectionEditor
             key={`rich-text-${overview.selectedPage.slug}-${overview.selectedSection?.key ?? 'new'}`}
+            pageSlug={overview.selectedPage.slug}
+            selectedSection={overview.selectedSection}
+          />
+
+          <TimelineSectionEditor
+            key={`timeline-${overview.selectedPage.slug}-${overview.selectedSection?.key ?? 'new'}`}
             pageSlug={overview.selectedPage.slug}
             selectedSection={overview.selectedSection}
           />

@@ -28,7 +28,13 @@ type PageListItemLean = {
       body: string;
     } | null;
     richText?: { body: string } | null;
-    timeline?: { sectionLabel: string } | null;
+    timeline?: {
+      sectionLabel: string;
+      backgroundColor: string;
+      layout: 'alternating' | 'stacked';
+      showOnNavigation: boolean;
+      items: { year: string; title: string; description: string }[];
+    } | null;
     cta?: { heading: string } | null;
     gallery?: { heading: string } | null;
   }[];
@@ -79,6 +85,19 @@ function sectionDetail(
         }
       : null,
     richText: section.richText ? { body: section.richText.body } : null,
+    timeline: section.timeline
+      ? {
+          sectionLabel: section.timeline.sectionLabel,
+          backgroundColor: section.timeline.backgroundColor,
+          layout: section.timeline.layout,
+          showOnNavigation: section.timeline.showOnNavigation,
+          items: section.timeline.items.map((item) => ({
+            year: item.year,
+            title: item.title,
+            description: item.description,
+          })),
+        }
+      : null,
   };
 }
 
@@ -110,7 +129,7 @@ export async function getContentOverview(
   const activeSlug = parseContentPageSlug(params.page);
   const storedPages = await Page.find({ slug: { $in: [...CONTENT_PAGE_SLUGS] } })
     .select(
-      'slug title navLabel publishStatus lastEditedAt sections.key sections.type sections.active sections.hero.imageRef sections.hero.eyebrow sections.hero.heading sections.hero.body sections.richText.body sections.timeline.sectionLabel sections.cta.heading sections.gallery.heading',
+      'slug title navLabel publishStatus lastEditedAt sections.key sections.type sections.active sections.hero.imageRef sections.hero.eyebrow sections.hero.heading sections.hero.body sections.richText.body sections.timeline.sectionLabel sections.timeline.backgroundColor sections.timeline.layout sections.timeline.showOnNavigation sections.timeline.items sections.cta.heading sections.gallery.heading',
     )
     .lean<PageListItemLean[]>();
   const pagesBySlug = new Map(storedPages.map((page) => [page.slug, page]));

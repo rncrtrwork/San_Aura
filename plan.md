@@ -317,7 +317,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build page section list (draggable order) with per-section active toggle, edit, duplicate, delete
 - [x] Build Hero section editor (image upload, H1 text)
 - [x] Build Rich Text section editor
-- [ ] Build Timeline section editor: Section Label + repeatable Year/Title/Description items with Add Item
+- [x] Build Timeline section editor: Section Label + repeatable Year/Title/Description items with Add Item
 - [ ] Build Timeline layout controls (Background color, Layout alternating/stacked, Show on navigation)
 - [ ] Build CTA section editor
 - [ ] Build "Add Section" picker (choose section type to append to a page)

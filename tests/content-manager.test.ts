@@ -12,6 +12,7 @@ import {
 } from '@/server/content/sectionValidation';
 import { validateHeroSection } from '@/server/content/heroSectionValidation';
 import { validateRichTextSection } from '@/server/content/richTextSectionValidation';
+import { validateTimelineSection } from '@/server/content/timelineSectionValidation';
 
 test('content page parser accepts known CMS pages', () => {
   assert.equal(parseContentPageSlug('history'), 'history');
@@ -128,4 +129,41 @@ test('rich text section validation rejects empty body copy', () => {
     }).valid,
     false,
   );
+});
+
+test('timeline section validation accepts complete timeline items', () => {
+  const result = validateTimelineSection({
+    sectionKey: 'History Timeline',
+    sectionLabel: 'Resort History',
+    backgroundColor: 'ivory',
+    layout: 'alternating',
+    showOnNavigation: true,
+    active: true,
+    items: [
+      {
+        year: '1998',
+        title: 'The resort opens',
+        description: 'Sun Aura welcomes its first seasonal guests.',
+      },
+    ],
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.sectionKey, 'history-timeline');
+  }
+});
+
+test('timeline section validation rejects incomplete timeline items', () => {
+  const result = validateTimelineSection({
+    sectionKey: '',
+    sectionLabel: 'History',
+    backgroundColor: 'ivory',
+    layout: 'alternating',
+    showOnNavigation: true,
+    active: true,
+    items: [{ year: '1998', title: '', description: 'Missing title.' }],
+  });
+
+  assert.equal(result.valid, false);
 });
