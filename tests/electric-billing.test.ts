@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { computeKwhDelta, validateElectricReadingRequest } from '@/lib/electricReadingForms';
 import {
   resolveBillingMode,
   type ElectricBillingMember,
@@ -78,5 +79,33 @@ test('billing mode resolver honors stated per-member exceptions', () => {
       unitLabel: 'day',
       siteType: null,
     },
+  );
+});
+
+test('electric reading helpers validate input and compute kWh deltas', () => {
+  assert.deepEqual(
+    validateElectricReadingRequest({
+      siteId: ' site-1 ',
+      meterValue: 1542.75,
+      readingDate: '2026-09-01',
+    }),
+    {
+      siteId: 'site-1',
+      meterValue: 1542.75,
+      readingDate: '2026-09-01',
+    },
+  );
+  assert.equal(computeKwhDelta(1542.75, 1500.25), 42.5);
+  assert.equal(computeKwhDelta(1542.75, null), 0);
+});
+
+test('electric reading validation rejects malformed meter entries', () => {
+  assert.equal(
+    validateElectricReadingRequest({ siteId: '', meterValue: -1, readingDate: '2026-09-01' }),
+    'Enter a valid meter value.',
+  );
+  assert.equal(
+    validateElectricReadingRequest({ siteId: '', meterValue: 10, readingDate: 'not-a-date' }),
+    'Enter a valid reading date.',
   );
 });

@@ -374,7 +374,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 - [x] Build shared `resolveBillingMode(member, site)` helper implementing flat $25/day, flat $15/day, $0.25/kWh, and per-tier overrides described by the client
 - [x] Unit-test `resolveBillingMode()` against all four membership tiers and stated exceptions
-- [ ] Build admin "Add Meter Reading" form (site/member, meter value, date) computing kWh delta from prior reading
+- [x] Build admin "Add Meter Reading" form (site/member, meter value, date) computing kWh delta from prior reading
 - [ ] Build charge computation on reading save (writes a `Payment`/ledger entry of type `electric`)
 - [ ] Build "Prepaid / paid ahead" balance handling (member pays ahead, charges draw down the prepaid balance instead of creating new due amounts)
 - [ ] Build electric usage history view on Member detail (Phase 3) and Member Portal (Phase 12) reusing the same query

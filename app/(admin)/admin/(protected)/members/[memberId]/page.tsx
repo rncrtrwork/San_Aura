@@ -8,8 +8,11 @@ import {
 } from '@/components/admin/MemberDetailTabs';
 import { MemberProfileSummary } from '@/components/admin/MemberProfileSummary';
 import { MemberDocumentsPanel } from '@/components/admin/MemberDocumentsPanel';
+import { MemberElectricPanel } from '@/components/admin/MemberElectricPanel';
 import { MemberNotesPanel } from '@/components/admin/MemberNotesPanel';
 import { MemberPaymentsPanel } from '@/components/admin/MemberPaymentsPanel';
+import { getElectricReadingOptions } from '@/server/electricBilling/getElectricReadingOptions';
+import { getMemberElectricHistory } from '@/server/memberPortal/getMemberElectricHistory';
 import { getMemberDocuments } from '@/server/members/getMemberDocuments';
 import { getMemberProfile } from '@/server/members/getMemberProfile';
 import { getMemberPayments } from '@/server/members/getMemberPayments';
@@ -39,6 +42,14 @@ export default async function MemberDetailPage({ params, searchParams }: MemberD
   const documents = activeTab === 'documents' ? await getMemberDocuments(memberId) : [];
   const paymentHistory =
     activeTab === 'payments' ? await getMemberPayments(memberId) : { payments: [], balance: 0 };
+  const electricHistory =
+    activeTab === 'electric'
+      ? await getMemberElectricHistory(memberId)
+      : { readings: [], charges: [] };
+  const electricOptions =
+    activeTab === 'electric'
+      ? await getElectricReadingOptions(memberId)
+      : { sites: [], defaultSiteId: '' };
   const staffNotes = activeTab === 'notes' ? await getMemberStaffNotes(memberId) : '';
 
   return (
@@ -61,6 +72,13 @@ export default async function MemberDetailPage({ params, searchParams }: MemberD
             memberId={member.id}
             payments={paymentHistory.payments}
             balance={paymentHistory.balance}
+          />
+        ) : activeTab === 'electric' ? (
+          <MemberElectricPanel
+            memberId={member.id}
+            history={electricHistory}
+            siteOptions={electricOptions.sites}
+            defaultSiteId={electricOptions.defaultSiteId}
           />
         ) : activeTab === 'notes' ? (
           <MemberNotesPanel memberId={member.id} initialNotes={staffNotes} />
