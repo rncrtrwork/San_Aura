@@ -1,9 +1,13 @@
 import { Types } from 'mongoose';
-import type { MediaAssetCreateRequest } from '@/lib/mediaForms';
+import type { MediaAssetCreateRequest, MediaAssetUpdateRequest } from '@/lib/mediaForms';
 import { MEDIA_USAGE_TYPES, type MediaUsage } from '@/lib/mediaOptions';
 
 export type MediaValidationResult =
   | { valid: true; data: MediaAssetCreateRequest }
+  | { valid: false; message: string };
+
+export type MediaUpdateValidationResult =
+  | { valid: true; data: MediaAssetUpdateRequest }
   | { valid: false; message: string };
 
 function textValue(value: string, maxLength: number): string {
@@ -20,6 +24,10 @@ function isValidMediaUrl(value: string): boolean {
 
 function isValidMediaPublicId(value: string): boolean {
   return value.startsWith('sun-aura/media/') && value.length <= 500;
+}
+
+function focalValue(value: number): number | null {
+  return Number.isInteger(value) && value >= 0 && value <= 100 ? value : null;
 }
 
 export function validateMediaAssetCreate(
@@ -79,6 +87,49 @@ export function validateMediaAssetCreate(
       usage,
       privacyConfirmedNoPeople: true,
       dimensions,
+    },
+  };
+}
+
+export function validateMediaAssetUpdate(
+  input: Partial<MediaAssetUpdateRequest> | null,
+): MediaUpdateValidationResult {
+  if (!input || typeof input !== 'object') {
+    return { valid: false, message: 'Media details are required.' };
+  }
+
+  const altText = typeof input.altText === 'string' ? textValue(input.altText, 300) : '';
+  const caption = typeof input.caption === 'string' ? textValue(input.caption, 1000) : '';
+  const albumId = typeof input.albumId === 'string' ? input.albumId.trim() : '';
+  const usage = Array.isArray(input.usage) ? input.usage : [];
+  const focalPoint = input.focalPoint;
+  const focalX = focalPoint ? focalValue(focalPoint.x) : null;
+  const focalY = focalPoint ? focalValue(focalPoint.y) : null;
+
+  if (!altText) {
+    return { valid: false, message: 'Alt text is required.' };
+  }
+  if (albumId && !Types.ObjectId.isValid(albumId)) {
+    return { valid: false, message: 'Selected album is invalid.' };
+  }
+  if (!hasValidUsage(usage)) {
+    return { valid: false, message: 'Selected usage is invalid.' };
+  }
+  if (focalX === null || focalY === null) {
+    return { valid: false, message: 'Focal point must stay between 0 and 100.' };
+  }
+
+  return {
+    valid: true,
+    data: {
+      altText,
+      caption,
+      albumId,
+      usage,
+      focalPoint: {
+        x: focalX,
+        y: focalY,
+      },
     },
   };
 }

@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import type { MediaAssetCreateRequest } from '@/lib/mediaForms';
 import { mediaTypeFromMime } from '@/lib/mediaLibrary';
 import { parseMediaLibraryFilters } from '@/server/media/getMediaLibrary';
-import { validateMediaAssetCreate } from '@/server/media/mediaValidation';
+import { validateMediaAssetCreate, validateMediaAssetUpdate } from '@/server/media/mediaValidation';
 
 const validUpload: MediaAssetCreateRequest = {
   cloudinaryUrl: 'https://res.cloudinary.com/demo/image/upload/v1/sun-aura/media/cabin.jpg',
@@ -81,6 +81,36 @@ test('media upload validation rejects assets outside the media folder', () => {
   const result = validateMediaAssetCreate({
     ...validUpload,
     cloudinaryPublicId: 'sun-aura/events/cabin',
+  });
+
+  assert.equal(result.valid, false);
+});
+
+test('media detail validation accepts metadata and focal point updates', () => {
+  const result = validateMediaAssetUpdate({
+    altText: 'Cabin porch at sunset',
+    caption: 'Quiet cabin exterior',
+    albumId: '',
+    usage: ['stayType'],
+    focalPoint: {
+      x: 35,
+      y: 42,
+    },
+  });
+
+  assert.equal(result.valid, true);
+});
+
+test('media detail validation rejects focal points outside the image bounds', () => {
+  const result = validateMediaAssetUpdate({
+    altText: 'Cabin porch at sunset',
+    caption: '',
+    albumId: '',
+    usage: ['stayType'],
+    focalPoint: {
+      x: 101,
+      y: 42,
+    },
   });
 
   assert.equal(result.valid, false);

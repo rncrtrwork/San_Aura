@@ -16,6 +16,17 @@ export type MediaAssetCreateRequest = {
   };
 };
 
+export type MediaAssetUpdateRequest = {
+  altText: string;
+  caption: string;
+  albumId: string;
+  usage: MediaUsage[];
+  focalPoint: {
+    x: number;
+    y: number;
+  };
+};
+
 export type MediaAssetMutationResponse = {
   media?: {
     id: string;
