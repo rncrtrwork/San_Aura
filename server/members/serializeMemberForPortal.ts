@@ -12,6 +12,11 @@ export type MemberPortalProfile = {
   joinDate: string;
 };
 
+export type MemberPortalProfileResponse = {
+  profile?: MemberPortalProfile;
+  message?: string;
+};
+
 export function serializeMemberForPortal(
   member: MemberDocument & { _id: { toString(): string } },
 ): MemberPortalProfile {

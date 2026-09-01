@@ -1,5 +1,16 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import type { MemberDocument } from '@/models/Member';
+import { isValidMemberEmail, normalizeMemberEmail } from '@/lib/memberAuth';
+import {
+  memberBalanceLabel,
+  memberCurrencyLabel,
+  memberDateLabel,
+  memberDocumentStatusLabel,
+  memberRenewalMonthLabel,
+  parseMemberPortalTab,
+} from '@/lib/memberPortal';
+import { validateMemberUpdateRequest } from '@/lib/memberUpdateRequests';
 import { publicAddressLines, publicMailtoHref, publicTelHref } from '@/lib/publicContact';
 import {
   calculatePublicReservationTotal,
@@ -17,6 +28,7 @@ import { publicSeoFields } from '@/lib/publicSeo';
 import { PUBLIC_WEBSITE_REDIRECTS } from '@/lib/publicRedirects';
 import { publicStartingRateLabel } from '@/lib/publicStays';
 import { publicNavigationItems, publicPageHref } from '@/lib/publicWebsite';
+import { serializeMemberForPortal } from '@/server/members/serializeMemberForPortal';
 
 test('public page href keeps home at the root path', () => {
   assert.equal(publicPageHref('home'), '/');
@@ -285,5 +297,93 @@ test('public redirect map preserves legacy Weebly URLs as 301s', () => {
       ].includes(redirect.source),
     ).map((redirect) => redirect.destination),
     ['/', '/book', '/faq', '/rules', '/resort-map', '/gallery', '/stays-and-rates', '/our-story'],
+  );
+});
+
+test('member auth normalizes and validates member email input', () => {
+  assert.equal(normalizeMemberEmail(' Member@Example.COM '), 'member@example.com');
+  assert.equal(isValidMemberEmail('member@example.com'), true);
+  assert.equal(isValidMemberEmail('member'), false);
+});
+
+test('member portal dashboard helpers format balance and renewal month', () => {
+  assert.equal(memberBalanceLabel(125), '$125.00 due');
+  assert.equal(memberBalanceLabel(-40), '$40.00 credit');
+  assert.equal(memberRenewalMonthLabel(7), 'July');
+  assert.equal(memberRenewalMonthLabel(13), 'Not set');
+});
+
+test('member portal tabs and display helpers format member ledger values', () => {
+  assert.equal(parseMemberPortalTab('payments'), 'payments');
+  assert.equal(parseMemberPortalTab('electric'), 'electric');
+  assert.equal(parseMemberPortalTab('documents'), 'documents');
+  assert.equal(parseMemberPortalTab('membership'), 'membership');
+  assert.equal(parseMemberPortalTab('requests'), 'requests');
+  assert.equal(parseMemberPortalTab('bad'), 'dashboard');
+  assert.equal(memberCurrencyLabel(42.5), '$42.50');
+  assert.equal(memberDateLabel('2026-09-01T12:00:00.000Z'), 'Sep 1, 2026');
+});
+
+test('member document status labels flag missing and invalid expiry dates', () => {
+  assert.equal(memberDocumentStatusLabel(null), 'On file');
+  assert.equal(memberDocumentStatusLabel('not-a-date'), 'Date unavailable');
+});
+
+test('member portal serializer excludes staff notes from profile output', () => {
+  const member = {
+    _id: { toString: () => 'member-1' },
+    name: 'Jordan Guest',
+    email: 'jordan@example.com',
+    phone: '555-0100',
+    address: '100 Desert Way',
+    vehicleInfo: [],
+    membershipTier: '2850',
+    status: 'active',
+    renewalMonth: 4,
+    joinDate: new Date('2026-04-01T12:00:00.000Z'),
+    emergencyContact: null,
+    electricBillingMode: null,
+    assignedSiteId: null,
+    partyLinks: [],
+    staffNotes: 'Internal collection note',
+    createdAt: new Date('2026-04-01T12:00:00.000Z'),
+    updatedAt: new Date('2026-04-02T12:00:00.000Z'),
+  } satisfies MemberDocument & { _id: { toString(): string } };
+
+  const profile = serializeMemberForPortal(member);
+
+  assert.deepEqual(Object.keys(profile), [
+    'id',
+    'name',
+    'email',
+    'phone',
+    'address',
+    'membershipTier',
+    'status',
+    'renewalMonth',
+    'joinDate',
+  ]);
+});
+
+test('member update request validation trims valid staff messages', () => {
+  const result = validateMemberUpdateRequest({
+    topic: 'documents',
+    message: ' Please review my waiver expiration. ',
+  });
+
+  assert.deepEqual(result, {
+    topic: 'documents',
+    message: 'Please review my waiver expiration.',
+  });
+});
+
+test('member update request validation rejects invalid portal messages', () => {
+  assert.equal(
+    validateMemberUpdateRequest({ topic: 'billing', message: 'short' }),
+    'Enter at least 10 characters so staff knows what to update.',
+  );
+  assert.equal(
+    validateMemberUpdateRequest({ topic: 'bad-topic', message: 'Please update my record.' }),
+    'Choose a valid request topic.',
   );
 });

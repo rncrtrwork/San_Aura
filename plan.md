@@ -361,14 +361,14 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 ### Phase 12 — Member Self-Service Portal
 
-- [ ] Build member auth (email + password or magic link) separate from staff auth
-- [ ] Build member dashboard: current balance, membership type, status, renewal month
-- [ ] Build member "Payment History" tab (Payments filtered to that member, no staff notes)
-- [ ] Build member "Electric Billing" tab (ElectricReading + resulting charges history)
-- [ ] Build member "Documents on File" tab (list of Document types with status/expiry, read-only — no upload in MVP)
-- [ ] Build member "Emergency Contact" and "Membership Info" read-only display
-- [ ] Enforce field-level exclusion of `staffNotes` in the member-portal API serializer + add a regression test
-- [ ] Build "Request update" contact-staff action (simple message/ticket to admin, no self-edit of official records in MVP)
+- [x] Build member auth (email + password or magic link) separate from staff auth
+- [x] Build member dashboard: current balance, membership type, status, renewal month
+- [x] Build member "Payment History" tab (Payments filtered to that member, no staff notes)
+- [x] Build member "Electric Billing" tab (ElectricReading + resulting charges history)
+- [x] Build member "Documents on File" tab (list of Document types with status/expiry, read-only — no upload in MVP)
+- [x] Build member "Emergency Contact" and "Membership Info" read-only display
+- [x] Enforce field-level exclusion of `staffNotes` in the member-portal API serializer + add a regression test
+- [x] Build "Request update" contact-staff action (simple message/ticket to admin, no self-edit of official records in MVP)
 
 ### Phase 13 — Electric Billing / Ledger
 
