@@ -17,6 +17,8 @@ export type FaqRulesOverview = {
   activeTab: FaqRuleTab;
   counts: FaqRuleTabCounts;
   categories: FaqRuleCategorySummary[];
+  faqRevisionItems: FaqRevisionItem[];
+  selectedRevisionItem: FaqRevisionItem | null;
 };
 
 export function parseFaqRuleTab(value: string | string[] | undefined): FaqRuleTab {
@@ -59,3 +61,28 @@ export type FaqItemCreateResponse = {
   };
   message?: string;
 };
+
+export type FaqRevisionSummary = {
+  title: string;
+  bodyPreview: string;
+  editedAt: string;
+};
+
+export type FaqRevisionItem = {
+  id: string;
+  question: string;
+  category: string;
+  slug: string;
+  status: FaqPublishStatus;
+  revisionCount: number;
+  revisions: FaqRevisionSummary[];
+};
+
+export function faqRevisionPreview(value: string): string {
+  const plainText = value
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return plainText.length > 120 ? `${plainText.slice(0, 117)}...` : plainText;
+}

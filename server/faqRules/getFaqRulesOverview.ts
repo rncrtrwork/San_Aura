@@ -1,6 +1,12 @@
 import { connectToDatabase } from '@/lib/db';
-import type { FaqRuleCategorySummary, FaqRuleTab, FaqRulesOverview } from '@/lib/faqRules';
-import { parseFaqRuleTab } from '@/lib/faqRules';
+import type {
+  FaqPublishStatus,
+  FaqRevisionItem,
+  FaqRuleCategorySummary,
+  FaqRuleTab,
+  FaqRulesOverview,
+} from '@/lib/faqRules';
+import { faqRevisionPreview, parseFaqRuleTab } from '@/lib/faqRules';
 import type { ManagedContentStatus } from '@/models/managedContentFields';
 import { FAQItem } from '@/models/FAQItem';
 import { Policy } from '@/models/Policy';
@@ -17,6 +23,21 @@ type CategoryAccumulator = {
   publishedCount: number;
   draftCount: number;
   minDisplayOrder: number;
+};
+
+type FaqRevisionLean = {
+  title: string;
+  body: string;
+  editedAt: Date;
+};
+
+type FaqRevisionItemLean = {
+  _id: string;
+  question: string;
+  category: string;
+  slug: string;
+  status: FaqPublishStatus;
+  revisionHistory?: FaqRevisionLean[];
 };
 
 function summarizeCategories(items: CategorySourceItem[]): FaqRuleCategorySummary[] {
@@ -69,6 +90,39 @@ async function getCategoryItems(tab: FaqRuleTab): Promise<CategorySourceItem[]> 
     .lean<CategorySourceItem[]>();
 }
 
+function serializeFaqRevisionItems(items: FaqRevisionItemLean[]): FaqRevisionItem[] {
+  return items.map((item) => {
+    const revisions = item.revisionHistory ?? [];
+
+    return {
+      id: item._id.toString(),
+      question: item.question,
+      category: item.category,
+      slug: item.slug,
+      status: item.status,
+      revisionCount: revisions.length,
+      revisions: revisions
+        .slice()
+        .sort((left, right) => right.editedAt.getTime() - left.editedAt.getTime())
+        .map((revision) => ({
+          title: revision.title,
+          bodyPreview: faqRevisionPreview(revision.body),
+          editedAt: revision.editedAt.toISOString(),
+        })),
+    };
+  });
+}
+
+async function getFaqRevisionItems(): Promise<FaqRevisionItem[]> {
+  const items = await FAQItem.find()
+    .select('question category slug status revisionHistory')
+    .sort({ updatedAt: -1, displayOrder: 1, question: 1 })
+    .limit(20)
+    .lean<FaqRevisionItemLean[]>();
+
+  return serializeFaqRevisionItems(items);
+}
+
 export async function getFaqRulesOverview(
   params: Record<string, string | string[] | undefined>,
 ): Promise<FaqRulesOverview> {
@@ -79,6 +133,12 @@ export async function getFaqRulesOverview(
     ResortRule.countDocuments(),
     Policy.countDocuments(),
   ]);
+  const faqRevisionItems = activeTab === 'faq' ? await getFaqRevisionItems() : [];
+  const requestedRevisionItemId = typeof params.revisions === 'string' ? params.revisions : '';
+  const selectedRevisionItem =
+    faqRevisionItems.find((item) => item.id === requestedRevisionItemId) ??
+    faqRevisionItems[0] ??
+    null;
 
   return {
     activeTab,
@@ -88,5 +148,7 @@ export async function getFaqRulesOverview(
       policies: policiesCount,
     },
     categories: summarizeCategories(await getCategoryItems(activeTab)),
+    faqRevisionItems,
+    selectedRevisionItem,
   };
 }

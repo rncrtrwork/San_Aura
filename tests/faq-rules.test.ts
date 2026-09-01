@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { parseFaqRuleTab } from '@/lib/faqRules';
+import { faqRevisionPreview, parseFaqRuleTab } from '@/lib/faqRules';
 import { richTextReplacement } from '@/lib/richTextToolbar';
 import { validateFaqCategoryReorder } from '@/server/faqRules/categoryValidation';
 import { validateFaqItemCreate } from '@/server/faqRules/faqItemValidation';
@@ -96,4 +96,12 @@ test('rich text toolbar replacement wraps selected text', () => {
   assert.equal(richTextReplacement('bold', 'check-in'), '<strong>check-in</strong>');
   assert.equal(richTextReplacement('italic', ''), '<em>italic text</em>');
   assert.equal(richTextReplacement('link', 'rates'), '<a href="https://example.com">rates</a>');
+});
+
+test('faq revision preview strips markup and truncates long copy', () => {
+  const preview = faqRevisionPreview(`<p>${'Beachfront cabin '.repeat(12)}</p>`);
+
+  assert.equal(preview.includes('<p>'), false);
+  assert.equal(preview.length, 120);
+  assert.equal(preview.endsWith('...'), true);
 });
