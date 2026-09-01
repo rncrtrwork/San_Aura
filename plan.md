@@ -332,7 +332,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build Settings page shell with tabs (Property/Booking/Payments/Notifications/Staff & Roles/Integrations)
 - [x] Build Property Details form (name, logo upload via Cloudinary, address, timezone, phone, email, check-in/out time)
 - [x] Build Operating Season section (open year-round toggle, tax rate, currency, date format)
-- [ ] Build Booking Defaults form (cancellation window, deposit requirement, minimum age, default minimum stay)
+- [x] Build Booking Defaults form (cancellation window, deposit requirement, minimum age, default minimum stay)
 - [ ] Build Privacy & Safety toggles (photography prohibited, video prohibited, show privacy notice at booking) + live Privacy Policy Summary preview text
 - [ ] Build Notifications toggle list (New Reservation/Cancellation/Payment Failed/Arrival Reminder) — flag Payment Failed as N/A copy until Phase-2 payments exist, or repurpose as "Payment Recorded"
 - [ ] Build Staff Access summary table (Role/Permission count) linking to "Manage Roles"

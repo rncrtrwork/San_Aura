@@ -136,6 +136,18 @@ export type OperatingSettingsMutationResponse = {
   operating?: SettingsOverview['operating'];
 };
 
+export type BookingSettingsMutationRequest = {
+  cancellationWindowDays: number;
+  depositRequirementPercent: number;
+  minimumAge: number;
+  defaultMinimumStay: number;
+};
+
+export type BookingSettingsMutationResponse = {
+  message?: string;
+  booking?: SettingsOverview['booking'];
+};
+
 export function parseSettingsTab(value: string | string[] | undefined): SettingsTab {
   const tab = typeof value === 'string' ? value : '';
   return SETTINGS_TABS.find((entry) => entry === tab) ?? 'property';

@@ -6,6 +6,7 @@ import {
   parseSettingsTab,
   settingsTabHref,
 } from '@/lib/settingsManager';
+import { validateBookingSettings } from '@/server/settings/bookingValidation';
 import { validateOperatingSettings } from '@/server/settings/operatingValidation';
 import { validatePropertySettings } from '@/server/settings/propertyValidation';
 
@@ -106,6 +107,32 @@ test('operating settings validation rejects invalid tax and currency values', ()
       taxRatePercent: 120,
       currency: 'US',
       dateFormat: '',
+    }).valid,
+    false,
+  );
+});
+
+test('booking settings validation accepts reservation defaults', () => {
+  const result = validateBookingSettings({
+    cancellationWindowDays: 7,
+    depositRequirementPercent: 25,
+    minimumAge: 21,
+    defaultMinimumStay: 2,
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.minimumAge, 21);
+  }
+});
+
+test('booking settings validation rejects out-of-range defaults', () => {
+  assert.equal(
+    validateBookingSettings({
+      cancellationWindowDays: -1,
+      depositRequirementPercent: 101,
+      minimumAge: 17,
+      defaultMinimumStay: 0,
     }).valid,
     false,
   );
