@@ -5,7 +5,7 @@ import {
   type MediaApprovalStatus,
   type MediaDimensions,
   type MediaUsage,
-} from '@/models/MediaAsset';
+} from '@/lib/mediaOptions';
 
 export const MEDIA_TYPE_FILTERS = ['all', 'image', 'video', 'document'] as const;
 export const MEDIA_APPROVAL_FILTERS = ['all', ...MEDIA_APPROVAL_STATUSES] as const;

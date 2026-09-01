@@ -14,7 +14,7 @@ import {
   type MediaApprovalStatus,
   type MediaDimensions,
   type MediaUsage,
-} from '@/models/MediaAsset';
+} from '@/lib/mediaOptions';
 import { MediaAsset } from '@/models/MediaAsset';
 
 type AlbumLean = {

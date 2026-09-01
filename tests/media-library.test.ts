@@ -1,7 +1,25 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import type { MediaAssetCreateRequest } from '@/lib/mediaForms';
 import { mediaTypeFromMime } from '@/lib/mediaLibrary';
 import { parseMediaLibraryFilters } from '@/server/media/getMediaLibrary';
+import { validateMediaAssetCreate } from '@/server/media/mediaValidation';
+
+const validUpload: MediaAssetCreateRequest = {
+  cloudinaryUrl: 'https://res.cloudinary.com/demo/image/upload/v1/sun-aura/media/cabin.jpg',
+  cloudinaryPublicId: 'sun-aura/media/cabin',
+  filename: 'cabin.jpg',
+  mimeType: 'image/jpeg',
+  altText: 'Cabin exterior',
+  caption: '',
+  albumId: '',
+  usage: ['homepage'],
+  privacyConfirmedNoPeople: true,
+  dimensions: {
+    width: 1200,
+    height: 800,
+  },
+};
 
 test('media library filters accept known filter values', () => {
   const filters = parseMediaLibraryFilters({
@@ -42,4 +60,28 @@ test('media mime type classification groups image, video, and document assets', 
   assert.equal(mediaTypeFromMime('image/webp'), 'image');
   assert.equal(mediaTypeFromMime('video/mp4'), 'video');
   assert.equal(mediaTypeFromMime('application/pdf'), 'document');
+});
+
+test('media upload validation accepts Cloudinary media folder uploads', () => {
+  const result = validateMediaAssetCreate(validUpload);
+
+  assert.equal(result.valid, true);
+});
+
+test('media upload validation requires no people confirmation', () => {
+  const result = validateMediaAssetCreate({
+    ...validUpload,
+    privacyConfirmedNoPeople: false,
+  });
+
+  assert.equal(result.valid, false);
+});
+
+test('media upload validation rejects assets outside the media folder', () => {
+  const result = validateMediaAssetCreate({
+    ...validUpload,
+    cloudinaryPublicId: 'sun-aura/events/cabin',
+  });
+
+  assert.equal(result.valid, false);
 });

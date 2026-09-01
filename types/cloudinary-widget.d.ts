@@ -4,6 +4,9 @@ type CloudinaryUploadInfo = {
   original_filename: string;
   resource_type: string;
   format: string;
+  bytes?: number;
+  width?: number;
+  height?: number;
 };
 
 type CloudinaryUploadResult = {
