@@ -37,6 +37,7 @@ export const PUBLIC_DEFAULT_NAVIGATION: PublicNavigationItem[] = [
   { slug: 'resort-map', label: 'Resort Map', href: '/resort-map' },
   { slug: 'gallery', label: 'Gallery', href: '/gallery' },
   { slug: 'our-story', label: 'Our Story', href: '/our-story' },
+  { slug: 'history', label: 'History', href: '/history' },
   { slug: 'first-visit', label: 'First Visit', href: '/first-visit' },
   { slug: 'faq', label: 'FAQ', href: '/faq' },
   { slug: 'contact', label: 'Contact', href: '/contact' },

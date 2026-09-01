@@ -345,7 +345,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 - [x] Build public layout (header nav, footer) driven by `Page.navVisibility` from CMS
 - [x] Build Home page rendering CMS sections (hero, rich text, CTA, etc.)
-- [ ] Build Our Story / History page rendering the Timeline section
+- [x] Build Our Story / History page rendering the Timeline section
 - [ ] Build First Visit / Reservations info page
 - [ ] Build Events public page (list of published, non-past events; registration form wired to Phase 6 API)
 - [ ] Build FAQ public page (grouped by category, Featured FAQs pinned to top)
