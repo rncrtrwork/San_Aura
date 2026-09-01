@@ -372,7 +372,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 ### Phase 13 — Electric Billing / Ledger
 
-- [ ] Build shared `resolveBillingMode(member, site)` helper implementing flat $25/day, flat $15/day, $0.25/kWh, and per-tier overrides described by the client
+- [x] Build shared `resolveBillingMode(member, site)` helper implementing flat $25/day, flat $15/day, $0.25/kWh, and per-tier overrides described by the client
 - [ ] Unit-test `resolveBillingMode()` against all four membership tiers and stated exceptions
 - [ ] Build admin "Add Meter Reading" form (site/member, meter value, date) computing kWh delta from prior reading
 - [ ] Build charge computation on reading save (writes a `Payment`/ledger entry of type `electric`)
