@@ -18,7 +18,7 @@ export function PrivacyBanner({ compact = false }: PrivacyBannerProps) {
       <div className="min-w-0 flex-1">
         <p className="text-sm font-bold">Privacy First</p>
         <p className="mt-0.5 text-xs leading-relaxed text-admin-muted sm:text-sm">
-          Photography is not permitted on the property.
+          Photography and video recording are not permitted on the property.
         </p>
       </div>
       <ShieldCheck
