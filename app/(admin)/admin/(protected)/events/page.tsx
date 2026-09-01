@@ -52,12 +52,15 @@ function eventTimeRange(event: EventListItem): string {
 function registrationLabel(event: EventListItem): string {
   if (!event.registrationRequired) return 'No registration';
   if (event.capacity === null) return `${event.registrationsCount} registered`;
-  return `${event.registrationsCount}/${event.capacity} registered`;
+  return `${event.registrationsCount} registered · ${event.capacity} spots left`;
 }
 
 function registrationPercent(event: EventListItem): number {
   if (!event.registrationRequired || event.capacity === null) return 0;
-  return Math.min(100, Math.round((event.registrationsCount / event.capacity) * 100));
+  const totalCapacity = event.registrationsCount + event.capacity;
+  return totalCapacity === 0
+    ? 100
+    : Math.min(100, Math.round((event.registrationsCount / totalCapacity) * 100));
 }
 
 export default async function EventsPage({ searchParams }: EventsPageProps) {
@@ -218,7 +221,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
                       <div className="h-full bg-admin-accent" style={{ width: `${progress}%` }} />
                     </div>
                     <p className="mt-2 text-xs text-admin-muted">
-                      Capacity {event.capacity ?? 'unlimited'}
+                      {event.capacity === null ? 'Unlimited capacity' : 'Remaining capacity'}
                     </p>
                   </div>
                 </article>

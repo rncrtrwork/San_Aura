@@ -85,7 +85,10 @@ function miniCalendarMonth(dateValue: string): CalendarMonth {
 
 function registrationPercent(event: EventListItem): number {
   if (event.capacity === null) return 0;
-  return Math.min(100, Math.round((event.registrationsCount / event.capacity) * 100));
+  const totalCapacity = event.registrationsCount + event.capacity;
+  return totalCapacity === 0
+    ? 100
+    : Math.min(100, Math.round((event.registrationsCount / totalCapacity) * 100));
 }
 
 export function EventEditPanel({ event }: EventEditPanelProps) {
@@ -425,7 +428,7 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
             <h2 className="font-serif text-2xl text-forest-900">Registrations</h2>
             <p className="mt-3 text-4xl font-bold text-forest-900">{event.registrationsCount}</p>
             <p className="mt-1 text-sm font-semibold text-admin-muted">
-              {event.capacity === null ? 'Unlimited capacity' : `${event.capacity} capacity`}
+              {event.capacity === null ? 'Unlimited capacity' : `${event.capacity} spots remaining`}
             </p>
             <div className="mt-4 h-2 overflow-hidden rounded-full bg-cream-alt">
               <div

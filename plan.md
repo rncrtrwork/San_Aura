@@ -285,7 +285,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build "Feature on homepage" and "Send reminder" toggles
 - [x] Build Registrations count widget + progress bar on event edit panel
 - [x] Build "Save Draft" vs "Publish Changes" flow with distinct status values
-- [ ] Build public-facing event registration capture (creates `EventRegistration`, decrements capacity)
+- [x] Build public-facing event registration capture (creates `EventRegistration`, decrements capacity)
 
 ### Phase 7 — Gallery / Media Manager
 
