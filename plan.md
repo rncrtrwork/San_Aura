@@ -309,7 +309,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build Revision History list + "View all revisions" (reads a lightweight version array on FAQItem)
 - [x] Repeat item CRUD + publishing panel for Resort Rules tab
 - [x] Repeat item CRUD + publishing panel for Policies tab
-- [ ] Wire persistent Privacy First banner (photography/video prohibited) on this page
+- [x] Wire persistent Privacy First banner (photography/video prohibited) on this page
 
 ### Phase 9 — Website Content Manager
 
