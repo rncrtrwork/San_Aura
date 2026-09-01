@@ -1,8 +1,8 @@
-import { FileText, ImageIcon, Search, Video } from 'lucide-react';
-import Link from 'next/link';
 import { MediaDetailPanel } from '@/components/admin/MediaDetailPanel';
+import { MediaLibraryGrid } from '@/components/admin/MediaLibraryGrid';
 import { MediaUploadPanel } from '@/components/admin/MediaUploadPanel';
-import type { MediaAssetCard, MediaLibraryFilters, MediaTypeFilter } from '@/lib/mediaLibrary';
+import { Search } from 'lucide-react';
+import type { MediaLibraryFilters, MediaTypeFilter } from '@/lib/mediaLibrary';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getMediaLibrary, parseMediaLibraryFilters } from '@/server/media/getMediaLibrary';
 
@@ -34,12 +34,6 @@ const approvalLabels = {
   rejected: 'Rejected',
 } as const;
 
-const dateFormatter = new Intl.DateTimeFormat('en-US', {
-  month: 'short',
-  day: 'numeric',
-  year: 'numeric',
-});
-
 function galleryHref(mediaType: MediaTypeFilter, filters: MediaLibraryFilters): string {
   const params = new URLSearchParams();
   if (mediaType !== 'all') params.set('mediaType', mediaType);
@@ -49,44 +43,6 @@ function galleryHref(mediaType: MediaTypeFilter, filters: MediaLibraryFilters): 
   if (filters.approvalStatus !== 'all') params.set('approvalStatus', filters.approvalStatus);
   const query = params.toString();
   return query ? `/admin/gallery?${query}` : '/admin/gallery';
-}
-
-function mediaDetailHref(mediaId: string, filters: MediaLibraryFilters): string {
-  const params = new URLSearchParams();
-  params.set('media', mediaId);
-  if (filters.mediaType !== 'all') params.set('mediaType', filters.mediaType);
-  if (filters.search) params.set('search', filters.search);
-  if (filters.albumId) params.set('albumId', filters.albumId);
-  if (filters.usage !== 'all') params.set('usage', filters.usage);
-  if (filters.approvalStatus !== 'all') params.set('approvalStatus', filters.approvalStatus);
-  return `/admin/gallery?${params.toString()}`;
-}
-
-function mediaIcon(asset: MediaAssetCard) {
-  if (asset.mediaType === 'image') return <ImageIcon aria-hidden="true" className="size-5" />;
-  if (asset.mediaType === 'video') return <Video aria-hidden="true" className="size-5" />;
-  return <FileText aria-hidden="true" className="size-5" />;
-}
-
-function mediaPreview(asset: MediaAssetCard) {
-  if (asset.mediaType === 'image') {
-    return (
-      <div
-        aria-hidden="true"
-        className="h-full w-full bg-cover bg-center"
-        style={{
-          backgroundImage: `url("${asset.cloudinaryUrl}")`,
-          backgroundPosition: `${asset.focalPoint.x}% ${asset.focalPoint.y}%`,
-        }}
-      />
-    );
-  }
-
-  return (
-    <span className="grid h-full place-items-center bg-cream-alt text-admin-muted">
-      {mediaIcon(asset)}
-    </span>
-  );
 }
 
 export default async function GalleryPage({ searchParams }: GalleryPageProps) {
@@ -208,83 +164,12 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
           selectedMedia ? 'xl:grid-cols-[minmax(0,1fr)_24rem]' : ''
         }`}
       >
-        <section className="admin-card overflow-hidden" aria-labelledby="media-grid-heading">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-admin-border px-5 py-4 sm:px-6">
-            <h2 id="media-grid-heading" className="font-bold text-forest-900">
-              Media Library
-            </h2>
-            <span className="text-sm text-admin-muted">Showing {media.length}</span>
-          </div>
-          {media.length === 0 ? (
-            <div className="grid justify-items-center px-6 py-14 text-center">
-              <span className="grid size-12 place-items-center rounded-full bg-cream-alt text-admin-accent">
-                <ImageIcon aria-hidden="true" className="size-5" />
-              </span>
-              <p className="mt-4 font-semibold text-forest-900">No media matches these filters</p>
-              <p className="mt-1 text-sm text-admin-muted">
-                Adjust your filters or upload new media assets.
-              </p>
-            </div>
-          ) : (
-            <div className="grid gap-4 p-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-              {media.map((asset) => (
-                <article
-                  key={asset.id}
-                  className={`overflow-hidden rounded-xl border bg-white shadow-sm ${
-                    asset.id === selectedMediaId ? 'border-admin-accent' : 'border-admin-border'
-                  }`}
-                >
-                  <Link href={mediaDetailHref(asset.id, filters)} className="block">
-                    <div className="aspect-[4/3] bg-cream-alt">{mediaPreview(asset)}</div>
-                    <div className="space-y-3 p-4">
-                      <div className="min-w-0">
-                        <h3 className="truncate font-bold text-forest-900">{asset.filename}</h3>
-                        <p className="mt-1 truncate text-xs text-admin-muted">{asset.altText}</p>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        <span className="rounded-full bg-cream-alt px-2.5 py-1 text-xs font-bold capitalize text-forest-900">
-                          {asset.approvalStatus}
-                        </span>
-                        {asset.publishToWebsite ? (
-                          <span className="rounded-full bg-admin-success/10 px-2.5 py-1 text-xs font-bold text-admin-success">
-                            Published
-                          </span>
-                        ) : null}
-                        {!asset.privacyConfirmedNoPeople ? (
-                          <span className="rounded-full bg-admin-danger/10 px-2.5 py-1 text-xs font-bold text-admin-danger">
-                            Privacy review needed
-                          </span>
-                        ) : null}
-                      </div>
-                      <dl className="grid gap-2 text-xs text-admin-muted">
-                        <div className="flex justify-between gap-3">
-                          <dt>Album</dt>
-                          <dd className="truncate text-right text-forest-900">
-                            {asset.album?.path ?? 'Unassigned'}
-                          </dd>
-                        </div>
-                        <div className="flex justify-between gap-3">
-                          <dt>Usage</dt>
-                          <dd className="truncate text-right text-forest-900">
-                            {asset.usage.length === 0
-                              ? 'Unused'
-                              : asset.usage.map((entry) => usageLabels[entry]).join(', ')}
-                          </dd>
-                        </div>
-                        <div className="flex justify-between gap-3">
-                          <dt>Uploaded</dt>
-                          <dd className="text-forest-900">
-                            {dateFormatter.format(new Date(asset.uploadedAt))}
-                          </dd>
-                        </div>
-                      </dl>
-                    </div>
-                  </Link>
-                </article>
-              ))}
-            </div>
-          )}
-        </section>
+        <MediaLibraryGrid
+          media={media}
+          albums={albums}
+          filters={filters}
+          selectedMediaId={selectedMediaId}
+        />
 
         {selectedMedia ? (
           <MediaDetailPanel asset={selectedMedia} albums={albums} filters={filters} />

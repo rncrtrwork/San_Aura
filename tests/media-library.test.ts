@@ -3,7 +3,11 @@ import { test } from 'node:test';
 import type { MediaAssetCreateRequest } from '@/lib/mediaForms';
 import { mediaTypeFromMime } from '@/lib/mediaLibrary';
 import { parseMediaLibraryFilters } from '@/server/media/getMediaLibrary';
-import { validateMediaAssetCreate, validateMediaAssetUpdate } from '@/server/media/mediaValidation';
+import {
+  validateMediaAssetCreate,
+  validateMediaAssetUpdate,
+  validateMediaBulkAction,
+} from '@/server/media/mediaValidation';
 
 const validUpload: MediaAssetCreateRequest = {
   cloudinaryUrl: 'https://res.cloudinary.com/demo/image/upload/v1/sun-aura/media/cabin.jpg',
@@ -111,6 +115,39 @@ test('media detail validation rejects focal points outside the image bounds', ()
       x: 101,
       y: 42,
     },
+  });
+
+  assert.equal(result.valid, false);
+});
+
+test('media bulk validation accepts approve actions with privacy confirmation', () => {
+  const result = validateMediaBulkAction({
+    action: 'approve',
+    mediaIds: ['64f5f5f5f5f5f5f5f5f5f5f5'],
+    albumId: '',
+    privacyConfirmedNoPeople: true,
+  });
+
+  assert.equal(result.valid, true);
+});
+
+test('media bulk validation requires privacy confirmation before approval', () => {
+  const result = validateMediaBulkAction({
+    action: 'approve',
+    mediaIds: ['64f5f5f5f5f5f5f5f5f5f5f5'],
+    albumId: '',
+    privacyConfirmedNoPeople: false,
+  });
+
+  assert.equal(result.valid, false);
+});
+
+test('media bulk validation requires an album for bulk album assignment', () => {
+  const result = validateMediaBulkAction({
+    action: 'addToAlbum',
+    mediaIds: ['64f5f5f5f5f5f5f5f5f5f5f5'],
+    albumId: '',
+    privacyConfirmedNoPeople: false,
   });
 
   assert.equal(result.valid, false);

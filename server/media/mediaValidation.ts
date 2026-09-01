@@ -1,5 +1,10 @@
 import { Types } from 'mongoose';
-import type { MediaAssetCreateRequest, MediaAssetUpdateRequest } from '@/lib/mediaForms';
+import type {
+  MediaAssetCreateRequest,
+  MediaAssetUpdateRequest,
+  MediaBulkAction,
+  MediaBulkActionRequest,
+} from '@/lib/mediaForms';
 import { MEDIA_USAGE_TYPES, type MediaUsage } from '@/lib/mediaOptions';
 
 export type MediaValidationResult =
@@ -9,6 +14,18 @@ export type MediaValidationResult =
 export type MediaUpdateValidationResult =
   | { valid: true; data: MediaAssetUpdateRequest }
   | { valid: false; message: string };
+
+export type MediaBulkValidationResult =
+  | { valid: true; data: MediaBulkActionRequest }
+  | { valid: false; message: string };
+
+const MEDIA_BULK_ACTIONS: MediaBulkAction[] = [
+  'approve',
+  'unapprove',
+  'addToAlbum',
+  'archive',
+  'delete',
+];
 
 function textValue(value: string, maxLength: number): string {
   return value.trim().slice(0, maxLength);
@@ -130,6 +147,48 @@ export function validateMediaAssetUpdate(
         x: focalX,
         y: focalY,
       },
+    },
+  };
+}
+
+export function validateMediaBulkAction(
+  input: Partial<MediaBulkActionRequest> | null,
+): MediaBulkValidationResult {
+  if (!input || typeof input !== 'object') {
+    return { valid: false, message: 'Bulk action details are required.' };
+  }
+
+  const action = input.action;
+  const mediaIds = Array.isArray(input.mediaIds)
+    ? input.mediaIds.filter(
+        (mediaId) => typeof mediaId === 'string' && Types.ObjectId.isValid(mediaId),
+      )
+    : [];
+  const albumId = typeof input.albumId === 'string' ? input.albumId.trim() : '';
+
+  if (!action || !MEDIA_BULK_ACTIONS.includes(action)) {
+    return { valid: false, message: 'Select a valid bulk action.' };
+  }
+  if (mediaIds.length === 0) {
+    return { valid: false, message: 'Select at least one media asset.' };
+  }
+  if (mediaIds.length > 100) {
+    return { valid: false, message: 'Bulk actions are limited to 100 assets.' };
+  }
+  if (action === 'addToAlbum' && (!albumId || !Types.ObjectId.isValid(albumId))) {
+    return { valid: false, message: 'Choose an album for this bulk action.' };
+  }
+  if (action === 'approve' && !input.privacyConfirmedNoPeople) {
+    return { valid: false, message: 'Confirm selected assets contain no identifiable people.' };
+  }
+
+  return {
+    valid: true,
+    data: {
+      action,
+      mediaIds,
+      albumId,
+      privacyConfirmedNoPeople: input.privacyConfirmedNoPeople === true,
     },
   };
 }
