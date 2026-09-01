@@ -71,6 +71,8 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     caption: asset.caption,
     albumRef: asset.albumRef?.toString() ?? null,
     usage: asset.usage,
+    approvalStatus: asset.approvalStatus,
+    publishToWebsite: asset.publishToWebsite,
     focalPointX: asset.focalPoint.x,
     focalPointY: asset.focalPoint.y,
   };
@@ -79,6 +81,8 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
   asset.caption = validation.data.caption;
   asset.albumRef = albumRef;
   asset.usage = validation.data.usage;
+  asset.approvalStatus = validation.data.approvalStatus;
+  asset.publishToWebsite = validation.data.publishToWebsite;
   asset.focalPoint = validation.data.focalPoint;
   await asset.save();
 
@@ -93,6 +97,8 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       caption: asset.caption,
       albumRef: asset.albumRef?.toString() ?? null,
       usage: asset.usage,
+      approvalStatus: asset.approvalStatus,
+      publishToWebsite: asset.publishToWebsite,
       focalPointX: asset.focalPoint.x,
       focalPointY: asset.focalPoint.y,
     },

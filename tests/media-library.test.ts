@@ -96,6 +96,8 @@ test('media detail validation accepts metadata and focal point updates', () => {
     caption: 'Quiet cabin exterior',
     albumId: '',
     usage: ['stayType'],
+    approvalStatus: 'approved',
+    publishToWebsite: true,
     focalPoint: {
       x: 35,
       y: 42,
@@ -111,9 +113,28 @@ test('media detail validation rejects focal points outside the image bounds', ()
     caption: '',
     albumId: '',
     usage: ['stayType'],
+    approvalStatus: 'approved',
+    publishToWebsite: false,
     focalPoint: {
       x: 101,
       y: 42,
+    },
+  });
+
+  assert.equal(result.valid, false);
+});
+
+test('media detail validation rejects publishing unapproved assets', () => {
+  const result = validateMediaAssetUpdate({
+    altText: 'Cabin porch at sunset',
+    caption: '',
+    albumId: '',
+    usage: ['stayType'],
+    approvalStatus: 'draft',
+    publishToWebsite: true,
+    focalPoint: {
+      x: 50,
+      y: 50,
     },
   });
 

@@ -293,7 +293,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Wire Cloudinary upload widget for "Upload Media" (multi-file)
 - [x] Build media detail side panel (Alt Text, Caption, Album, Focal Point picker, Usage list, File Details)
 - [x] Build bulk-select toolbar (Approve/Unapprove/Add to Album/Archive/Delete)
-- [ ] Build Approval Status + "Publish to website" toggle logic — enforce that publish requires `approved: true`
+- [x] Build Approval Status + "Publish to website" toggle logic — enforce that publish requires `approved: true`
 - [ ] Add manual "no people" confirmation checkbox required at upload/approval time as a lightweight enforcement step for the privacy policy
 - [ ] Build Album management (Create Album, assign media, nested albums e.g. "Stay Types > Cabins")
 - [ ] Build "Archived" and tab views (All Media/Homepage Gallery/Stay Types/Events/Map Assets/Archived)

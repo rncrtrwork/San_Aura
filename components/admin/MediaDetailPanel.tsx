@@ -6,7 +6,12 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { MediaAssetUpdateRequest, MediaAssetMutationResponse } from '@/lib/mediaForms';
 import type { MediaAlbumOption, MediaAssetCard, MediaLibraryFilters } from '@/lib/mediaLibrary';
-import { MEDIA_USAGE_TYPES, type MediaUsage } from '@/lib/mediaOptions';
+import {
+  MEDIA_APPROVAL_STATUSES,
+  MEDIA_USAGE_TYPES,
+  type MediaApprovalStatus,
+  type MediaUsage,
+} from '@/lib/mediaOptions';
 
 type MediaDetailPanelProps = {
   asset: MediaAssetCard;
@@ -42,6 +47,8 @@ export function MediaDetailPanel({ asset, albums, filters }: MediaDetailPanelPro
   const [caption, setCaption] = useState(asset.caption);
   const [albumId, setAlbumId] = useState(asset.album?.id ?? '');
   const [usage, setUsage] = useState<MediaUsage[]>(asset.usage);
+  const [approvalStatus, setApprovalStatus] = useState<MediaApprovalStatus>(asset.approvalStatus);
+  const [publishToWebsite, setPublishToWebsite] = useState(asset.publishToWebsite);
   const [focalX, setFocalX] = useState(asset.focalPoint.x);
   const [focalY, setFocalY] = useState(asset.focalPoint.y);
   const [saving, setSaving] = useState(false);
@@ -65,6 +72,8 @@ export function MediaDetailPanel({ asset, albums, filters }: MediaDetailPanelPro
       caption,
       albumId,
       usage,
+      approvalStatus,
+      publishToWebsite,
       focalPoint: {
         x: focalX,
         y: focalY,
@@ -195,6 +204,48 @@ export function MediaDetailPanel({ asset, albums, filters }: MediaDetailPanelPro
             ))}
           </div>
         </fieldset>
+
+        <div className="grid gap-4 rounded-lg border border-admin-border p-4">
+          <label className="block">
+            <span className="text-xs font-bold uppercase tracking-[0.14em] text-admin-muted">
+              Approval Status
+            </span>
+            <select
+              value={approvalStatus}
+              onChange={(event) => {
+                const nextStatus = event.target.value as MediaApprovalStatus;
+                setApprovalStatus(nextStatus);
+                if (nextStatus !== 'approved') {
+                  setPublishToWebsite(false);
+                }
+              }}
+              className="mt-2 h-11 w-full rounded-lg border border-admin-border bg-white px-3 text-sm text-forest-900"
+            >
+              {MEDIA_APPROVAL_STATUSES.map((status) => (
+                <option key={status} value={status}>
+                  {status.charAt(0).toUpperCase()}
+                  {status.slice(1)}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="flex items-start gap-3 rounded-lg bg-cream-alt p-3 text-sm text-forest-900">
+            <input
+              type="checkbox"
+              checked={publishToWebsite}
+              disabled={approvalStatus !== 'approved'}
+              onChange={(event) => setPublishToWebsite(event.target.checked)}
+              className="mt-1 size-4 rounded border-admin-border text-admin-accent disabled:opacity-50"
+            />
+            <span>
+              <span className="font-bold">Publish to website</span>
+              <span className="mt-1 block text-xs leading-relaxed text-admin-muted">
+                Media must be approved before it can appear on the public website.
+              </span>
+            </span>
+          </label>
+        </div>
 
         <fieldset>
           <legend className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-admin-muted">

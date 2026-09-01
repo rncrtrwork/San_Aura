@@ -1,4 +1,5 @@
 import type { MediaUsage } from '@/lib/mediaOptions';
+import type { MediaApprovalStatus } from '@/lib/mediaOptions';
 
 export type MediaAssetCreateRequest = {
   cloudinaryUrl: string;
@@ -21,6 +22,8 @@ export type MediaAssetUpdateRequest = {
   caption: string;
   albumId: string;
   usage: MediaUsage[];
+  approvalStatus: MediaApprovalStatus;
+  publishToWebsite: boolean;
   focalPoint: {
     x: number;
     y: number;

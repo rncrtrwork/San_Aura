@@ -5,7 +5,7 @@ import type {
   MediaBulkAction,
   MediaBulkActionRequest,
 } from '@/lib/mediaForms';
-import { MEDIA_USAGE_TYPES, type MediaUsage } from '@/lib/mediaOptions';
+import { MEDIA_APPROVAL_STATUSES, MEDIA_USAGE_TYPES, type MediaUsage } from '@/lib/mediaOptions';
 
 export type MediaValidationResult =
   | { valid: true; data: MediaAssetCreateRequest }
@@ -119,6 +119,8 @@ export function validateMediaAssetUpdate(
   const caption = typeof input.caption === 'string' ? textValue(input.caption, 1000) : '';
   const albumId = typeof input.albumId === 'string' ? input.albumId.trim() : '';
   const usage = Array.isArray(input.usage) ? input.usage : [];
+  const approvalStatus = input.approvalStatus;
+  const publishToWebsite = input.publishToWebsite === true;
   const focalPoint = input.focalPoint;
   const focalX = focalPoint ? focalValue(focalPoint.x) : null;
   const focalY = focalPoint ? focalValue(focalPoint.y) : null;
@@ -132,6 +134,12 @@ export function validateMediaAssetUpdate(
   if (!hasValidUsage(usage)) {
     return { valid: false, message: 'Selected usage is invalid.' };
   }
+  if (!approvalStatus || !MEDIA_APPROVAL_STATUSES.includes(approvalStatus)) {
+    return { valid: false, message: 'Select a valid approval status.' };
+  }
+  if (publishToWebsite && approvalStatus !== 'approved') {
+    return { valid: false, message: 'Only approved media can publish to the website.' };
+  }
   if (focalX === null || focalY === null) {
     return { valid: false, message: 'Focal point must stay between 0 and 100.' };
   }
@@ -143,6 +151,8 @@ export function validateMediaAssetUpdate(
       caption,
       albumId,
       usage,
+      approvalStatus,
+      publishToWebsite,
       focalPoint: {
         x: focalX,
         y: focalY,
