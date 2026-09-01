@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { groupedPublicFaqItems, type PublicFaqItem } from '@/lib/publicFaq';
 import { publicNavigationItems, publicPageHref } from '@/lib/publicWebsite';
 
 test('public page href keeps home at the root path', () => {
@@ -53,4 +54,38 @@ test('public navigation only includes published CMS pages marked visible', () =>
     { slug: 'home', label: 'Home', href: '/' },
     { slug: 'contact', label: 'Talk to us', href: '/contact' },
   ]);
+});
+
+const faqItems: PublicFaqItem[] = [
+  {
+    id: 'two',
+    category: 'Arrival',
+    question: 'When is check-in?',
+    answer: '<p>After posted check-in time.</p>',
+    relatedLinks: [],
+    displayOrder: 2,
+    featured: false,
+  },
+  {
+    id: 'one',
+    category: 'Privacy',
+    question: 'Can guests take photos?',
+    answer: '<p>No photos or video.</p>',
+    relatedLinks: [],
+    displayOrder: 1,
+    featured: true,
+  },
+];
+
+test('public FAQ grouping pins featured items and preserves category groups', () => {
+  const page = groupedPublicFaqItems(faqItems);
+
+  assert.deepEqual(
+    page.featuredItems.map((item) => item.id),
+    ['one'],
+  );
+  assert.deepEqual(
+    page.categories.map((category) => category.category),
+    ['Privacy', 'Arrival'],
+  );
 });
