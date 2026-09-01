@@ -122,6 +122,15 @@ export default async function FaqRulesPage({ searchParams }: FaqRulesPageProps) 
               items={overview.managedContentItems}
             />
           ) : null}
+          {overview.activeTab === 'policies' ? (
+            <ManagedContentTabPanel
+              tab="policies"
+              label="Policies"
+              singularLabel="Policy"
+              categories={overview.categories}
+              items={overview.managedContentItems}
+            />
+          ) : null}
         </section>
       </div>
     </div>

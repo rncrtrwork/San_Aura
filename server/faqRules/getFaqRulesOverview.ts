@@ -188,7 +188,7 @@ export async function getFaqRulesOverview(
     faqRevisionItems.find((item) => item.id === requestedRevisionItemId) ??
     faqRevisionItems[0] ??
     null;
-  const managedContentItems = activeTab === 'rules' ? await getManagedContentItems(activeTab) : [];
+  const managedContentItems = activeTab === 'faq' ? [] : await getManagedContentItems(activeTab);
 
   return {
     activeTab,

@@ -141,3 +141,22 @@ test('managed content validation rejects incomplete resort rules', () => {
 
   assert.equal(result.valid, false);
 });
+
+test('managed content validation accepts a complete policy', () => {
+  const result = validateManagedContentItem({
+    category: 'Cancellations',
+    title: 'Cancellation Policy',
+    slug: 'guest-cancellation-policy',
+    body: '<p>Cancellation windows are managed by staff.</p>',
+    relatedLinks: [],
+    displayOrder: 5,
+    status: 'draft',
+    seoTitle: 'Cancellation Policy',
+    metaDescription: 'Read the current Sun Aura Resort cancellation policy.',
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.slug, 'guest-cancellation-policy');
+  }
+});

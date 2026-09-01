@@ -308,7 +308,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build Publishing panel (status draft/published, SEO title + char counter, meta description + char counter, Featured FAQ toggle)
 - [x] Build Revision History list + "View all revisions" (reads a lightweight version array on FAQItem)
 - [x] Repeat item CRUD + publishing panel for Resort Rules tab
-- [ ] Repeat item CRUD + publishing panel for Policies tab
+- [x] Repeat item CRUD + publishing panel for Policies tab
 - [ ] Wire persistent Privacy First banner (photography/video prohibited) on this page
 
 ### Phase 9 — Website Content Manager
