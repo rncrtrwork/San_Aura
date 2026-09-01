@@ -304,7 +304,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build FAQ & Rules page shell with tabs (FAQ/Resort Rules/Policies) and item counts
 - [x] Build left-side category tree (Reservations/Arrival & Check-in/During Your Stay/Privacy/Pets/etc.) with drag-reorder
 - [x] Build "Add FAQ Item" flow (question, category, slug, rich-text answer, related links, display order)
-- [ ] Build rich text editor toolbar for the Answer field
+- [x] Build rich text editor toolbar for the Answer field
 - [ ] Build Publishing panel (status draft/published, SEO title + char counter, meta description + char counter, Featured FAQ toggle)
 - [ ] Build Revision History list + "View all revisions" (reads a lightweight version array on FAQItem)
 - [ ] Repeat item CRUD + publishing panel for Resort Rules tab

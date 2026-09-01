@@ -2,13 +2,15 @@
 
 import { LoaderCircle, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import type {
   FaqItemCreateRequest,
   FaqItemCreateResponse,
   FaqRelatedLinkInput,
   FaqRuleCategorySummary,
 } from '@/lib/faqRules';
+import { richTextReplacement, type RichTextAction } from '@/lib/richTextToolbar';
+import { RichTextToolbar } from '@/components/admin/RichTextToolbar';
 
 type FaqItemCreateFormProps = {
   categories: FaqRuleCategorySummary[];
@@ -31,6 +33,7 @@ function slugify(value: string): string {
 
 export function FaqItemCreateForm({ categories }: FaqItemCreateFormProps) {
   const router = useRouter();
+  const answerRef = useRef<HTMLTextAreaElement | null>(null);
   const [category, setCategory] = useState(categories[0]?.name ?? '');
   const [customCategory, setCustomCategory] = useState('');
   const [question, setQuestion] = useState('');
@@ -55,6 +58,15 @@ export function FaqItemCreateForm({ categories }: FaqItemCreateFormProps) {
           : link,
       ),
     );
+  }
+
+  function formatAnswer(action: RichTextAction) {
+    const textarea = answerRef.current;
+    const start = textarea?.selectionStart ?? answer.length;
+    const end = textarea?.selectionEnd ?? answer.length;
+    const selectedText = answer.slice(start, end);
+    const replacement = richTextReplacement(action, selectedText);
+    setAnswer(`${answer.slice(0, start)}${replacement}${answer.slice(end)}`);
   }
 
   async function createFaqItem() {
@@ -170,12 +182,16 @@ export function FaqItemCreateForm({ categories }: FaqItemCreateFormProps) {
         <span className="text-xs font-bold uppercase tracking-[0.14em] text-admin-muted">
           Rich-text answer
         </span>
+        <div className="mt-2">
+          <RichTextToolbar onFormat={formatAnswer} />
+        </div>
         <textarea
+          ref={answerRef}
           value={answer}
           onChange={(event) => setAnswer(event.target.value)}
           placeholder="Write the answer guests should see..."
           maxLength={50000}
-          className="mt-2 min-h-36 w-full rounded-lg border border-admin-border bg-white px-3 py-2 text-sm text-forest-900"
+          className="min-h-36 w-full rounded-b-lg border border-admin-border bg-white px-3 py-2 text-sm text-forest-900"
         />
       </label>
 

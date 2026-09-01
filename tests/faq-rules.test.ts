@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { parseFaqRuleTab } from '@/lib/faqRules';
+import { richTextReplacement } from '@/lib/richTextToolbar';
 import { validateFaqCategoryReorder } from '@/server/faqRules/categoryValidation';
 import { validateFaqItemCreate } from '@/server/faqRules/faqItemValidation';
 
@@ -64,4 +65,10 @@ test('faq item validation rejects incomplete related links', () => {
   });
 
   assert.equal(result.valid, false);
+});
+
+test('rich text toolbar replacement wraps selected text', () => {
+  assert.equal(richTextReplacement('bold', 'check-in'), '<strong>check-in</strong>');
+  assert.equal(richTextReplacement('italic', ''), '<em>italic text</em>');
+  assert.equal(richTextReplacement('link', 'rates'), '<a href="https://example.com">rates</a>');
 });
