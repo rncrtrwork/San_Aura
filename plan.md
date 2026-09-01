@@ -386,7 +386,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Load-test the Calendar/Resort Map queries against realistic data volume (187 sites × season)
 - [x] Accessibility pass (labels, contrast, keyboard nav) on public site and admin
 - [x] Set up MongoDB Atlas production cluster + backups
-- [ ] Configure Cloudinary production environment + folder structure/naming convention
+- [x] Configure Cloudinary production environment + folder structure/naming convention
 - [ ] Set up production hosting + environment variables (client to supply Mongo/Cloudinary URLs into `.env` per their note)
 - [ ] Set up error monitoring/logging (e.g., Sentry) for production
 - [ ] Data migration: import existing Excel membership/payment/electric records into MongoDB via a one-time import script

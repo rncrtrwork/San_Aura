@@ -6,6 +6,7 @@ import type {
   MediaBulkActionRequest,
   MediaAlbumCreateRequest,
 } from '@/lib/mediaForms';
+import { CLOUDINARY_FOLDERS, isCloudinaryPublicIdInFolder } from '@/lib/cloudinaryFolders';
 import { MEDIA_APPROVAL_STATUSES, MEDIA_USAGE_TYPES, type MediaUsage } from '@/lib/mediaOptions';
 
 export type MediaValidationResult =
@@ -45,7 +46,7 @@ function isValidMediaUrl(value: string): boolean {
 }
 
 function isValidMediaPublicId(value: string): boolean {
-  return value.startsWith('sun-aura/media/') && value.length <= 500;
+  return isCloudinaryPublicIdInFolder(value, CLOUDINARY_FOLDERS.media);
 }
 
 function focalValue(value: number): number | null {

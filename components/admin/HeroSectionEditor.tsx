@@ -4,6 +4,7 @@ import { ImageUp, LoaderCircle, Save } from 'lucide-react';
 import Script from 'next/script';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { CLOUDINARY_FOLDERS } from '@/lib/cloudinaryFolders';
 import type { CloudinarySignatureResponse, CloudinaryWidgetConfig } from '@/lib/cloudinaryUpload';
 import type {
   ContentSectionDetail,
@@ -126,7 +127,7 @@ export function HeroSectionEditor({ pageSlug, selectedSection }: HeroSectionEdit
                 widget.close();
               });
           },
-          folder: 'sun-aura/media',
+          folder: CLOUDINARY_FOLDERS.media,
           tags: ['content-hero'],
           context: { privacy_confirmed_no_people: String(privacyConfirmed) },
           sources: ['local'],

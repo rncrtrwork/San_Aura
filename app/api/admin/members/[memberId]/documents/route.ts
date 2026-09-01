@@ -1,6 +1,7 @@
 import { Types } from 'mongoose';
 import { NextResponse, type NextRequest } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
+import { CLOUDINARY_FOLDERS, isCloudinaryPublicIdInFolder } from '@/lib/cloudinaryFolders';
 import {
   type MemberDocumentCreateRequest,
   type MemberDocumentResponse,
@@ -41,7 +42,7 @@ function validateDocument(body: MemberDocumentCreateRequest): string | null {
   }
   if (
     !body.cloudinaryUrl.startsWith('https://res.cloudinary.com/') ||
-    !body.cloudinaryPublicId.startsWith('sun-aura/member-documents/')
+    !isCloudinaryPublicIdInFolder(body.cloudinaryPublicId, CLOUDINARY_FOLDERS.memberDocuments)
   ) {
     return 'The uploaded document location is invalid.';
   }

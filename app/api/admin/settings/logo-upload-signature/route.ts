@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { getCloudinary } from '@/lib/cloudinary';
+import { CLOUDINARY_FOLDERS } from '@/lib/cloudinaryFolders';
 import type {
   CloudinarySignatureRequest,
   CloudinarySignatureResponse,
@@ -55,7 +56,7 @@ export async function POST(request: NextRequest) {
   if (
     entries.length > 30 ||
     invalidValue ||
-    (requestedFolder !== undefined && requestedFolder !== 'sun-aura/settings')
+    (requestedFolder !== undefined && requestedFolder !== CLOUDINARY_FOLDERS.settings)
   ) {
     return NextResponse.json<CloudinarySignatureResponse>(
       { message: 'Upload parameters are invalid.' },

@@ -70,6 +70,44 @@ export function validateProductionMongoEnvironment(
   ];
 }
 
+export function validateProductionCloudinaryEnvironment(
+  env: ProductionEnvironment,
+): ProductionReadinessCheck[] {
+  const cloudName = env.CLOUDINARY_CLOUD_NAME?.trim();
+  const apiKey = env.CLOUDINARY_API_KEY?.trim();
+  const apiSecret = env.CLOUDINARY_API_SECRET?.trim();
+  const hasCredentials = hasValue(cloudName) && hasValue(apiKey) && hasValue(apiSecret);
+  const validCloudName = Boolean(cloudName && /^[a-z0-9_-]+$/i.test(cloudName));
+  const validApiKey = Boolean(apiKey && /^[0-9]+$/.test(apiKey));
+
+  return [
+    createCheck(
+      'cloudinary-credentials-present',
+      'Cloudinary credentials are configured',
+      hasCredentials ? 'pass' : 'fail',
+      hasCredentials
+        ? 'Cloudinary cloud name, API key, and API secret are present.'
+        : 'Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET.',
+    ),
+    createCheck(
+      'cloudinary-cloud-name-format',
+      'Cloudinary cloud name format is valid',
+      validCloudName ? 'pass' : 'fail',
+      validCloudName
+        ? 'Cloudinary cloud name uses a safe identifier format.'
+        : 'Use only letters, numbers, underscores, and dashes in CLOUDINARY_CLOUD_NAME.',
+    ),
+    createCheck(
+      'cloudinary-api-key-format',
+      'Cloudinary API key format is valid',
+      validApiKey ? 'pass' : 'fail',
+      validApiKey
+        ? 'Cloudinary API key uses the expected numeric format.'
+        : 'Use the numeric API key from the Cloudinary dashboard.',
+    ),
+  ];
+}
+
 export function hasFailedReadinessChecks(checks: ProductionReadinessCheck[]): boolean {
   return checks.some((check) => check.status === 'fail');
 }

@@ -1,6 +1,7 @@
 import { Types } from 'mongoose';
 import { NextResponse, type NextRequest } from 'next/server';
 import { getCloudinary } from '@/lib/cloudinary';
+import { CLOUDINARY_FOLDERS } from '@/lib/cloudinaryFolders';
 import { connectToDatabase } from '@/lib/db';
 import type {
   CloudinarySignatureRequest,
@@ -91,7 +92,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
   if (
     entries.length > 30 ||
     invalidValue ||
-    (requestedFolder !== undefined && requestedFolder !== 'sun-aura/member-documents')
+    (requestedFolder !== undefined && requestedFolder !== CLOUDINARY_FOLDERS.memberDocuments)
   ) {
     return NextResponse.json<CloudinarySignatureResponse>(
       { message: 'Upload parameters are invalid.' },

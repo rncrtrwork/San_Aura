@@ -4,6 +4,7 @@ import { CalendarDays, FileUp, ImageIcon, LoaderCircle, Save } from 'lucide-reac
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
 import { useMemo, useRef, useState, type FormEvent } from 'react';
+import { CLOUDINARY_FOLDERS } from '@/lib/cloudinaryFolders';
 import type { CloudinarySignatureResponse, CloudinaryWidgetConfig } from '@/lib/cloudinaryUpload';
 import type { EventMutationRequest, EventMutationResponse } from '@/lib/eventForms';
 import type { EventListItem } from '@/lib/eventFilters';
@@ -225,7 +226,7 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
                 widget.close();
               });
           },
-          folder: 'sun-aura/events',
+          folder: CLOUDINARY_FOLDERS.events,
           tags: ['event', event.id],
           context: { event_id: event.id },
           sources: ['local', 'camera'],
