@@ -56,8 +56,13 @@ export type ContentHeroSection = {
   body: string;
 };
 
+export type ContentRichTextSection = {
+  body: string;
+};
+
 export type ContentSectionDetail = ContentSectionSummary & {
   hero: ContentHeroSection | null;
+  richText: ContentRichTextSection | null;
 };
 
 export type HeroSectionMutationRequest = {
@@ -65,6 +70,12 @@ export type HeroSectionMutationRequest = {
   imageId: string;
   eyebrow: string;
   heading: string;
+  body: string;
+  active: boolean;
+};
+
+export type RichTextSectionMutationRequest = {
+  sectionKey: string;
   body: string;
   active: boolean;
 };

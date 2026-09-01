@@ -78,6 +78,7 @@ function sectionDetail(
           body: section.hero.body,
         }
       : null,
+    richText: section.richText ? { body: section.richText.body } : null,
   };
 }
 

@@ -11,6 +11,7 @@ import {
   validateContentSectionStatus,
 } from '@/server/content/sectionValidation';
 import { validateHeroSection } from '@/server/content/heroSectionValidation';
+import { validateRichTextSection } from '@/server/content/richTextSectionValidation';
 
 test('content page parser accepts known CMS pages', () => {
   assert.equal(parseContentPageSlug('history'), 'history');
@@ -98,6 +99,30 @@ test('hero section validation rejects missing H1 copy and invalid image ids', ()
       imageId: 'not-an-object-id',
       eyebrow: '',
       heading: 'Valid heading',
+      body: '',
+      active: true,
+    }).valid,
+    false,
+  );
+});
+
+test('rich text section validation accepts formatted body copy', () => {
+  const result = validateRichTextSection({
+    sectionKey: 'Intro Copy',
+    body: '<p>Plan your first quiet weekend at Sun Aura.</p>',
+    active: true,
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.sectionKey, 'intro-copy');
+  }
+});
+
+test('rich text section validation rejects empty body copy', () => {
+  assert.equal(
+    validateRichTextSection({
+      sectionKey: '',
       body: '',
       active: true,
     }).valid,
