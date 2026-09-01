@@ -3,6 +3,11 @@ import { getPublicResortMap } from '@/server/public/getPublicResortMap';
 
 export const dynamic = 'force-dynamic';
 
+export const metadata = {
+  title: 'Resort Map | Sun Aura Resort',
+  description: 'Explore a read-only public map of Sun Aura Resort sites and status.',
+};
+
 export default async function ResortMapPage() {
   const sites = await getPublicResortMap();
 

@@ -4,6 +4,11 @@ import { getPublicEvents } from '@/server/events/getPublicEvents';
 
 export const dynamic = 'force-dynamic';
 
+export const metadata = {
+  title: 'Events | Sun Aura Resort',
+  description: 'View published upcoming events and register for Sun Aura Resort gatherings.',
+};
+
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
   month: 'long',
   day: 'numeric',

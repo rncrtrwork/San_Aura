@@ -1,8 +1,16 @@
 import Link from 'next/link';
 import { PublicCmsSections } from '@/components/public/PublicCmsSections';
 import { getPublicContentPage } from '@/server/public/getPublicContentPage';
+import { getPublicSeoMetadata } from '@/server/public/getPublicSeoMetadata';
 
 export const dynamic = 'force-dynamic';
+
+export async function generateMetadata() {
+  return getPublicSeoMetadata('first-visit', {
+    title: 'First Visit & Reservations | Sun Aura Resort',
+    description: 'Review first-visit guidance and reservation expectations for Sun Aura Resort.',
+  });
+}
 
 const visitSteps = [
   {

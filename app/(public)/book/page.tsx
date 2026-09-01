@@ -3,6 +3,11 @@ import { getPublicBookingOptions } from '@/server/public/getPublicBookingOptions
 
 export const dynamic = 'force-dynamic';
 
+export const metadata = {
+  title: 'Book a Stay | Sun Aura Resort',
+  description: 'Search availability and submit a pending stay request for Sun Aura Resort.',
+};
+
 export default async function BookPage() {
   const stayTypes = await getPublicBookingOptions();
 

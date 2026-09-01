@@ -1,8 +1,16 @@
 import Link from 'next/link';
 import { PublicCmsSections } from '@/components/public/PublicCmsSections';
 import { getPublicContentPage } from '@/server/public/getPublicContentPage';
+import { getPublicSeoMetadata } from '@/server/public/getPublicSeoMetadata';
 
 export const dynamic = 'force-dynamic';
+
+export async function generateMetadata() {
+  return getPublicSeoMetadata('our-story', {
+    title: 'Our Story | Sun Aura Resort',
+    description: 'Learn about Sun Aura Resort, a private Northwest Indiana retreat.',
+  });
+}
 
 export default async function OurStoryPage() {
   const cmsPage = await getPublicContentPage('our-story');

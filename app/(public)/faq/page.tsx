@@ -3,6 +3,11 @@ import { getPublicFaqPage } from '@/server/public/getPublicFaqPage';
 
 export const dynamic = 'force-dynamic';
 
+export const metadata = {
+  title: 'FAQ | Sun Aura Resort',
+  description: 'Find answers to common Sun Aura Resort guest questions.',
+};
+
 function FaqAnswer({ html }: { html: string }) {
   return (
     <div

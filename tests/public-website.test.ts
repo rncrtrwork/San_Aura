@@ -13,6 +13,7 @@ import {
   type PublicManagedContentItem,
 } from '@/lib/publicManagedContent';
 import { publicMapStatusSummary, type PublicMapSite } from '@/lib/publicMap';
+import { publicSeoFields } from '@/lib/publicSeo';
 import { publicStartingRateLabel } from '@/lib/publicStays';
 import { publicNavigationItems, publicPageHref } from '@/lib/publicWebsite';
 
@@ -245,4 +246,21 @@ test('public reservation total applies weekend and extra guest rates', () => {
   );
 
   assert.equal(total, 485);
+});
+
+test('public SEO fields prefer CMS seo fields over fallbacks', () => {
+  assert.deepEqual(
+    publicSeoFields(
+      {
+        title: 'Home',
+        seoTitle: 'Modern Resort Website',
+        metaDescription: 'CMS-powered resort website description.',
+      },
+      { title: 'Fallback title', description: 'Fallback description' },
+    ),
+    {
+      title: 'Modern Resort Website',
+      description: 'CMS-powered resort website description.',
+    },
+  );
 });

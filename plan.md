@@ -355,7 +355,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build Stays & Rates public page (stay type cards + starting rates pulled from `StayType`)
 - [x] Build Contact page (property info from `PropertySettings`)
 - [x] Build "Book a Stay" public flow: date/site-type search → availability check against `Site`/`Reservation` → reservation request submission (no payment capture — creates a `pending` Reservation for staff to confirm)
-- [ ] Wire SEO metadata (title/meta description) per page from CMS fields
+- [x] Wire SEO metadata (title/meta description) per page from CMS fields
 - [ ] Add responsive/mobile QA pass across all public pages
 - [ ] Retire/redirect old Weebly URLs to new equivalents (301 map)
 

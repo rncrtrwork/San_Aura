@@ -2,6 +2,11 @@ import { getPublicGalleryPage } from '@/server/public/getPublicGalleryPage';
 
 export const dynamic = 'force-dynamic';
 
+export const metadata = {
+  title: 'Gallery | Sun Aura Resort',
+  description: 'Browse approved Sun Aura Resort media grouped by album.',
+};
+
 export default async function GalleryPage() {
   const albumGroups = await getPublicGalleryPage();
   const hasAssets = albumGroups.some((group) => group.assets.length > 0);

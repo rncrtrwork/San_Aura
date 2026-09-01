@@ -3,6 +3,11 @@ import { getPublicManagedContentPage } from '@/server/public/getPublicManagedCon
 
 export const dynamic = 'force-dynamic';
 
+export const metadata = {
+  title: 'Resort Rules | Sun Aura Resort',
+  description: 'Review published resort rules for Sun Aura Resort guests.',
+};
+
 export default async function RulesPage() {
   const page = await getPublicManagedContentPage('rules');
 

@@ -5,6 +5,11 @@ import { getPublicStayTypes } from '@/server/public/getPublicStayTypes';
 
 export const dynamic = 'force-dynamic';
 
+export const metadata = {
+  title: 'Stays & Rates | Sun Aura Resort',
+  description: 'Compare Sun Aura Resort cabins, RV sites, tent sites, and starting rates.',
+};
+
 export default async function StaysAndRatesPage() {
   const stayTypes = await getPublicStayTypes();
 

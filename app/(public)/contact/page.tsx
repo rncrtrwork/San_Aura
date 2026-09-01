@@ -1,8 +1,16 @@
 import Link from 'next/link';
 import { publicAddressLines, publicMailtoHref, publicTelHref } from '@/lib/publicContact';
 import { getPublicContactInfo } from '@/server/public/getPublicContactInfo';
+import { getPublicSeoMetadata } from '@/server/public/getPublicSeoMetadata';
 
 export const dynamic = 'force-dynamic';
+
+export async function generateMetadata() {
+  return getPublicSeoMetadata('contact', {
+    title: 'Contact | Sun Aura Resort',
+    description: 'Contact Sun Aura Resort for reservation, membership, and visit questions.',
+  });
+}
 
 export default async function ContactPage() {
   const contact = await getPublicContactInfo();

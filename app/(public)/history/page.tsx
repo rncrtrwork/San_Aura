@@ -1,7 +1,15 @@
 import { PublicCmsSections } from '@/components/public/PublicCmsSections';
 import { getPublicContentPage } from '@/server/public/getPublicContentPage';
+import { getPublicSeoMetadata } from '@/server/public/getPublicSeoMetadata';
 
 export const dynamic = 'force-dynamic';
+
+export async function generateMetadata() {
+  return getPublicSeoMetadata('history', {
+    title: 'History | Sun Aura Resort',
+    description: 'Explore the history timeline for Sun Aura Resort.',
+  });
+}
 
 const fallbackTimeline = [
   {
