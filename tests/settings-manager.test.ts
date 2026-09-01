@@ -1,6 +1,12 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
+  ACTIVITY_ACTIONS,
+  parseActivityActionFilter,
+  parseActivityEntityTypeFilter,
+  parseActivityLogFilters,
+} from '@/lib/activityLogFilters';
+import {
   SETTINGS_TAB_DEFINITIONS,
   SETTINGS_TABS,
   enabledNotificationCount,
@@ -277,4 +283,26 @@ test('staff user update validation accepts role assignment and active state', ()
   if (result.valid) {
     assert.equal(result.data.active, false);
   }
+});
+
+test('activity log filters parse action, entity, and search inputs', () => {
+  const filters = parseActivityLogFilters({
+    q: ' Page ',
+    action: 'publish',
+    entityType: 'Page',
+  });
+
+  assert.equal(filters.query, 'Page');
+  assert.equal(filters.action, 'publish');
+  assert.equal(filters.entityType, 'Page');
+  assert.equal(ACTIVITY_ACTIONS.includes(filters.action), true);
+});
+
+test('activity log filters fall back to all for invalid values', () => {
+  assert.equal(parseActivityActionFilter('bad'), 'all');
+  assert.equal(parseActivityEntityTypeFilter('bad'), 'all');
+  assert.equal(
+    parseActivityLogFilters({ action: ['publish'], entityType: ['Page'] }).action,
+    'all',
+  );
 });
