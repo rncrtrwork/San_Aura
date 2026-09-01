@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { publicAddressLines, publicMailtoHref, publicTelHref } from '@/lib/publicContact';
+import {
+  calculatePublicReservationTotal,
+  validatePublicBookingAvailability,
+  validatePublicBookingRequest,
+} from '@/lib/publicBooking';
 import { groupedPublicFaqItems, type PublicFaqItem } from '@/lib/publicFaq';
 import { groupedPublicGalleryAssets, type PublicGalleryAsset } from '@/lib/publicGallery';
 import {
@@ -204,4 +209,40 @@ test('public contact helpers render address and contact links', () => {
   ]);
   assert.equal(publicTelHref(contact.phone), 'tel:2193452000');
   assert.equal(publicMailtoHref(contact.email), 'mailto:hello@example.com');
+});
+
+test('public booking availability validation accepts date range and site type', () => {
+  const result = validatePublicBookingAvailability({
+    checkIn: '2026-10-02',
+    checkOut: '2026-10-04',
+    siteType: 'rv',
+  });
+
+  assert.equal(result.valid, true);
+});
+
+test('public booking validation rejects invalid dates and contact fields', () => {
+  const result = validatePublicBookingRequest({
+    guestName: '',
+    guestEmail: 'guest',
+    guestPhone: '',
+    stayTypeId: 'stay',
+    siteId: 'site',
+    checkIn: '2026-10-04',
+    checkOut: '2026-10-02',
+    guestsCount: 2,
+  });
+
+  assert.equal(result.valid, false);
+});
+
+test('public reservation total applies weekend and extra guest rates', () => {
+  const total = calculatePublicReservationTotal(
+    new Date('2026-10-02T12:00:00'),
+    new Date('2026-10-05T12:00:00'),
+    4,
+    { baseRate: 100, weekendRate: 150, extraGuestFee: 10, cleaningFee: 25 },
+  );
+
+  assert.equal(total, 485);
 });
