@@ -1,7 +1,13 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { isValidMemberEmail, normalizeMemberEmail } from '@/lib/memberAuth';
-import { memberBalanceLabel, memberRenewalMonthLabel } from '@/lib/memberPortal';
+import {
+  memberBalanceLabel,
+  memberCurrencyLabel,
+  memberDateLabel,
+  memberRenewalMonthLabel,
+  parseMemberPortalTab,
+} from '@/lib/memberPortal';
 import { publicAddressLines, publicMailtoHref, publicTelHref } from '@/lib/publicContact';
 import {
   calculatePublicReservationTotal,
@@ -301,4 +307,11 @@ test('member portal dashboard helpers format balance and renewal month', () => {
   assert.equal(memberBalanceLabel(-40), '$40.00 credit');
   assert.equal(memberRenewalMonthLabel(7), 'July');
   assert.equal(memberRenewalMonthLabel(13), 'Not set');
+});
+
+test('member portal tabs and display helpers format member ledger values', () => {
+  assert.equal(parseMemberPortalTab('payments'), 'payments');
+  assert.equal(parseMemberPortalTab('bad'), 'dashboard');
+  assert.equal(memberCurrencyLabel(42.5), '$42.50');
+  assert.equal(memberDateLabel('2026-09-01T12:00:00.000Z'), 'Sep 1, 2026');
 });

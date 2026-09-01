@@ -363,7 +363,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 - [x] Build member auth (email + password or magic link) separate from staff auth
 - [x] Build member dashboard: current balance, membership type, status, renewal month
-- [ ] Build member "Payment History" tab (Payments filtered to that member, no staff notes)
+- [x] Build member "Payment History" tab (Payments filtered to that member, no staff notes)
 - [ ] Build member "Electric Billing" tab (ElectricReading + resulting charges history)
 - [ ] Build member "Documents on File" tab (list of Document types with status/expiry, read-only — no upload in MVP)
 - [ ] Build member "Emergency Contact" and "Membership Info" read-only display

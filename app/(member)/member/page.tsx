@@ -1,13 +1,12 @@
 import { redirect } from 'next/navigation';
+import { MemberDashboardCards } from '@/components/member/MemberDashboardCards';
 import { MemberLogoutButton } from '@/components/member/MemberLogoutButton';
-import {
-  MEMBER_STATUS_LABELS,
-  MEMBER_TIER_LABELS,
-  memberBalanceLabel,
-  memberRenewalMonthLabel,
-} from '@/lib/memberPortal';
+import { MemberPaymentHistoryTab } from '@/components/member/MemberPaymentHistoryTab';
+import { MemberPortalTabs } from '@/components/member/MemberPortalTabs';
+import { parseMemberPortalTab } from '@/lib/memberPortal';
 import { requireMemberPageSession } from '@/server/auth/memberAuthorization';
 import { getMemberDashboard } from '@/server/memberPortal/getMemberDashboard';
+import { getMemberPayments } from '@/server/members/getMemberPayments';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,12 +15,19 @@ export const metadata = {
   description: 'View Sun Aura Resort membership balance, status, and renewal details.',
 };
 
-export default async function MemberPage() {
+type MemberPageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export default async function MemberPage({ searchParams }: MemberPageProps) {
   const session = await requireMemberPageSession();
+  const activeTab = parseMemberPortalTab((await searchParams).tab);
   const dashboard = await getMemberDashboard(session.memberId);
   if (!dashboard) {
     redirect('/member/login');
   }
+  const paymentHistory =
+    activeTab === 'payments' ? await getMemberPayments(session.memberId) : null;
 
   return (
     <main className="min-h-screen bg-cream px-6 py-8 text-forest-900 md:px-10">
@@ -36,33 +42,15 @@ export default async function MemberPage() {
           </div>
           <MemberLogoutButton />
         </header>
+        <MemberPortalTabs activeTab={activeTab} />
 
-        <section className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          <article className="rounded-[2rem] border border-line bg-[#fbfaf6] p-6 shadow-card">
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-gold-700">Balance</p>
-            <p className="mt-3 font-serif text-4xl">{memberBalanceLabel(dashboard.balance)}</p>
-          </article>
-          <article className="rounded-[2rem] border border-line bg-[#fbfaf6] p-6 shadow-card">
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-gold-700">
-              Membership
-            </p>
-            <p className="mt-3 font-serif text-3xl">
-              {MEMBER_TIER_LABELS[dashboard.profile.membershipTier]}
-            </p>
-          </article>
-          <article className="rounded-[2rem] border border-line bg-[#fbfaf6] p-6 shadow-card">
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-gold-700">Status</p>
-            <p className="mt-3 font-serif text-3xl">
-              {MEMBER_STATUS_LABELS[dashboard.profile.status]}
-            </p>
-          </article>
-          <article className="rounded-[2rem] border border-line bg-[#fbfaf6] p-6 shadow-card">
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-gold-700">Renewal</p>
-            <p className="mt-3 font-serif text-3xl">
-              {memberRenewalMonthLabel(dashboard.profile.renewalMonth)}
-            </p>
-          </article>
-        </section>
+        <div className="mt-8">
+          {activeTab === 'payments' && paymentHistory ? (
+            <MemberPaymentHistoryTab paymentHistory={paymentHistory} />
+          ) : (
+            <MemberDashboardCards dashboard={dashboard} />
+          )}
+        </div>
       </div>
     </main>
   );
