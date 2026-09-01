@@ -1,8 +1,10 @@
 'use client';
 
-import { CalendarDays, ImageIcon, LoaderCircle, Save } from 'lucide-react';
+import { CalendarDays, FileUp, ImageIcon, LoaderCircle, Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Script from 'next/script';
 import { useMemo, useRef, useState, type FormEvent } from 'react';
+import type { CloudinarySignatureResponse, CloudinaryWidgetConfig } from '@/lib/cloudinaryUpload';
 import type { EventMutationRequest, EventMutationResponse } from '@/lib/eventForms';
 import type { EventListItem } from '@/lib/eventFilters';
 
@@ -71,25 +73,27 @@ function miniCalendarMonth(dateValue: string): CalendarMonth {
 
 export function EventEditPanel({ event }: EventEditPanelProps) {
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [selectedDate, setSelectedDate] = useState(dateInputValue(event.startsAt));
   const [imageUrl, setImageUrl] = useState(event.imageUrl);
+  const [imagePublicId, setImagePublicId] = useState(event.imagePublicId);
+  const [widgetReady, setWidgetReady] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const calendarMonth = useMemo(() => miniCalendarMonth(selectedDate), [selectedDate]);
   const calendarDays = useMemo(() => daysForMiniCalendar(calendarMonth), [calendarMonth]);
 
-  async function handleSubmit(formEvent: FormEvent<HTMLFormElement>) {
-    formEvent.preventDefault();
-    setSubmitting(true);
-    setError('');
-    setMessage('');
-    const form = new FormData(formEvent.currentTarget);
+  function buildPayload(
+    form: FormData,
+    image: { url: string; publicId: string },
+  ): EventMutationRequest {
     const date = fieldValue(form, 'date');
     const startTime = fieldValue(form, 'startTime');
     const endTime = fieldValue(form, 'endTime');
-    const payload: EventMutationRequest = {
+    return {
       title: fieldValue(form, 'title'),
       startsAt: `${date}T${startTime}:00`,
       endsAt: `${date}T${endTime}:00`,
@@ -97,35 +101,145 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
       capacity: capacityValue(fieldValue(form, 'capacity')),
       registrationRequired: form.get('registrationRequired') === 'on',
       description: fieldValue(form, 'description'),
-      imageUrl: fieldValue(form, 'imageUrl'),
-      imagePublicId: event.imagePublicId,
+      imageUrl: image.url,
+      imagePublicId: image.publicId,
       featureOnHomepage: event.featureOnHomepage,
       sendReminder: event.sendReminder,
       status: event.status,
     };
+  }
+
+  async function saveEvent(payload: EventMutationRequest): Promise<EventMutationResponse> {
+    const response = await fetch(`/api/admin/events/${event.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const result = (await response.json()) as EventMutationResponse;
+    if (!response.ok) {
+      throw new Error(result.message ?? 'Unable to save this event.');
+    }
+    return result;
+  }
+
+  async function handleSubmit(formEvent: FormEvent<HTMLFormElement>) {
+    formEvent.preventDefault();
+    setSubmitting(true);
+    setError('');
+    setMessage('');
+    const form = new FormData(formEvent.currentTarget);
+    const payload = buildPayload(form, {
+      url: fieldValue(form, 'imageUrl'),
+      publicId: imagePublicId,
+    });
 
     try {
-      const response = await fetch(`/api/admin/events/${event.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const result = (await response.json()) as EventMutationResponse;
-      if (!response.ok) {
-        setError(result.message ?? 'Unable to save this event.');
-        return;
-      }
+      const result = await saveEvent(payload);
       setMessage(result.message ?? 'Event saved.');
       router.refresh();
-    } catch {
-      setError('Unable to reach the server. Please try again.');
+    } catch (saveError) {
+      setError(saveError instanceof Error ? saveError.message : 'Unable to reach the server.');
     } finally {
       setSubmitting(false);
     }
   }
 
+  async function persistUpload(info: CloudinaryUploadInfo) {
+    if (!formRef.current) {
+      throw new Error('Event form is unavailable.');
+    }
+    const payload = buildPayload(new FormData(formRef.current), {
+      url: info.secure_url,
+      publicId: info.public_id,
+    });
+    await saveEvent(payload);
+    setImageUrl(info.secure_url);
+    setImagePublicId(info.public_id);
+    setMessage('Event image uploaded.');
+    router.refresh();
+  }
+
+  async function openUploadWidget() {
+    setUploading(true);
+    setError('');
+    setMessage('');
+    try {
+      const configResponse = await fetch(`/api/admin/events/${event.id}/upload-signature`);
+      const config = (await configResponse.json()) as CloudinaryWidgetConfig;
+      if (!configResponse.ok || !config.cloudName || !config.apiKey) {
+        throw new Error(config.message ?? 'Event image uploads are unavailable.');
+      }
+      if (!window.cloudinary) {
+        throw new Error('The upload service is still loading.');
+      }
+
+      const widget = window.cloudinary.createUploadWidget(
+        {
+          cloudName: config.cloudName,
+          apiKey: config.apiKey,
+          uploadSignature: (callback, paramsToSign) => {
+            void fetch(`/api/admin/events/${event.id}/upload-signature`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ paramsToSign }),
+            })
+              .then((response) => response.json())
+              .then((result: CloudinarySignatureResponse) => {
+                if (!result.signature) {
+                  throw new Error(result.message ?? 'Unable to authorize the upload.');
+                }
+                callback(result.signature);
+              })
+              .catch(() => {
+                setError('Unable to authorize the upload.');
+                setUploading(false);
+                widget.close();
+              });
+          },
+          folder: 'sun-aura/events',
+          tags: ['event', event.id],
+          context: { event_id: event.id },
+          sources: ['local', 'camera'],
+          resourceType: 'auto',
+          clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+          maxFileSize: 10_000_000,
+          multiple: false,
+        },
+        (widgetError, result) => {
+          if (widgetError) {
+            setError('The upload could not be completed.');
+            setUploading(false);
+            return;
+          }
+          if (result.event === 'close' || result.event === 'abort') {
+            setUploading(false);
+          }
+          if (result.event === 'success' && result.info) {
+            void persistUpload(result.info)
+              .catch((uploadError: Error) => setError(uploadError.message))
+              .finally(() => {
+                setUploading(false);
+                widget.destroy();
+              });
+          }
+        },
+      );
+      widget.open();
+    } catch (uploadError) {
+      setError(
+        uploadError instanceof Error ? uploadError.message : 'Event image uploads are unavailable.',
+      );
+      setUploading(false);
+    }
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+      <Script
+        src="https://upload-widget.cloudinary.com/global/all.js"
+        strategy="afterInteractive"
+        onReady={() => setWidgetReady(true)}
+      />
       <section className="admin-card overflow-hidden">
         <div
           className="relative min-h-64 bg-cover bg-center"
@@ -144,10 +258,16 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
             </div>
             <button
               type="button"
-              onClick={() => imageInputRef.current?.focus()}
+              onClick={openUploadWidget}
+              disabled={!widgetReady || uploading}
               className="inline-flex h-11 items-center rounded-lg bg-white px-4 text-sm font-bold text-forest-900"
             >
-              Change Image
+              {uploading ? (
+                <LoaderCircle aria-hidden="true" className="mr-2 size-4 animate-spin" />
+              ) : (
+                <FileUp aria-hidden="true" className="mr-2 size-4" />
+              )}
+              {widgetReady ? 'Change Image' : 'Loading Uploader'}
             </button>
           </div>
         </div>
