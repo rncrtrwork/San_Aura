@@ -387,7 +387,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Accessibility pass (labels, contrast, keyboard nav) on public site and admin
 - [x] Set up MongoDB Atlas production cluster + backups
 - [x] Configure Cloudinary production environment + folder structure/naming convention
-- [ ] Set up production hosting + environment variables (client to supply Mongo/Cloudinary URLs into `.env` per their note)
+- [x] Set up production hosting + environment variables (client to supply Mongo/Cloudinary URLs into `.env` per their note)
 - [ ] Set up error monitoring/logging (e.g., Sentry) for production
 - [ ] Data migration: import existing Excel membership/payment/electric records into MongoDB via a one-time import script
 - [ ] Staff training walkthrough / admin user guide (short doc covering each of the 10 modules)

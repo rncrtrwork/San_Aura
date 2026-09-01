@@ -108,6 +108,69 @@ export function validateProductionCloudinaryEnvironment(
   ];
 }
 
+function isValidHttpsUrl(value: string | undefined): boolean {
+  if (!value) {
+    return false;
+  }
+
+  try {
+    return new URL(value).protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+export function validateProductionHostingEnvironment(
+  env: ProductionEnvironment,
+): ProductionReadinessCheck[] {
+  const nodeEnvironment = env.NODE_ENV?.trim();
+  const siteUrl = env.NEXT_PUBLIC_SITE_URL?.trim();
+  const sessionSecret = env.SESSION_SECRET?.trim();
+  const smtpPort = env.SMTP_PORT?.trim();
+  const hasSmtpConfig =
+    hasValue(env.SMTP_HOST) &&
+    hasValue(smtpPort) &&
+    hasValue(env.SMTP_USER) &&
+    hasValue(env.SMTP_PASSWORD) &&
+    hasValue(env.SMTP_FROM_EMAIL);
+  const validSmtpPort = Boolean(smtpPort && Number.isInteger(Number(smtpPort)));
+
+  return [
+    createCheck(
+      'node-env-production',
+      'Node environment is production',
+      nodeEnvironment === 'production' ? 'pass' : 'fail',
+      nodeEnvironment === 'production'
+        ? 'NODE_ENV is set to production.'
+        : 'Set NODE_ENV to production in the hosting environment.',
+    ),
+    createCheck(
+      'site-url-https',
+      'Public site URL uses HTTPS',
+      isValidHttpsUrl(siteUrl) ? 'pass' : 'fail',
+      isValidHttpsUrl(siteUrl)
+        ? 'NEXT_PUBLIC_SITE_URL is an HTTPS URL.'
+        : 'Set NEXT_PUBLIC_SITE_URL to the final HTTPS production URL.',
+    ),
+    createCheck(
+      'session-secret-length',
+      'Session secret is strong',
+      Boolean(sessionSecret && sessionSecret.length >= 32) ? 'pass' : 'fail',
+      sessionSecret && sessionSecret.length >= 32
+        ? 'SESSION_SECRET contains at least 32 characters.'
+        : 'Set SESSION_SECRET to a random value with at least 32 characters.',
+    ),
+    createCheck(
+      'smtp-config-complete',
+      'SMTP configuration is complete',
+      hasSmtpConfig && validSmtpPort ? 'pass' : 'fail',
+      hasSmtpConfig && validSmtpPort
+        ? 'SMTP host, port, user, password, and from address are configured.'
+        : 'Set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, and SMTP_FROM_EMAIL.',
+    ),
+  ];
+}
+
 export function hasFailedReadinessChecks(checks: ProductionReadinessCheck[]): boolean {
   return checks.some((check) => check.status === 'fail');
 }

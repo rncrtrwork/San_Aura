@@ -4,6 +4,7 @@ import { describe, it } from 'node:test';
 import {
   hasFailedReadinessChecks,
   validateProductionCloudinaryEnvironment,
+  validateProductionHostingEnvironment,
   validateProductionMongoEnvironment,
   type ProductionReadinessCheck,
 } from '@/lib/productionReadiness';
@@ -95,5 +96,39 @@ describe('production readiness checks', () => {
       isCloudinaryPublicIdInFolder('sun-aura/events/wrong-folder', CLOUDINARY_FOLDERS.media),
       false,
     );
+  });
+
+  it('accepts a complete production hosting environment', () => {
+    const checks = validateProductionHostingEnvironment({
+      NODE_ENV: 'production',
+      NEXT_PUBLIC_SITE_URL: 'https://sunauraresort.net',
+      SESSION_SECRET: 'sun-aura-production-session-secret-32',
+      SMTP_HOST: 'smtp.example.com',
+      SMTP_PORT: '587',
+      SMTP_USER: 'mailer',
+      SMTP_PASSWORD: 'mailer-password',
+      SMTP_FROM_EMAIL: 'hello@sunauraresort.net',
+    });
+
+    assert.equal(hasFailedReadinessChecks(checks), false);
+  });
+
+  it('rejects incomplete production hosting environment values', () => {
+    const checks = validateProductionHostingEnvironment({
+      NODE_ENV: 'development',
+      NEXT_PUBLIC_SITE_URL: 'http://localhost:3000',
+      SESSION_SECRET: 'short',
+      SMTP_HOST: 'smtp.example.com',
+      SMTP_PORT: 'mail',
+      SMTP_USER: '',
+      SMTP_PASSWORD: '',
+      SMTP_FROM_EMAIL: '',
+    });
+
+    assert.equal(checkStatus(checks, 'node-env-production'), 'fail');
+    assert.equal(checkStatus(checks, 'site-url-https'), 'fail');
+    assert.equal(checkStatus(checks, 'session-secret-length'), 'fail');
+    assert.equal(checkStatus(checks, 'smtp-config-complete'), 'fail');
+    assert.equal(hasFailedReadinessChecks(checks), true);
   });
 });

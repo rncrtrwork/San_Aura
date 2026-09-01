@@ -46,6 +46,9 @@ npm run build
 
 CI runs lint and typecheck on every push and pull request.
 
+Production hosts should also run `npm run verify:production` after environment variables are
+configured.
+
 ## Project structure
 
 - `app/(public)` — public resort website routes
