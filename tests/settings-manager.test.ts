@@ -5,6 +5,7 @@ import {
   SETTINGS_TABS,
   enabledNotificationCount,
   NOTIFICATION_SETTING_DEFINITIONS,
+  PERMISSION_GROUPS,
   parseSettingsTab,
   privacyPolicySummaryText,
   settingsTabHref,
@@ -13,6 +14,7 @@ import { validateBookingSettings } from '@/server/settings/bookingValidation';
 import { validateNotificationSettings } from '@/server/settings/notificationValidation';
 import { validateOperatingSettings } from '@/server/settings/operatingValidation';
 import { validatePropertySettings } from '@/server/settings/propertyValidation';
+import { validateRolePermissions } from '@/server/settings/rolePermissionsValidation';
 import { validatePrivacySettings } from '@/server/settings/privacyValidation';
 
 test('settings tabs include the required administration sections', () => {
@@ -206,5 +208,31 @@ test('settings staff summaries can carry role permission counts', () => {
   assert.equal(
     roles.reduce((total, role) => total + role.permissionCount, 0),
     27,
+  );
+});
+
+test('role permission groups expose dashboard and staff access controls', () => {
+  const flattened = PERMISSION_GROUPS.flatMap((group) => group.permissions);
+
+  assert.equal(flattened.includes('dashboard.read'), true);
+  assert.equal(flattened.includes('staff.write'), true);
+});
+
+test('role permissions validation deduplicates valid permissions', () => {
+  const result = validateRolePermissions({
+    permissions: ['dashboard.read', 'staff.read', 'staff.read'],
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.deepEqual(result.data.permissions, ['dashboard.read', 'staff.read']);
+  }
+});
+
+test('role permissions validation rejects unsupported or shell-less roles', () => {
+  assert.equal(validateRolePermissions({ permissions: ['members.read'] }).valid, false);
+  assert.equal(
+    validateRolePermissions({ permissions: ['dashboard.read', 'not.real'] }).valid,
+    false,
   );
 });

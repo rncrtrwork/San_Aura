@@ -1,3 +1,5 @@
+import { PERMISSIONS, type Permission } from '@/server/auth/permissions';
+
 export const SETTINGS_TABS = [
   'property',
   'booking',
@@ -14,6 +16,28 @@ export type SettingsTabDefinition = {
   label: string;
   description: string;
 };
+
+export type PermissionGroup = {
+  label: string;
+  permissions: Permission[];
+};
+
+export const PERMISSION_GROUPS: readonly PermissionGroup[] = [
+  { label: 'Dashboard', permissions: ['dashboard.read'] },
+  { label: 'Members', permissions: ['members.read', 'members.write'] },
+  {
+    label: 'Reservations',
+    permissions: ['reservations.read', 'reservations.write'],
+  },
+  { label: 'Payments', permissions: ['payments.read', 'payments.write'] },
+  { label: 'Sites', permissions: ['sites.read', 'sites.write'] },
+  { label: 'Events', permissions: ['events.read', 'events.write'] },
+  { label: 'Media', permissions: ['media.read', 'media.write'] },
+  { label: 'Content', permissions: ['content.read', 'content.write'] },
+  { label: 'Settings', permissions: ['settings.read', 'settings.write'] },
+  { label: 'Staff', permissions: ['staff.read', 'staff.write'] },
+  { label: 'Activity', permissions: ['activity.read'] },
+] as const;
 
 export type NotificationSettingKey =
   | 'newReservation'
@@ -139,6 +163,7 @@ export type SettingsOverview = {
       id: string;
       name: string;
       permissionCount: number;
+      permissions: Permission[];
     }[];
   };
 };
@@ -222,6 +247,19 @@ export function privacyPolicySummaryText(privacy: SettingsOverview['privacy']): 
 
 export function enabledNotificationCount(values: NotificationSettingsMutationRequest): number {
   return NOTIFICATION_SETTING_DEFINITIONS.filter((definition) => values[definition.key]).length;
+}
+
+export type RolePermissionsMutationRequest = {
+  permissions: string[];
+};
+
+export type RolePermissionsMutationResponse = {
+  message?: string;
+  role?: SettingsOverview['staff']['roles'][number];
+};
+
+export function isPermission(value: string): value is Permission {
+  return PERMISSIONS.some((permission) => permission === value);
 }
 
 export function parseSettingsTab(value: string | string[] | undefined): SettingsTab {

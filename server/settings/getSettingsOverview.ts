@@ -91,6 +91,7 @@ export async function getSettingsOverview(params: SettingsQueryParams): Promise<
         id: role._id.toString(),
         name: role.name,
         permissionCount: role.permissions.length,
+        permissions: role.permissions,
       })),
     },
   };
