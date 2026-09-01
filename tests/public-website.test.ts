@@ -7,6 +7,7 @@ import {
   type PublicManagedContentItem,
 } from '@/lib/publicManagedContent';
 import { publicMapStatusSummary, type PublicMapSite } from '@/lib/publicMap';
+import { publicStartingRateLabel } from '@/lib/publicStays';
 import { publicNavigationItems, publicPageHref } from '@/lib/publicWebsite';
 
 test('public page href keeps home at the root path', () => {
@@ -171,4 +172,9 @@ test('public gallery assets group by album with resort highlights fallback', () 
     groups.map((group) => group.albumLabel),
     ['Resort Highlights', 'Stay Types > Cabins'],
   );
+});
+
+test('public stay starting rates render guest-friendly labels', () => {
+  assert.equal(publicStartingRateLabel(125), 'From $125 / night');
+  assert.equal(publicStartingRateLabel(0), 'Rate available on request');
 });
