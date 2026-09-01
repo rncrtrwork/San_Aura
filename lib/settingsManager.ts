@@ -124,6 +124,18 @@ export type PropertySettingsMutationResponse = {
   property?: SettingsOverview['property'] & SettingsOverview['booking'];
 };
 
+export type OperatingSettingsMutationRequest = {
+  openYearRound: boolean;
+  taxRatePercent: number;
+  currency: string;
+  dateFormat: string;
+};
+
+export type OperatingSettingsMutationResponse = {
+  message?: string;
+  operating?: SettingsOverview['operating'];
+};
+
 export function parseSettingsTab(value: string | string[] | undefined): SettingsTab {
   const tab = typeof value === 'string' ? value : '';
   return SETTINGS_TABS.find((entry) => entry === tab) ?? 'property';

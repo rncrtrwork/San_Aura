@@ -3,48 +3,9 @@ import { parseSettingsTab, type SettingsOverview } from '@/lib/settingsManager';
 import { PropertySettings, type PropertySettingsDocument } from '@/models/PropertySettings';
 import { Role } from '@/models/Role';
 import { User } from '@/models/User';
+import { DEFAULT_PROPERTY_SETTINGS } from '@/server/settings/defaultPropertySettings';
 
 type SettingsQueryParams = Record<string, string | string[] | undefined>;
-
-const fallbackSettings: Omit<PropertySettingsDocument, 'createdAt' | 'updatedAt'> = {
-  key: 'property',
-  resortName: 'Sun Aura Resort',
-  logoUrl: '',
-  logoPublicId: '',
-  address: {
-    street: '3449 East State Road 10',
-    city: 'Lake Village',
-    state: 'Indiana',
-    postalCode: '46349',
-    country: 'United States',
-  },
-  phone: '219-345-2000',
-  email: 'sunauraresort@outlook.com',
-  timezone: 'America/Chicago',
-  checkInTime: '14:00',
-  checkOutTime: '12:00',
-  keyReturnTime: '11:00',
-  cancellationWindowDays: 7,
-  depositRequirementPercent: 25,
-  minimumAge: 21,
-  defaultMinimumStay: 1,
-  openYearRound: true,
-  taxRatePercent: 0,
-  currency: 'USD',
-  dateFormat: 'MM/DD/YYYY',
-  privacy: {
-    photographyProhibited: true,
-    videoProhibited: true,
-    showPrivacyNoticeAtBooking: true,
-  },
-  notifications: {
-    newReservation: true,
-    cancellation: true,
-    paymentRecorded: true,
-    arrivalReminder: true,
-  },
-  paypalMeUrl: '',
-};
 
 function addressLine(settings: Pick<PropertySettingsDocument, 'address'>): string {
   const { address } = settings;
@@ -64,7 +25,7 @@ export async function getSettingsOverview(params: SettingsQueryParams): Promise<
     User.countDocuments({ active: true }),
     Role.countDocuments(),
   ]);
-  const settings = storedSettings ?? fallbackSettings;
+  const settings = storedSettings ?? DEFAULT_PROPERTY_SETTINGS;
 
   return {
     activeTab: parseSettingsTab(params.tab),

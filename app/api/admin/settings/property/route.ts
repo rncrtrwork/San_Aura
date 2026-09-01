@@ -7,6 +7,7 @@ import { connectToDatabase } from '@/lib/db';
 import { PropertySettings } from '@/models/PropertySettings';
 import { logActivity } from '@/server/activity/logActivity';
 import { requirePermission } from '@/server/auth/authorization';
+import { DEFAULT_PROPERTY_SETTINGS } from '@/server/settings/defaultPropertySettings';
 import { propertySettingsSnapshot } from '@/server/settings/propertySnapshot';
 import { validatePropertySettings } from '@/server/settings/propertyValidation';
 
@@ -67,27 +68,7 @@ export const PATCH = requirePermission('settings.write', async (request: NextReq
   const settings =
     existingSettings ??
     new PropertySettings({
-      key: 'property',
-      cancellationWindowDays: 7,
-      depositRequirementPercent: 25,
-      minimumAge: 21,
-      defaultMinimumStay: 1,
-      openYearRound: true,
-      taxRatePercent: 0,
-      currency: 'USD',
-      dateFormat: 'MM/DD/YYYY',
-      privacy: {
-        photographyProhibited: true,
-        videoProhibited: true,
-        showPrivacyNoticeAtBooking: true,
-      },
-      notifications: {
-        newReservation: true,
-        cancellation: true,
-        paymentRecorded: true,
-        arrivalReminder: true,
-      },
-      paypalMeUrl: '',
+      ...DEFAULT_PROPERTY_SETTINGS,
     });
   const beforeSnapshot = existingSettings ? propertySettingsSnapshot(settings) : null;
 

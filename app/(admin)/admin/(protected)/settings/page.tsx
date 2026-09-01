@@ -7,6 +7,7 @@ import {
   ShieldCheck,
   UsersRound,
 } from 'lucide-react';
+import { OperatingSeasonForm } from '@/components/admin/OperatingSeasonForm';
 import { PropertyDetailsForm } from '@/components/admin/PropertyDetailsForm';
 import { SETTINGS_TAB_DEFINITIONS, settingsTabHref, type SettingsTab } from '@/lib/settingsManager';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
@@ -169,7 +170,10 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
           </div>
 
           {overview.activeTab === 'property' ? (
-            <PropertyDetailsForm property={overview.property} booking={overview.booking} />
+            <>
+              <PropertyDetailsForm property={overview.property} booking={overview.booking} />
+              <OperatingSeasonForm operating={overview.operating} />
+            </>
           ) : (
             <div className="mt-6 rounded-xl border border-admin-border bg-white p-5">
               <p className="text-sm font-bold text-forest-900">

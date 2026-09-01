@@ -6,6 +6,7 @@ import {
   parseSettingsTab,
   settingsTabHref,
 } from '@/lib/settingsManager';
+import { validateOperatingSettings } from '@/server/settings/operatingValidation';
 import { validatePropertySettings } from '@/server/settings/propertyValidation';
 
 test('settings tabs include the required administration sections', () => {
@@ -78,6 +79,33 @@ test('property settings validation rejects invalid uploads and times', () => {
       checkInTime: '14:00',
       checkOutTime: 'bad',
       keyReturnTime: '11:00',
+    }).valid,
+    false,
+  );
+});
+
+test('operating settings validation accepts season display details', () => {
+  const result = validateOperatingSettings({
+    openYearRound: true,
+    taxRatePercent: 7.125,
+    currency: 'usd',
+    dateFormat: 'MM/DD/YYYY',
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.taxRatePercent, 7.13);
+    assert.equal(result.data.currency, 'USD');
+  }
+});
+
+test('operating settings validation rejects invalid tax and currency values', () => {
+  assert.equal(
+    validateOperatingSettings({
+      openYearRound: true,
+      taxRatePercent: 120,
+      currency: 'US',
+      dateFormat: '',
     }).valid,
     false,
   );
