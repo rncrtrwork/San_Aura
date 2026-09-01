@@ -167,3 +167,28 @@ test('timeline section validation rejects incomplete timeline items', () => {
 
   assert.equal(result.valid, false);
 });
+
+test('timeline section validation preserves layout controls', () => {
+  const result = validateTimelineSection({
+    sectionKey: 'Stacked Timeline',
+    sectionLabel: 'Milestones',
+    backgroundColor: 'forest',
+    layout: 'stacked',
+    showOnNavigation: false,
+    active: true,
+    items: [
+      {
+        year: '2026',
+        title: 'New website rebuild',
+        description: 'The content system begins powering public pages.',
+      },
+    ],
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.backgroundColor, 'forest');
+    assert.equal(result.data.layout, 'stacked');
+    assert.equal(result.data.showOnNavigation, false);
+  }
+});

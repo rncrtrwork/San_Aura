@@ -29,9 +29,13 @@ export function TimelineSectionEditor({ pageSlug, selectedSection }: TimelineSec
     selectedSection?.type === 'timeline' ? selectedSection.key : '',
   );
   const [sectionLabel, setSectionLabel] = useState(selectedTimeline?.sectionLabel ?? 'Our History');
-  const [backgroundColor] = useState(selectedTimeline?.backgroundColor ?? 'ivory');
-  const [layout] = useState(selectedTimeline?.layout ?? 'alternating');
-  const [showOnNavigation] = useState(selectedTimeline?.showOnNavigation ?? true);
+  const [backgroundColor, setBackgroundColor] = useState(
+    selectedTimeline?.backgroundColor ?? 'ivory',
+  );
+  const [layout, setLayout] = useState(selectedTimeline?.layout ?? 'alternating');
+  const [showOnNavigation, setShowOnNavigation] = useState(
+    selectedTimeline?.showOnNavigation ?? true,
+  );
   const [items, setItems] = useState<ContentTimelineItem[]>(
     selectedTimeline?.items.length ? selectedTimeline.items : [emptyTimelineItem],
   );
@@ -127,6 +131,50 @@ export function TimelineSectionEditor({ pageSlug, selectedSection }: TimelineSec
           className="mt-2 h-11 w-full rounded-lg border border-admin-border bg-white px-3 text-sm text-forest-900"
         />
       </label>
+
+      <div className="mt-5 grid gap-4 rounded-xl border border-admin-border bg-white p-4 lg:grid-cols-3">
+        <label>
+          <span className="text-xs font-bold uppercase tracking-[0.14em] text-admin-muted">
+            Background color
+          </span>
+          <input
+            value={backgroundColor}
+            onChange={(event) => setBackgroundColor(event.target.value.slice(0, 30))}
+            placeholder="ivory"
+            maxLength={30}
+            className="mt-2 h-11 w-full rounded-lg border border-admin-border bg-white px-3 text-sm text-forest-900"
+          />
+        </label>
+        <label>
+          <span className="text-xs font-bold uppercase tracking-[0.14em] text-admin-muted">
+            Layout
+          </span>
+          <select
+            value={layout}
+            onChange={(event) =>
+              setLayout(event.target.value === 'stacked' ? 'stacked' : 'alternating')
+            }
+            className="mt-2 h-11 w-full rounded-lg border border-admin-border bg-white px-3 text-sm text-forest-900"
+          >
+            <option value="alternating">Alternating</option>
+            <option value="stacked">Stacked</option>
+          </select>
+        </label>
+        <label className="flex items-start gap-3 rounded-lg bg-cream-alt p-3 text-sm text-forest-900">
+          <input
+            type="checkbox"
+            checked={showOnNavigation}
+            onChange={(event) => setShowOnNavigation(event.target.checked)}
+            className="mt-1 size-4 rounded border-admin-border text-admin-accent"
+          />
+          <span>
+            <span className="font-bold">Show on navigation</span>
+            <span className="mt-1 block text-xs leading-relaxed text-admin-muted">
+              Surface this timeline section in page-level navigation anchors.
+            </span>
+          </span>
+        </label>
+      </div>
 
       <div className="mt-5 space-y-3">
         {items.map((item, index) => (
