@@ -1,8 +1,9 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import { moreLinks, navLinks } from '@/lib/content';
+import type { PublicNavigationItem } from '@/lib/publicWebsite';
 import { ChevronDown } from './icons';
 
 const logoMask = {
@@ -12,8 +13,8 @@ const logoMask = {
 
 function Logo() {
   return (
-    <button
-      type="button"
+    <Link
+      href="/"
       aria-label="Sun Aura Resort home"
       className="relative h-[62px] w-[94px] shrink-0 overflow-hidden sm:h-[70px] sm:w-[106px]"
       style={logoMask}
@@ -26,14 +27,20 @@ function Logo() {
         sizes="106px"
         className="object-cover"
       />
-    </button>
+    </Link>
   );
 }
 
-export function Header() {
+type HeaderProps = {
+  navigation: PublicNavigationItem[];
+};
+
+export function Header({ navigation }: HeaderProps) {
   const [open, setOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
+  const primaryLinks = navigation.slice(0, 5);
+  const moreLinks = navigation.slice(5);
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
@@ -59,57 +66,59 @@ export function Header() {
           aria-label="Primary navigation"
           className="ml-auto hidden min-w-0 items-center gap-1 pl-6 xl:flex xl:gap-2"
         >
-          {navLinks.map((label) => (
-            <button
-              key={label}
-              type="button"
+          {primaryLinks.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
               className="whitespace-nowrap rounded px-3 py-3 text-[13px] text-forest-900 transition-colors hover:bg-cream-alt xl:px-4"
             >
-              {label}
-            </button>
+              {item.label}
+            </Link>
           ))}
-          <div className="relative" ref={moreRef}>
-            <button
-              type="button"
-              aria-expanded={moreOpen}
-              onClick={() => setMoreOpen(!moreOpen)}
-              className="flex items-center gap-1 rounded px-3 py-3 text-[13px] text-forest-900 transition-colors hover:bg-cream-alt xl:px-4"
-            >
-              More{' '}
-              <ChevronDown
-                className={`h-4 w-4 transition-transform ${moreOpen ? 'rotate-180' : ''}`}
-              />
-            </button>
-            <div
-              className={`absolute left-0 top-full mt-2 w-52 overflow-hidden rounded-md border border-line bg-[#fbfaf6] p-2 shadow-card transition ${moreOpen ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-2 opacity-0'}`}
-            >
-              {moreLinks.map((label) => (
-                <button
-                  key={label}
-                  type="button"
-                  onClick={() => setMoreOpen(false)}
-                  className="block w-full rounded px-4 py-3 text-left text-sm text-forest-900 hover:bg-cream-alt"
-                >
-                  {label}
-                </button>
-              ))}
+          {moreLinks.length > 0 ? (
+            <div className="relative" ref={moreRef}>
+              <button
+                type="button"
+                aria-expanded={moreOpen}
+                onClick={() => setMoreOpen(!moreOpen)}
+                className="flex items-center gap-1 rounded px-3 py-3 text-[13px] text-forest-900 transition-colors hover:bg-cream-alt xl:px-4"
+              >
+                More{' '}
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${moreOpen ? 'rotate-180' : ''}`}
+                />
+              </button>
+              <div
+                className={`absolute left-0 top-full mt-2 w-52 overflow-hidden rounded-md border border-line bg-[#fbfaf6] p-2 shadow-card transition ${moreOpen ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-2 opacity-0'}`}
+              >
+                {moreLinks.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMoreOpen(false)}
+                    className="block w-full rounded px-4 py-3 text-left text-sm text-forest-900 hover:bg-cream-alt"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
+          ) : null}
         </nav>
 
         <div className="ml-3 hidden shrink-0 items-center gap-3 xl:flex">
-          <button
-            type="button"
+          <Link
+            href="/member"
             className="px-5 py-4 text-[12px] font-semibold uppercase tracking-[.06em] text-forest-900"
           >
             Join Us
-          </button>
-          <button
-            type="button"
+          </Link>
+          <Link
+            href="/book"
             className="rounded px-7 py-4 text-[12px] bg-[#E47A3F] font-semibold uppercase tracking-[.06em] text-white transition-colors hover:bg-orange-400"
           >
             Book Now
-          </button>
+          </Link>
         </div>
 
         <button
@@ -135,44 +144,48 @@ export function Header() {
         className={`fixed inset-0 top-[82px] overflow-y-auto bg-cream px-7 pb-10 pt-6 transition-all duration-300 xl:hidden ${open ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-4 opacity-0'}`}
       >
         <nav className="flex flex-col" aria-label="Mobile navigation">
-          {navLinks.map((label) => (
-            <button
-              key={label}
-              type="button"
+          {primaryLinks.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
               onClick={() => setOpen(false)}
               className="border-b border-line py-4 text-left font-serif text-2xl text-forest-900"
             >
-              {label}
-            </button>
+              {item.label}
+            </Link>
           ))}
-          <p className="pt-6 text-[10px] font-semibold uppercase tracking-[.1em] text-gold-700">
-            More
-          </p>
-          {moreLinks.map((label) => (
-            <button
-              key={label}
-              type="button"
-              onClick={() => setOpen(false)}
-              className="border-b border-line py-3 text-left text-sm text-forest-900"
-            >
-              {label}
-            </button>
-          ))}
+          {moreLinks.length > 0 ? (
+            <>
+              <p className="pt-6 text-[10px] font-semibold uppercase tracking-[.1em] text-gold-700">
+                More
+              </p>
+              {moreLinks.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  className="border-b border-line py-3 text-left text-sm text-forest-900"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </>
+          ) : null}
           <div className="mt-7 grid grid-cols-2 gap-3">
-            <button
-              type="button"
+            <Link
+              href="/member"
               onClick={() => setOpen(false)}
               className="rounded border border-forest-900 px-4 py-4 text-xs font-semibold uppercase tracking-[.06em] text-forest-900"
             >
               Join Us
-            </button>
-            <button
-              type="button"
+            </Link>
+            <Link
+              href="/book"
               onClick={() => setOpen(false)}
               className="rounded bg-gold-600 px-4 py-4 text-xs font-semibold uppercase tracking-[.06em] text-white"
             >
               Book Now
-            </button>
+            </Link>
           </div>
         </nav>
       </div>
