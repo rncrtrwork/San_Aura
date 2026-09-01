@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { computeKwhDelta, validateElectricReadingRequest } from '@/lib/electricReadingForms';
+import { summarizePrepaidBalance } from '@/lib/memberLedger';
 import {
   calculateElectricCharge,
   electricBillingPeriodDays,
@@ -147,4 +148,19 @@ test('electric charge calculation leaves baseline and weekly readings uncharged'
     }),
     0,
   );
+});
+
+test('prepaid balance summary draws electric charges from paid-ahead credits', () => {
+  assert.deepEqual(summarizePrepaidBalance(-100, 75), {
+    creditBefore: 100,
+    creditApplied: 75,
+    newDueAmount: 0,
+    balanceAfterCharge: -25,
+  });
+  assert.deepEqual(summarizePrepaidBalance(-25, 75), {
+    creditBefore: 25,
+    creditApplied: 25,
+    newDueAmount: 50,
+    balanceAfterCharge: 50,
+  });
 });

@@ -69,6 +69,8 @@ export function MemberElectricReadingForm({
       setMessage(
         `Meter reading saved. Delta: ${(result.kwhUsed ?? 0).toLocaleString()} kWh; charge: $${(
           result.resultingCharge ?? 0
+        ).toFixed(2)}; prepaid applied: $${(result.prepaidApplied ?? 0).toFixed(2)}; new due: $${(
+          result.newDueAmount ?? 0
         ).toFixed(2)}.`,
       );
       router.refresh();

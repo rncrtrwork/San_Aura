@@ -3,12 +3,14 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import { computeKwhDelta, validateElectricReadingRequest } from '@/lib/electricReadingForms';
 import { calculateElectricCharge, resolveBillingMode } from '@/lib/electricBilling';
+import { summarizePrepaidBalance } from '@/lib/memberLedger';
 import { ElectricReading } from '@/models/ElectricReading';
 import { Member, type ElectricBillingMode, type MembershipTier } from '@/models/Member';
 import { Payment } from '@/models/Payment';
 import { Site, type SiteType } from '@/models/Site';
 import { logActivity } from '@/server/activity/logActivity';
 import { authorizeRequest } from '@/server/auth/authorization';
+import { getMemberLedgerBalance } from '@/server/members/getMemberLedgerBalance';
 import type {
   ElectricReadingCreateRequest,
   ElectricReadingCreateResponse,
@@ -130,6 +132,8 @@ export async function POST(request: NextRequest, context: RouteContext) {
     periodStart: previousReading?.readingDate ?? null,
     periodEnd: readingDate,
   });
+  const balanceBeforeCharge = await getMemberLedgerBalance(memberId);
+  const prepaidSummary = summarizePrepaidBalance(balanceBeforeCharge, resultingCharge);
   const reading = await ElectricReading.create({
     siteRef: siteId ? siteId : null,
     memberRef: memberId,
@@ -173,6 +177,8 @@ export async function POST(request: NextRequest, context: RouteContext) {
       kwhUsed: reading.kwhUsed,
       billingMode: reading.billingMode,
       resultingCharge: reading.resultingCharge,
+      prepaidApplied: prepaidSummary.creditApplied,
+      newDueAmount: prepaidSummary.newDueAmount,
       readingDate: reading.readingDate,
     },
   });
@@ -183,6 +189,9 @@ export async function POST(request: NextRequest, context: RouteContext) {
       chargeId: charge?._id.toString(),
       kwhUsed: reading.kwhUsed,
       resultingCharge: reading.resultingCharge,
+      prepaidApplied: prepaidSummary.creditApplied,
+      newDueAmount: prepaidSummary.newDueAmount,
+      balanceAfterCharge: prepaidSummary.balanceAfterCharge,
     },
     { status: 201 },
   );

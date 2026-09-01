@@ -9,6 +9,9 @@ export type ElectricReadingCreateResponse = {
   chargeId?: string;
   kwhUsed?: number;
   resultingCharge?: number;
+  prepaidApplied?: number;
+  newDueAmount?: number;
+  balanceAfterCharge?: number;
   message?: string;
 };
 
