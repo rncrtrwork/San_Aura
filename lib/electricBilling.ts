@@ -21,6 +21,13 @@ export type ResolvedBillingMode = {
   siteType: SiteType | null;
 };
 
+export type ElectricChargeInput = {
+  mode: ElectricBillingMode;
+  kwhUsed: number;
+  periodStart: Date | null;
+  periodEnd: Date;
+};
+
 const defaultModeByTier: Record<MembershipTier, ElectricBillingMode> = {
   '2850': 'flat25',
   '2000': 'weekly',
@@ -55,4 +62,22 @@ export function resolveBillingMode(
     unitLabel: unitByMode[mode],
     siteType: site?.type ?? null,
   };
+}
+
+export function electricBillingPeriodDays(periodStart: Date | null, periodEnd: Date): number {
+  if (!periodStart) return 0;
+  const milliseconds = periodEnd.getTime() - periodStart.getTime();
+  if (milliseconds <= 0) return 0;
+  return Math.ceil(milliseconds / 86_400_000);
+}
+
+export function calculateElectricCharge(input: ElectricChargeInput): number {
+  if (input.mode === 'kwh') {
+    return Number(Math.max(0, input.kwhUsed * 0.25).toFixed(2));
+  }
+
+  const days = electricBillingPeriodDays(input.periodStart, input.periodEnd);
+  if (input.mode === 'flat25') return days * 25;
+  if (input.mode === 'flat15') return days * 15;
+  return 0;
 }

@@ -2,9 +2,10 @@ import { Types } from 'mongoose';
 import { NextResponse, type NextRequest } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import { computeKwhDelta, validateElectricReadingRequest } from '@/lib/electricReadingForms';
-import { resolveBillingMode } from '@/lib/electricBilling';
+import { calculateElectricCharge, resolveBillingMode } from '@/lib/electricBilling';
 import { ElectricReading } from '@/models/ElectricReading';
 import { Member, type ElectricBillingMode, type MembershipTier } from '@/models/Member';
+import { Payment } from '@/models/Payment';
 import { Site, type SiteType } from '@/models/Site';
 import { logActivity } from '@/server/activity/logActivity';
 import { authorizeRequest } from '@/server/auth/authorization';
@@ -34,6 +35,7 @@ type SiteBillingLean = {
 type PriorReadingLean = {
   _id: Types.ObjectId;
   meterValue: number;
+  readingDate: Date;
 };
 
 function readingDateValue(value: string): Date {
@@ -109,7 +111,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     siteRef: siteId ? new Types.ObjectId(siteId) : null,
     readingDate: { $lt: readingDate },
   })
-    .select('meterValue')
+    .select('meterValue readingDate')
     .sort({ readingDate: -1, createdAt: -1 })
     .lean<PriorReadingLean>();
   const kwhUsed = computeKwhDelta(validation.meterValue, previousReading?.meterValue ?? null);
@@ -122,6 +124,12 @@ export async function POST(request: NextRequest, context: RouteContext) {
   }
 
   const resolved = resolveBillingMode(member, site);
+  const resultingCharge = calculateElectricCharge({
+    mode: resolved.mode,
+    kwhUsed,
+    periodStart: previousReading?.readingDate ?? null,
+    periodEnd: readingDate,
+  });
   const reading = await ElectricReading.create({
     siteRef: siteId ? siteId : null,
     memberRef: memberId,
@@ -131,8 +139,27 @@ export async function POST(request: NextRequest, context: RouteContext) {
     kwhUsed,
     enteredBy: authorization.staff.userId,
     billingMode: resolved.mode,
-    resultingCharge: 0,
+    resultingCharge,
   });
+  const charge =
+    resultingCharge > 0
+      ? await Payment.create({
+          memberRef: memberId,
+          reservationRef: null,
+          amount: resultingCharge,
+          entryKind: 'charge',
+          type: 'electric',
+          method: 'manual-adjustment',
+          externalReference: `Electric reading ${reading._id.toString()}`,
+          recordedBy: authorization.staff.userId,
+          date: readingDate,
+          appliesToPeriod: {
+            start: previousReading?.readingDate ?? readingDate,
+            end: readingDate,
+          },
+          notes: 'Generated from electric meter reading.',
+        })
+      : null;
 
   await logActivity({
     actorId: authorization.staff.userId,
@@ -145,6 +172,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
       meterValue: reading.meterValue,
       kwhUsed: reading.kwhUsed,
       billingMode: reading.billingMode,
+      resultingCharge: reading.resultingCharge,
       readingDate: reading.readingDate,
     },
   });
@@ -152,6 +180,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
   return NextResponse.json<ElectricReadingCreateResponse>(
     {
       id: reading._id.toString(),
+      chargeId: charge?._id.toString(),
       kwhUsed: reading.kwhUsed,
       resultingCharge: reading.resultingCharge,
     },

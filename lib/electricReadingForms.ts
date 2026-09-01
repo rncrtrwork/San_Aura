@@ -6,6 +6,7 @@ export type ElectricReadingCreateRequest = {
 
 export type ElectricReadingCreateResponse = {
   id?: string;
+  chargeId?: string;
   kwhUsed?: number;
   resultingCharge?: number;
   message?: string;

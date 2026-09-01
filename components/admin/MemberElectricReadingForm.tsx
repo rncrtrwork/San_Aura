@@ -66,7 +66,11 @@ export function MemberElectricReadingForm({
         return;
       }
       formElement.reset();
-      setMessage(`Meter reading saved. Delta: ${(result.kwhUsed ?? 0).toLocaleString()} kWh.`);
+      setMessage(
+        `Meter reading saved. Delta: ${(result.kwhUsed ?? 0).toLocaleString()} kWh; charge: $${(
+          result.resultingCharge ?? 0
+        ).toFixed(2)}.`,
+      );
       router.refresh();
     } catch {
       setError('Unable to reach the server. Please try again.');
