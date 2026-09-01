@@ -84,6 +84,7 @@ export async function getSettingsOverview(params: SettingsQueryParams): Promise<
     },
     payments: {
       paypalMeConfigured: Boolean(settings.paypalMeUrl),
+      paypalMeUrl: settings.paypalMeUrl,
     },
     staff: {
       activeStaffCount,

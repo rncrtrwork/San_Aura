@@ -19,6 +19,7 @@ import {
 import { validateBookingSettings } from '@/server/settings/bookingValidation';
 import { validateNotificationSettings } from '@/server/settings/notificationValidation';
 import { validateOperatingSettings } from '@/server/settings/operatingValidation';
+import { validatePaymentSettings } from '@/server/settings/paymentSettingsValidation';
 import { validatePropertySettings } from '@/server/settings/propertyValidation';
 import { validateRolePermissions } from '@/server/settings/rolePermissionsValidation';
 import {
@@ -305,4 +306,19 @@ test('activity log filters fall back to all for invalid values', () => {
     parseActivityLogFilters({ action: ['publish'], entityType: ['Page'] }).action,
     'all',
   );
+});
+
+test('payment settings validation accepts PayPal.me links and empty MVP state', () => {
+  assert.equal(validatePaymentSettings({ paypalMeUrl: '' }).valid, true);
+  const result = validatePaymentSettings({ paypalMeUrl: 'https://paypal.me/sunauraresort' });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.paypalMeUrl, 'https://paypal.me/sunauraresort');
+  }
+});
+
+test('payment settings validation rejects processor-style or unsafe urls', () => {
+  assert.equal(validatePaymentSettings({ paypalMeUrl: 'https://stripe.com/test' }).valid, false);
+  assert.equal(validatePaymentSettings({ paypalMeUrl: 'javascript:alert(1)' }).valid, false);
 });

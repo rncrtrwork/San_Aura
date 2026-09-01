@@ -339,7 +339,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build Manage Roles modal/page: permission checklist editor per role
 - [x] Build Staff user management (invite/deactivate staff, assign role) — likely under Staff & Roles tab
 - [x] Build full Activity Log page (searchable/filterable list, beyond the Overview widget) reading `ActivityLog`
-- [ ] Build Payments tab placeholder explaining PayPal-link-only flow for MVP (no processor keys) with a field for the resort's PayPal.me link to surface to guests/members
+- [x] Build Payments tab placeholder explaining PayPal-link-only flow for MVP (no processor keys) with a field for the resort's PayPal.me link to surface to guests/members
 
 ### Phase 11 — Public Website Rebuild
 

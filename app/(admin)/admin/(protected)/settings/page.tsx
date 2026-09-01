@@ -10,6 +10,7 @@ import {
 import { BookingDefaultsForm } from '@/components/admin/BookingDefaultsForm';
 import { NotificationsSettingsForm } from '@/components/admin/NotificationsSettingsForm';
 import { OperatingSeasonForm } from '@/components/admin/OperatingSeasonForm';
+import { PaymentsSettingsForm } from '@/components/admin/PaymentsSettingsForm';
 import { PropertyDetailsForm } from '@/components/admin/PropertyDetailsForm';
 import { PrivacySafetyForm } from '@/components/admin/PrivacySafetyForm';
 import { RolePermissionsManager } from '@/components/admin/RolePermissionsManager';
@@ -187,6 +188,8 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
             </>
           ) : overview.activeTab === 'notifications' ? (
             <NotificationsSettingsForm notifications={overview.notifications} />
+          ) : overview.activeTab === 'payments' ? (
+            <PaymentsSettingsForm payments={overview.payments} />
           ) : overview.activeTab === 'staff-roles' ? (
             <>
               <StaffAccessSummary staff={overview.staff} />

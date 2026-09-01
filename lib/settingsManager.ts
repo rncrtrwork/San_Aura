@@ -155,6 +155,7 @@ export type SettingsOverview = {
   };
   payments: {
     paypalMeConfigured: boolean;
+    paypalMeUrl: string;
   };
   staff: {
     activeStaffCount: number;
@@ -286,6 +287,15 @@ export type StaffUserUpdateRequest = {
 export type StaffUserMutationResponse = {
   message?: string;
   staffUser?: SettingsOverview['staff']['users'][number];
+};
+
+export type PaymentSettingsMutationRequest = {
+  paypalMeUrl: string;
+};
+
+export type PaymentSettingsMutationResponse = {
+  message?: string;
+  payments?: SettingsOverview['payments'];
 };
 
 export function parseSettingsTab(value: string | string[] | undefined): SettingsTab {
