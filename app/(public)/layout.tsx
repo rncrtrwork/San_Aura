@@ -11,7 +11,7 @@ export default async function PublicLayout({ children }: Readonly<{ children: Re
   return (
     <>
       <Header navigation={navigation} />
-      <main>{children}</main>
+      <main id="main-content">{children}</main>
       <div
         className="bg-cover bg-no-repeat"
         style={{

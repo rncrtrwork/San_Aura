@@ -3,7 +3,10 @@ import { LoginForm } from '@/components/admin/LoginForm';
 
 export default function AdminLoginPage() {
   return (
-    <main className="grid min-h-screen place-items-center bg-admin-canvas px-5 py-12">
+    <main
+      id="main-content"
+      className="grid min-h-screen place-items-center bg-admin-canvas px-5 py-12"
+    >
       <section className="admin-card w-full max-w-md p-8 sm:p-10">
         <div className="flex flex-col items-center text-center">
           <Image

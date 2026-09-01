@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function MemberLoginPage() {
   return (
-    <main className="min-h-screen bg-cream px-6 py-12 text-forest-900">
+    <main id="main-content" className="min-h-screen bg-cream px-6 py-12 text-forest-900">
       <div className="mx-auto grid min-h-[calc(100vh-6rem)] max-w-5xl items-center gap-8 lg:grid-cols-[1fr_0.9fr]">
         <section>
           <Link href="/" className="text-sm font-bold uppercase tracking-[0.14em] text-gold-700">

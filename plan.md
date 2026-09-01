@@ -384,7 +384,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 - [x] Write integration tests for auth/RBAC boundaries (staff routes, member-portal data boundary)
 - [x] Load-test the Calendar/Resort Map queries against realistic data volume (187 sites × season)
-- [ ] Accessibility pass (labels, contrast, keyboard nav) on public site and admin
+- [x] Accessibility pass (labels, contrast, keyboard nav) on public site and admin
 - [ ] Set up MongoDB Atlas production cluster + backups
 - [ ] Configure Cloudinary production environment + folder structure/naming convention
 - [ ] Set up production hosting + environment variables (client to supply Mongo/Cloudinary URLs into `.env` per their note)
