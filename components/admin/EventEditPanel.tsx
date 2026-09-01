@@ -103,8 +103,8 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
       description: fieldValue(form, 'description'),
       imageUrl: image.url,
       imagePublicId: image.publicId,
-      featureOnHomepage: event.featureOnHomepage,
-      sendReminder: event.sendReminder,
+      featureOnHomepage: form.get('featureOnHomepage') === 'on',
+      sendReminder: form.get('sendReminder') === 'on',
       status: event.status,
     };
   }
@@ -349,6 +349,24 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
                 className="size-4 rounded border-admin-border text-admin-accent"
               />
               Registration required
+            </label>
+            <label className="flex items-center gap-3 rounded-lg border border-admin-border bg-white px-4 py-3 text-sm font-bold text-forest-900">
+              <input
+                name="featureOnHomepage"
+                type="checkbox"
+                defaultChecked={event.featureOnHomepage}
+                className="size-4 rounded border-admin-border text-admin-accent"
+              />
+              Feature on homepage
+            </label>
+            <label className="flex items-center gap-3 rounded-lg border border-admin-border bg-white px-4 py-3 text-sm font-bold text-forest-900">
+              <input
+                name="sendReminder"
+                type="checkbox"
+                defaultChecked={event.sendReminder}
+                className="size-4 rounded border-admin-border text-admin-accent"
+              />
+              Send reminder
             </label>
             <label className="text-sm font-semibold text-forest-900 md:col-span-2">
               Image URL

@@ -63,6 +63,8 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     registrationRequired: event.registrationRequired,
     imageUrl: event.imageUrl,
     status: event.status,
+    featureOnHomepage: event.featureOnHomepage,
+    sendReminder: event.sendReminder,
   };
   event.set(validation.data);
   await event.save();
@@ -81,6 +83,8 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       registrationRequired: event.registrationRequired,
       imageUrl: event.imageUrl,
       status: event.status,
+      featureOnHomepage: event.featureOnHomepage,
+      sendReminder: event.sendReminder,
     },
   });
 
