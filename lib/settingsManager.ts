@@ -165,6 +165,15 @@ export type SettingsOverview = {
       permissionCount: number;
       permissions: Permission[];
     }[];
+    users: {
+      id: string;
+      name: string;
+      email: string;
+      roleId: string;
+      roleName: string;
+      active: boolean;
+      lastLogin: string | null;
+    }[];
   };
 };
 
@@ -261,6 +270,23 @@ export type RolePermissionsMutationResponse = {
 export function isPermission(value: string): value is Permission {
   return PERMISSIONS.some((permission) => permission === value);
 }
+
+export type StaffUserCreateRequest = {
+  name: string;
+  email: string;
+  roleId: string;
+  temporaryPassword: string;
+};
+
+export type StaffUserUpdateRequest = {
+  roleId: string;
+  active: boolean;
+};
+
+export type StaffUserMutationResponse = {
+  message?: string;
+  staffUser?: SettingsOverview['staff']['users'][number];
+};
 
 export function parseSettingsTab(value: string | string[] | undefined): SettingsTab {
   const tab = typeof value === 'string' ? value : '';

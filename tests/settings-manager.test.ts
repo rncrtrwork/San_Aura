@@ -15,6 +15,10 @@ import { validateNotificationSettings } from '@/server/settings/notificationVali
 import { validateOperatingSettings } from '@/server/settings/operatingValidation';
 import { validatePropertySettings } from '@/server/settings/propertyValidation';
 import { validateRolePermissions } from '@/server/settings/rolePermissionsValidation';
+import {
+  validateStaffUserCreate,
+  validateStaffUserUpdate,
+} from '@/server/settings/staffUserValidation';
 import { validatePrivacySettings } from '@/server/settings/privacyValidation';
 
 test('settings tabs include the required administration sections', () => {
@@ -235,4 +239,42 @@ test('role permissions validation rejects unsupported or shell-less roles', () =
     validateRolePermissions({ permissions: ['dashboard.read', 'not.real'] }).valid,
     false,
   );
+});
+
+test('staff user create validation accepts invite details', () => {
+  const result = validateStaffUserCreate({
+    name: 'Front Desk',
+    email: 'FRONT@EXAMPLE.COM',
+    roleId: '64f000000000000000000001',
+    temporaryPassword: 'temporary-1',
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.email, 'front@example.com');
+  }
+});
+
+test('staff user create validation rejects weak invite details', () => {
+  assert.equal(
+    validateStaffUserCreate({
+      name: '',
+      email: 'bad',
+      roleId: 'bad-role',
+      temporaryPassword: 'short',
+    }).valid,
+    false,
+  );
+});
+
+test('staff user update validation accepts role assignment and active state', () => {
+  const result = validateStaffUserUpdate({
+    roleId: '64f000000000000000000001',
+    active: false,
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.active, false);
+  }
 });

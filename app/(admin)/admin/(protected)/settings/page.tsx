@@ -14,6 +14,7 @@ import { PropertyDetailsForm } from '@/components/admin/PropertyDetailsForm';
 import { PrivacySafetyForm } from '@/components/admin/PrivacySafetyForm';
 import { RolePermissionsManager } from '@/components/admin/RolePermissionsManager';
 import { StaffAccessSummary } from '@/components/admin/StaffAccessSummary';
+import { StaffUserManagement } from '@/components/admin/StaffUserManagement';
 import { SETTINGS_TAB_DEFINITIONS, settingsTabHref, type SettingsTab } from '@/lib/settingsManager';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getSettingsOverview } from '@/server/settings/getSettingsOverview';
@@ -190,6 +191,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
             <>
               <StaffAccessSummary staff={overview.staff} />
               <RolePermissionsManager roles={overview.staff.roles} />
+              <StaffUserManagement staff={overview.staff} />
             </>
           ) : (
             <div className="mt-6 rounded-xl border border-admin-border bg-white p-5">

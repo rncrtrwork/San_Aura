@@ -20,10 +20,11 @@ function addressLine(settings: Pick<PropertySettingsDocument, 'address'>): strin
 
 export async function getSettingsOverview(params: SettingsQueryParams): Promise<SettingsOverview> {
   await connectToDatabase();
-  const [storedSettings, activeStaffCount, roles] = await Promise.all([
+  const [storedSettings, activeStaffCount, roles, staffUsers] = await Promise.all([
     PropertySettings.findOne({ key: 'property' }).lean<PropertySettingsDocument | null>(),
     User.countDocuments({ active: true }),
     Role.find().select('_id name permissions').lean(),
+    User.find().select('_id name email roleId active lastLogin').sort({ name: 1 }).lean(),
   ]);
   const settings = storedSettings ?? DEFAULT_PROPERTY_SETTINGS;
   const sortedRoles = [...roles].sort(
@@ -93,6 +94,20 @@ export async function getSettingsOverview(params: SettingsQueryParams): Promise<
         permissionCount: role.permissions.length,
         permissions: role.permissions,
       })),
+      users: staffUsers.map((user) => {
+        const roleId = user.roleId.toString();
+        const role = sortedRoles.find((entry) => entry._id.toString() === roleId);
+
+        return {
+          id: user._id.toString(),
+          name: user.name,
+          email: user.email,
+          roleId,
+          roleName: role?.name ?? 'Unassigned',
+          active: user.active,
+          lastLogin: user.lastLogin?.toISOString() ?? null,
+        };
+      }),
     },
   };
 }
