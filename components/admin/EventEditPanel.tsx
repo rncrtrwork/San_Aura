@@ -71,6 +71,11 @@ function miniCalendarMonth(dateValue: string): CalendarMonth {
   return { year: date.getUTCFullYear(), monthIndex: date.getUTCMonth() };
 }
 
+function registrationPercent(event: EventListItem): number {
+  if (event.capacity === null) return 0;
+  return Math.min(100, Math.round((event.registrationsCount / event.capacity) * 100));
+}
+
 export function EventEditPanel({ event }: EventEditPanelProps) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
@@ -394,43 +399,62 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
           </div>
         </section>
 
-        <aside className="admin-card p-5">
-          <div className="flex items-center gap-2">
-            <CalendarDays aria-hidden="true" className="size-5 text-admin-accent" />
-            <h2 className="font-serif text-2xl text-forest-900">Date Picker</h2>
+        <aside className="space-y-6">
+          <div className="admin-card p-5">
+            <h2 className="font-serif text-2xl text-forest-900">Registrations</h2>
+            <p className="mt-3 text-4xl font-bold text-forest-900">{event.registrationsCount}</p>
+            <p className="mt-1 text-sm font-semibold text-admin-muted">
+              {event.capacity === null ? 'Unlimited capacity' : `${event.capacity} capacity`}
+            </p>
+            <div className="mt-4 h-2 overflow-hidden rounded-full bg-cream-alt">
+              <div
+                className="h-full bg-admin-accent"
+                style={{ width: `${registrationPercent(event)}%` }}
+              />
+            </div>
+            <p className="mt-2 text-xs font-semibold text-admin-muted">
+              {event.registrationRequired ? 'Registration required' : 'Registration optional'}
+            </p>
           </div>
-          <p className="mt-2 text-sm font-semibold text-admin-muted">
-            {monthFormatter.format(
-              new Date(Date.UTC(calendarMonth.year, calendarMonth.monthIndex, 1)),
-            )}
-          </p>
-          <div className="mt-4 grid grid-cols-7 gap-1 text-center text-xs">
-            {Array.from({ length: 7 }, (_, index) => (
-              <span key={index} className="py-1 font-bold text-admin-muted">
-                {weekdayFormatter.format(new Date(Date.UTC(2026, 1, index + 1)))}
-              </span>
-            ))}
-            {calendarDays.map((day) => {
-              const key = day.toISOString().slice(0, 10);
-              const inMonth = day.getUTCMonth() === calendarMonth.monthIndex;
-              const selected = key === selectedDate;
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => setSelectedDate(key)}
-                  className={`grid aspect-square place-items-center rounded-md text-xs font-bold ${
-                    selected
-                      ? 'bg-admin-accent text-white'
-                      : inMonth
-                        ? 'bg-cream-alt text-forest-900 hover:bg-admin-accent/10'
-                        : 'bg-transparent text-admin-muted/50'
-                  }`}
-                >
-                  {day.getUTCDate()}
-                </button>
-              );
-            })}
+
+          <div className="admin-card p-5">
+            <div className="flex items-center gap-2">
+              <CalendarDays aria-hidden="true" className="size-5 text-admin-accent" />
+              <h2 className="font-serif text-2xl text-forest-900">Date Picker</h2>
+            </div>
+            <p className="mt-2 text-sm font-semibold text-admin-muted">
+              {monthFormatter.format(
+                new Date(Date.UTC(calendarMonth.year, calendarMonth.monthIndex, 1)),
+              )}
+            </p>
+            <div className="mt-4 grid grid-cols-7 gap-1 text-center text-xs">
+              {Array.from({ length: 7 }, (_, index) => (
+                <span key={index} className="py-1 font-bold text-admin-muted">
+                  {weekdayFormatter.format(new Date(Date.UTC(2026, 1, index + 1)))}
+                </span>
+              ))}
+              {calendarDays.map((day) => {
+                const key = day.toISOString().slice(0, 10);
+                const inMonth = day.getUTCMonth() === calendarMonth.monthIndex;
+                const selected = key === selectedDate;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setSelectedDate(key)}
+                    className={`grid aspect-square place-items-center rounded-md text-xs font-bold ${
+                      selected
+                        ? 'bg-admin-accent text-white'
+                        : inMonth
+                          ? 'bg-cream-alt text-forest-900 hover:bg-admin-accent/10'
+                          : 'bg-transparent text-admin-muted/50'
+                    }`}
+                  >
+                    {day.getUTCDate()}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </aside>
       </div>
