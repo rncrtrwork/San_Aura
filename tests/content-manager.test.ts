@@ -3,8 +3,13 @@ import { test } from 'node:test';
 import {
   CONTENT_PAGE_DEFAULTS,
   CONTENT_PAGE_SLUGS,
+  isContentPageSlug,
   parseContentPageSlug,
 } from '@/lib/contentManager';
+import {
+  validateContentSectionOrder,
+  validateContentSectionStatus,
+} from '@/server/content/sectionValidation';
 
 test('content page parser accepts known CMS pages', () => {
   assert.equal(parseContentPageSlug('history'), 'history');
@@ -27,4 +32,33 @@ test('content page defaults include the required shell pages', () => {
     'footer',
   ]);
   assert.equal(CONTENT_PAGE_DEFAULTS.history.title, 'History');
+});
+
+test('content page slug guard narrows valid page slugs', () => {
+  assert.equal(isContentPageSlug('contact'), true);
+  assert.equal(isContentPageSlug('book-online'), false);
+});
+
+test('content section order validation accepts unique keys', () => {
+  const result = validateContentSectionOrder({
+    sectionKeys: ['hero-main', 'history-timeline', 'footer-cta'],
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.deepEqual(result.data.sectionKeys, ['hero-main', 'history-timeline', 'footer-cta']);
+  }
+});
+
+test('content section order validation rejects duplicate keys', () => {
+  const result = validateContentSectionOrder({
+    sectionKeys: ['hero-main', 'hero-main'],
+  });
+
+  assert.equal(result.valid, false);
+});
+
+test('content section status validation requires a boolean active state', () => {
+  assert.equal(validateContentSectionStatus({ active: true }).valid, true);
+  assert.equal(validateContentSectionStatus({}).valid, false);
 });

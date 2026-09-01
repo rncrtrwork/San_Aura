@@ -6,6 +6,7 @@ import {
   type ContentOverview,
   type ContentPageListItem,
   type ContentPageSlug,
+  type ContentSectionSummary,
 } from '@/lib/contentManager';
 import { Page, type PagePublishStatus, type PageSectionType } from '@/models/Page';
 
@@ -15,15 +16,54 @@ type PageListItemLean = {
   navLabel: string;
   publishStatus: PagePublishStatus;
   lastEditedAt: Date;
-  sections?: { type: PageSectionType }[];
+  sections?: {
+    key: string;
+    type: PageSectionType;
+    active: boolean;
+    hero?: { heading: string } | null;
+    richText?: { body: string } | null;
+    timeline?: { sectionLabel: string } | null;
+    cta?: { heading: string } | null;
+    gallery?: { heading: string } | null;
+  }[];
 };
+
+function textPreview(value: string): string {
+  const preview = value
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return preview.length > 70 ? `${preview.slice(0, 67)}...` : preview;
+}
+
+function sectionLabel(section: NonNullable<PageListItemLean['sections']>[number]): string {
+  if (section.type === 'hero') return section.hero?.heading || 'Hero section';
+  if (section.type === 'richText') {
+    return textPreview(section.richText?.body ?? '') || 'Rich text section';
+  }
+  if (section.type === 'timeline') return section.timeline?.sectionLabel || 'Timeline section';
+  if (section.type === 'cta') return section.cta?.heading || 'CTA section';
+  return section.gallery?.heading || 'Gallery section';
+}
+
+function sectionSummary(
+  section: NonNullable<PageListItemLean['sections']>[number],
+): ContentSectionSummary {
+  return {
+    key: section.key,
+    type: section.type,
+    active: section.active,
+    label: sectionLabel(section),
+  };
+}
 
 function pageListItem(
   slug: ContentPageSlug,
   page: PageListItemLean | undefined,
 ): ContentPageListItem {
   const defaults = CONTENT_PAGE_DEFAULTS[slug];
-  const sectionTypes = page?.sections?.map((section) => section.type) ?? [];
+  const sections = page?.sections?.map(sectionSummary) ?? [];
+  const sectionTypes = sections.map((section) => section.type);
 
   return {
     slug,
@@ -33,6 +73,7 @@ function pageListItem(
     lastEditedAt: page?.lastEditedAt.toISOString() ?? null,
     sectionCount: sectionTypes.length,
     sectionTypes,
+    sections,
     exists: Boolean(page),
   };
 }
@@ -43,7 +84,9 @@ export async function getContentOverview(
   await connectToDatabase();
   const activeSlug = parseContentPageSlug(params.page);
   const storedPages = await Page.find({ slug: { $in: [...CONTENT_PAGE_SLUGS] } })
-    .select('slug title navLabel publishStatus lastEditedAt sections.type')
+    .select(
+      'slug title navLabel publishStatus lastEditedAt sections.key sections.type sections.active sections.hero.heading sections.richText.body sections.timeline.sectionLabel sections.cta.heading sections.gallery.heading',
+    )
     .lean<PageListItemLean[]>();
   const pagesBySlug = new Map(storedPages.map((page) => [page.slug, page]));
   const pages = CONTENT_PAGE_SLUGS.map((slug) => pageListItem(slug, pagesBySlug.get(slug)));

@@ -19,6 +19,7 @@ export type ContentPageListItem = {
   lastEditedAt: string | null;
   sectionCount: number;
   sectionTypes: PageSectionType[];
+  sections: ContentSectionSummary[];
   exists: boolean;
 };
 
@@ -40,7 +41,36 @@ export const CONTENT_PAGE_DEFAULTS: Record<ContentPageSlug, { title: string; nav
   footer: { title: 'Footer', navLabel: 'Footer' },
 };
 
+export type ContentSectionSummary = {
+  key: string;
+  type: PageSectionType;
+  active: boolean;
+  label: string;
+};
+
+export type ContentSectionOrderRequest = {
+  sectionKeys: string[];
+};
+
+export type ContentSectionOrderResponse = {
+  message?: string;
+  sectionKeys?: string[];
+};
+
+export type ContentSectionStatusRequest = {
+  active: boolean;
+};
+
+export type ContentSectionMutationResponse = {
+  message?: string;
+  section?: ContentSectionSummary;
+};
+
 export function parseContentPageSlug(value: string | string[] | undefined): ContentPageSlug {
   const slug = typeof value === 'string' ? value : '';
   return CONTENT_PAGE_SLUGS.find((entry) => entry === slug) ?? 'home';
+}
+
+export function isContentPageSlug(value: string): value is ContentPageSlug {
+  return CONTENT_PAGE_SLUGS.some((entry) => entry === value);
 }

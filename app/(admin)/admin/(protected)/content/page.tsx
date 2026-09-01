@@ -1,4 +1,5 @@
 import { FileText, Layers3 } from 'lucide-react';
+import { PageSectionList } from '@/components/admin/PageSectionList';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getContentOverview } from '@/server/content/getContentOverview';
 
@@ -20,7 +21,9 @@ function contentPageHref(slug: string): string {
 
 export default async function ContentPage({ searchParams }: ContentPageProps) {
   await requirePagePermission('content.read');
-  const overview = await getContentOverview(await searchParams);
+  const params = await searchParams;
+  const selectedSectionKey = typeof params.section === 'string' ? params.section : '';
+  const overview = await getContentOverview(params);
 
   return (
     <div className="space-y-6">
@@ -145,6 +148,16 @@ export default async function ContentPage({ searchParams }: ContentPageProps) {
               </ul>
             )}
           </div>
+
+          <PageSectionList
+            key={`${overview.selectedPage.slug}-${overview.selectedPage.sections
+              .map((section) => section.key)
+              .join('|')}`}
+            pageSlug={overview.selectedPage.slug}
+            pageExists={overview.selectedPage.exists}
+            sections={overview.selectedPage.sections}
+            selectedSectionKey={selectedSectionKey}
+          />
         </section>
       </div>
     </div>

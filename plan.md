@@ -314,7 +314,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 ### Phase 9 — Website Content Manager
 
 - [x] Build Content page shell: left Pages list (Home/Our Story/History/First Visit/Contact/Footer) with last-edited timestamps
-- [ ] Build page section list (draggable order) with per-section active toggle, edit, duplicate, delete
+- [x] Build page section list (draggable order) with per-section active toggle, edit, duplicate, delete
 - [ ] Build Hero section editor (image upload, H1 text)
 - [ ] Build Rich Text section editor
 - [ ] Build Timeline section editor: Section Label + repeatable Year/Title/Description items with Add Item
