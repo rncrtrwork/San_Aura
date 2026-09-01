@@ -73,6 +73,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     usage: asset.usage,
     approvalStatus: asset.approvalStatus,
     publishToWebsite: asset.publishToWebsite,
+    privacyConfirmedNoPeople: asset.privacyConfirmedNoPeople,
     focalPointX: asset.focalPoint.x,
     focalPointY: asset.focalPoint.y,
   };
@@ -83,6 +84,11 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
   asset.usage = validation.data.usage;
   asset.approvalStatus = validation.data.approvalStatus;
   asset.publishToWebsite = validation.data.publishToWebsite;
+  asset.privacyConfirmedNoPeople = validation.data.privacyConfirmedNoPeople;
+  asset.privacyConfirmedBy = validation.data.privacyConfirmedNoPeople
+    ? new Types.ObjectId(authorization.staff.userId)
+    : null;
+  asset.privacyConfirmedAt = validation.data.privacyConfirmedNoPeople ? new Date() : null;
   asset.focalPoint = validation.data.focalPoint;
   await asset.save();
 
@@ -99,6 +105,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       usage: asset.usage,
       approvalStatus: asset.approvalStatus,
       publishToWebsite: asset.publishToWebsite,
+      privacyConfirmedNoPeople: asset.privacyConfirmedNoPeople,
       focalPointX: asset.focalPoint.x,
       focalPointY: asset.focalPoint.y,
     },

@@ -24,6 +24,7 @@ export type MediaAssetUpdateRequest = {
   usage: MediaUsage[];
   approvalStatus: MediaApprovalStatus;
   publishToWebsite: boolean;
+  privacyConfirmedNoPeople: boolean;
   focalPoint: {
     x: number;
     y: number;

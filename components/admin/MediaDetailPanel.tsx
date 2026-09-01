@@ -1,6 +1,6 @@
 'use client';
 
-import { FileText, LoaderCircle, SlidersHorizontal, X } from 'lucide-react';
+import { CameraOff, FileText, LoaderCircle, SlidersHorizontal, X } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -49,6 +49,7 @@ export function MediaDetailPanel({ asset, albums, filters }: MediaDetailPanelPro
   const [usage, setUsage] = useState<MediaUsage[]>(asset.usage);
   const [approvalStatus, setApprovalStatus] = useState<MediaApprovalStatus>(asset.approvalStatus);
   const [publishToWebsite, setPublishToWebsite] = useState(asset.publishToWebsite);
+  const [privacyConfirmed, setPrivacyConfirmed] = useState(asset.privacyConfirmedNoPeople);
   const [focalX, setFocalX] = useState(asset.focalPoint.x);
   const [focalY, setFocalY] = useState(asset.focalPoint.y);
   const [saving, setSaving] = useState(false);
@@ -74,6 +75,7 @@ export function MediaDetailPanel({ asset, albums, filters }: MediaDetailPanelPro
       usage,
       approvalStatus,
       publishToWebsite,
+      privacyConfirmedNoPeople: privacyConfirmed,
       focalPoint: {
         x: focalX,
         y: focalY,
@@ -230,18 +232,42 @@ export function MediaDetailPanel({ asset, albums, filters }: MediaDetailPanelPro
             </select>
           </label>
 
+          <label className="flex items-start gap-3 rounded-lg border border-admin-accent/25 bg-[#FFF7E8] p-3 text-sm text-forest-900">
+            <input
+              type="checkbox"
+              checked={privacyConfirmed}
+              onChange={(event) => {
+                setPrivacyConfirmed(event.target.checked);
+                if (!event.target.checked) {
+                  setPublishToWebsite(false);
+                }
+              }}
+              className="mt-1 size-4 rounded border-admin-border text-admin-accent"
+            />
+            <span>
+              <span className="flex items-center gap-2 font-bold">
+                <CameraOff aria-hidden="true" className="size-4 text-admin-accent" />
+                No identifiable people
+              </span>
+              <span className="mt-1 block text-xs leading-relaxed text-admin-muted">
+                Required before this asset can be approved or published.
+              </span>
+            </span>
+          </label>
+
           <label className="flex items-start gap-3 rounded-lg bg-cream-alt p-3 text-sm text-forest-900">
             <input
               type="checkbox"
               checked={publishToWebsite}
-              disabled={approvalStatus !== 'approved'}
+              disabled={approvalStatus !== 'approved' || !privacyConfirmed}
               onChange={(event) => setPublishToWebsite(event.target.checked)}
               className="mt-1 size-4 rounded border-admin-border text-admin-accent disabled:opacity-50"
             />
             <span>
               <span className="font-bold">Publish to website</span>
               <span className="mt-1 block text-xs leading-relaxed text-admin-muted">
-                Media must be approved before it can appear on the public website.
+                Media must be approved and privacy-confirmed before it can appear on the public
+                website.
               </span>
             </span>
           </label>

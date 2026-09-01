@@ -98,6 +98,7 @@ test('media detail validation accepts metadata and focal point updates', () => {
     usage: ['stayType'],
     approvalStatus: 'approved',
     publishToWebsite: true,
+    privacyConfirmedNoPeople: true,
     focalPoint: {
       x: 35,
       y: 42,
@@ -115,6 +116,7 @@ test('media detail validation rejects focal points outside the image bounds', ()
     usage: ['stayType'],
     approvalStatus: 'approved',
     publishToWebsite: false,
+    privacyConfirmedNoPeople: true,
     focalPoint: {
       x: 101,
       y: 42,
@@ -132,6 +134,25 @@ test('media detail validation rejects publishing unapproved assets', () => {
     usage: ['stayType'],
     approvalStatus: 'draft',
     publishToWebsite: true,
+    privacyConfirmedNoPeople: true,
+    focalPoint: {
+      x: 50,
+      y: 50,
+    },
+  });
+
+  assert.equal(result.valid, false);
+});
+
+test('media detail validation requires no people confirmation before approval', () => {
+  const result = validateMediaAssetUpdate({
+    altText: 'Cabin porch at sunset',
+    caption: '',
+    albumId: '',
+    usage: ['stayType'],
+    approvalStatus: 'approved',
+    publishToWebsite: false,
+    privacyConfirmedNoPeople: false,
     focalPoint: {
       x: 50,
       y: 50,

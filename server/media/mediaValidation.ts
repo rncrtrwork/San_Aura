@@ -121,6 +121,7 @@ export function validateMediaAssetUpdate(
   const usage = Array.isArray(input.usage) ? input.usage : [];
   const approvalStatus = input.approvalStatus;
   const publishToWebsite = input.publishToWebsite === true;
+  const privacyConfirmedNoPeople = input.privacyConfirmedNoPeople === true;
   const focalPoint = input.focalPoint;
   const focalX = focalPoint ? focalValue(focalPoint.x) : null;
   const focalY = focalPoint ? focalValue(focalPoint.y) : null;
@@ -140,6 +141,12 @@ export function validateMediaAssetUpdate(
   if (publishToWebsite && approvalStatus !== 'approved') {
     return { valid: false, message: 'Only approved media can publish to the website.' };
   }
+  if (approvalStatus === 'approved' && !privacyConfirmedNoPeople) {
+    return { valid: false, message: 'Confirm this media contains no identifiable people.' };
+  }
+  if (publishToWebsite && !privacyConfirmedNoPeople) {
+    return { valid: false, message: 'Published media requires no-people confirmation.' };
+  }
   if (focalX === null || focalY === null) {
     return { valid: false, message: 'Focal point must stay between 0 and 100.' };
   }
@@ -153,6 +160,7 @@ export function validateMediaAssetUpdate(
       usage,
       approvalStatus,
       publishToWebsite,
+      privacyConfirmedNoPeople,
       focalPoint: {
         x: focalX,
         y: focalY,
