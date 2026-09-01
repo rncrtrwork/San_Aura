@@ -9,7 +9,7 @@ type SiteFooterProps = {
 export function SiteFooter({ navigation }: SiteFooterProps) {
   return (
     <footer className="relative overflow-hidden border-t border-line bg-transparent px-6 py-10 md:px-10 lg:px-12 lg:py-8">
-      <div className="relative z-10 mx-auto grid max-w-[1360px] gap-9 pr-20 text-white  md:grid-cols-4 md:gap-12 md:pr-32">
+      <div className="relative z-10 mx-auto grid max-w-[1360px] gap-9 pr-0 text-white md:grid-cols-4 md:gap-12 md:pr-32">
         <div>
           <p className="font-serif text-2xl">SUN AURA RESORT</p>
           <address className="mt-3 text-xs not-italic leading-5 text-white">

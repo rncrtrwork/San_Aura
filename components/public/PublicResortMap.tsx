@@ -28,6 +28,9 @@ export function PublicResortMap({ sites }: PublicResortMapProps) {
     <section className="bg-cream px-6 py-16 md:px-10 md:py-20 lg:px-12">
       <div className="mx-auto max-w-[1360px]">
         <div className="overflow-x-auto rounded-[2rem] border border-line bg-[#fbfaf6] p-4 shadow-card">
+          <p className="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-gold-700 lg:hidden">
+            Swipe to explore the full map
+          </p>
           <div className="relative aspect-[980/361] min-w-[900px] overflow-hidden rounded-[1.5rem] bg-forest-800">
             <Image
               src="/images/resort-map.png"
