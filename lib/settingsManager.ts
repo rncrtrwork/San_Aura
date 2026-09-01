@@ -135,6 +135,11 @@ export type SettingsOverview = {
   staff: {
     activeStaffCount: number;
     roleCount: number;
+    roles: {
+      id: string;
+      name: string;
+      permissionCount: number;
+    }[];
   };
 };
 

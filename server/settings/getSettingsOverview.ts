@@ -8,6 +8,7 @@ import {
 import { PropertySettings, type PropertySettingsDocument } from '@/models/PropertySettings';
 import { Role } from '@/models/Role';
 import { User } from '@/models/User';
+import { ROLE_NAMES } from '@/server/auth/permissions';
 import { DEFAULT_PROPERTY_SETTINGS } from '@/server/settings/defaultPropertySettings';
 
 type SettingsQueryParams = Record<string, string | string[] | undefined>;
@@ -19,12 +20,17 @@ function addressLine(settings: Pick<PropertySettingsDocument, 'address'>): strin
 
 export async function getSettingsOverview(params: SettingsQueryParams): Promise<SettingsOverview> {
   await connectToDatabase();
-  const [storedSettings, activeStaffCount, roleCount] = await Promise.all([
+  const [storedSettings, activeStaffCount, roles] = await Promise.all([
     PropertySettings.findOne({ key: 'property' }).lean<PropertySettingsDocument | null>(),
     User.countDocuments({ active: true }),
-    Role.countDocuments(),
+    Role.find().select('_id name permissions').lean(),
   ]);
   const settings = storedSettings ?? DEFAULT_PROPERTY_SETTINGS;
+  const sortedRoles = [...roles].sort(
+    (left, right) =>
+      ROLE_NAMES.findIndex((roleName) => roleName === left.name) -
+      ROLE_NAMES.findIndex((roleName) => roleName === right.name),
+  );
 
   return {
     activeTab: parseSettingsTab(params.tab),
@@ -80,7 +86,12 @@ export async function getSettingsOverview(params: SettingsQueryParams): Promise<
     },
     staff: {
       activeStaffCount,
-      roleCount,
+      roleCount: sortedRoles.length,
+      roles: sortedRoles.map((role) => ({
+        id: role._id.toString(),
+        name: role.name,
+        permissionCount: role.permissions.length,
+      })),
     },
   };
 }

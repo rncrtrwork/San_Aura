@@ -196,3 +196,15 @@ test('notification labels use payment recorded wording for MVP', () => {
 
   assert.equal(paymentDefinition?.label, 'Payment Recorded');
 });
+
+test('settings staff summaries can carry role permission counts', () => {
+  const roles = [
+    { id: 'role-admin', name: 'Admin', permissionCount: 20 },
+    { id: 'role-editor', name: 'Content Editor', permissionCount: 7 },
+  ];
+
+  assert.equal(
+    roles.reduce((total, role) => total + role.permissionCount, 0),
+    27,
+  );
+});

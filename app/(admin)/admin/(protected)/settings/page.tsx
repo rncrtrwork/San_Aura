@@ -12,6 +12,7 @@ import { NotificationsSettingsForm } from '@/components/admin/NotificationsSetti
 import { OperatingSeasonForm } from '@/components/admin/OperatingSeasonForm';
 import { PropertyDetailsForm } from '@/components/admin/PropertyDetailsForm';
 import { PrivacySafetyForm } from '@/components/admin/PrivacySafetyForm';
+import { StaffAccessSummary } from '@/components/admin/StaffAccessSummary';
 import { SETTINGS_TAB_DEFINITIONS, settingsTabHref, type SettingsTab } from '@/lib/settingsManager';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getSettingsOverview } from '@/server/settings/getSettingsOverview';
@@ -184,6 +185,8 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
             </>
           ) : overview.activeTab === 'notifications' ? (
             <NotificationsSettingsForm notifications={overview.notifications} />
+          ) : overview.activeTab === 'staff-roles' ? (
+            <StaffAccessSummary staff={overview.staff} />
           ) : (
             <div className="mt-6 rounded-xl border border-admin-border bg-white p-5">
               <p className="text-sm font-bold text-forest-900">
