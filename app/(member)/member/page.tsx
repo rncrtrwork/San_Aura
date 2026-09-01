@@ -6,6 +6,7 @@ import { MemberInfoTab } from '@/components/member/MemberInfoTab';
 import { MemberLogoutButton } from '@/components/member/MemberLogoutButton';
 import { MemberPaymentHistoryTab } from '@/components/member/MemberPaymentHistoryTab';
 import { MemberPortalTabs } from '@/components/member/MemberPortalTabs';
+import { MemberUpdateRequestForm } from '@/components/member/MemberUpdateRequestForm';
 import { parseMemberPortalTab } from '@/lib/memberPortal';
 import { requireMemberPageSession } from '@/server/auth/memberAuthorization';
 import { getMemberDashboard } from '@/server/memberPortal/getMemberDashboard';
@@ -63,6 +64,8 @@ export default async function MemberPage({ searchParams }: MemberPageProps) {
             <MemberDocumentsTab documents={documents} />
           ) : activeTab === 'membership' && profile ? (
             <MemberInfoTab profile={profile} />
+          ) : activeTab === 'requests' ? (
+            <MemberUpdateRequestForm />
           ) : (
             <MemberDashboardCards dashboard={dashboard} />
           )}

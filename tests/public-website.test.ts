@@ -10,6 +10,7 @@ import {
   memberRenewalMonthLabel,
   parseMemberPortalTab,
 } from '@/lib/memberPortal';
+import { validateMemberUpdateRequest } from '@/lib/memberUpdateRequests';
 import { publicAddressLines, publicMailtoHref, publicTelHref } from '@/lib/publicContact';
 import {
   calculatePublicReservationTotal,
@@ -317,6 +318,7 @@ test('member portal tabs and display helpers format member ledger values', () =>
   assert.equal(parseMemberPortalTab('electric'), 'electric');
   assert.equal(parseMemberPortalTab('documents'), 'documents');
   assert.equal(parseMemberPortalTab('membership'), 'membership');
+  assert.equal(parseMemberPortalTab('requests'), 'requests');
   assert.equal(parseMemberPortalTab('bad'), 'dashboard');
   assert.equal(memberCurrencyLabel(42.5), '$42.50');
   assert.equal(memberDateLabel('2026-09-01T12:00:00.000Z'), 'Sep 1, 2026');
@@ -361,4 +363,27 @@ test('member portal serializer excludes staff notes from profile output', () => 
     'renewalMonth',
     'joinDate',
   ]);
+});
+
+test('member update request validation trims valid staff messages', () => {
+  const result = validateMemberUpdateRequest({
+    topic: 'documents',
+    message: ' Please review my waiver expiration. ',
+  });
+
+  assert.deepEqual(result, {
+    topic: 'documents',
+    message: 'Please review my waiver expiration.',
+  });
+});
+
+test('member update request validation rejects invalid portal messages', () => {
+  assert.equal(
+    validateMemberUpdateRequest({ topic: 'billing', message: 'short' }),
+    'Enter at least 10 characters so staff knows what to update.',
+  );
+  assert.equal(
+    validateMemberUpdateRequest({ topic: 'bad-topic', message: 'Please update my record.' }),
+    'Choose a valid request topic.',
+  );
 });

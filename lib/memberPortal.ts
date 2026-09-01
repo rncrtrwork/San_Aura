@@ -19,6 +19,7 @@ export const MEMBER_PORTAL_TABS = [
   'electric',
   'documents',
   'membership',
+  'requests',
 ] as const;
 
 export type MemberPortalTab = (typeof MEMBER_PORTAL_TABS)[number];
@@ -29,6 +30,7 @@ export const MEMBER_PORTAL_TAB_DEFINITIONS: Array<{ value: MemberPortalTab; labe
   { value: 'electric', label: 'Electric Billing' },
   { value: 'documents', label: 'Documents' },
   { value: 'membership', label: 'Membership Info' },
+  { value: 'requests', label: 'Request Update' },
 ];
 
 export const MEMBER_STATUS_LABELS: Record<MemberStatus, string> = {
