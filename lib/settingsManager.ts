@@ -148,6 +148,30 @@ export type BookingSettingsMutationResponse = {
   booking?: SettingsOverview['booking'];
 };
 
+export type PrivacySettingsMutationRequest = SettingsOverview['privacy'];
+
+export type PrivacySettingsMutationResponse = {
+  message?: string;
+  privacy?: SettingsOverview['privacy'];
+};
+
+export function privacyPolicySummaryText(privacy: SettingsOverview['privacy']): string {
+  const rules: string[] = [];
+  if (privacy.photographyProhibited) {
+    rules.push('Photography is not permitted on the property');
+  }
+  if (privacy.videoProhibited) {
+    rules.push('video recording is not permitted on the property');
+  }
+
+  const policy = rules.length > 0 ? `${rules.join(' and ')}.` : 'Media capture is not restricted.';
+  const bookingNotice = privacy.showPrivacyNoticeAtBooking
+    ? 'Guests will see this privacy notice during booking.'
+    : 'This notice is retained internally and hidden during booking.';
+
+  return `${policy} ${bookingNotice}`;
+}
+
 export function parseSettingsTab(value: string | string[] | undefined): SettingsTab {
   const tab = typeof value === 'string' ? value : '';
   return SETTINGS_TABS.find((entry) => entry === tab) ?? 'property';

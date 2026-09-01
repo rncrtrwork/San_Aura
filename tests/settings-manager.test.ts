@@ -4,11 +4,13 @@ import {
   SETTINGS_TAB_DEFINITIONS,
   SETTINGS_TABS,
   parseSettingsTab,
+  privacyPolicySummaryText,
   settingsTabHref,
 } from '@/lib/settingsManager';
 import { validateBookingSettings } from '@/server/settings/bookingValidation';
 import { validateOperatingSettings } from '@/server/settings/operatingValidation';
 import { validatePropertySettings } from '@/server/settings/propertyValidation';
+import { validatePrivacySettings } from '@/server/settings/privacyValidation';
 
 test('settings tabs include the required administration sections', () => {
   assert.deepEqual(SETTINGS_TABS, [
@@ -135,5 +137,33 @@ test('booking settings validation rejects out-of-range defaults', () => {
       defaultMinimumStay: 0,
     }).valid,
     false,
+  );
+});
+
+test('privacy settings validation accepts explicit boolean toggles', () => {
+  const result = validatePrivacySettings({
+    photographyProhibited: true,
+    videoProhibited: true,
+    showPrivacyNoticeAtBooking: false,
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.showPrivacyNoticeAtBooking, false);
+  }
+});
+
+test('privacy settings validation rejects missing toggles', () => {
+  assert.equal(validatePrivacySettings({ photographyProhibited: true }).valid, false);
+});
+
+test('privacy policy summary reflects booking visibility', () => {
+  assert.equal(
+    privacyPolicySummaryText({
+      photographyProhibited: true,
+      videoProhibited: true,
+      showPrivacyNoticeAtBooking: true,
+    }),
+    'Photography is not permitted on the property and video recording is not permitted on the property. Guests will see this privacy notice during booking.',
   );
 });

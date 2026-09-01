@@ -10,6 +10,7 @@ import {
 import { BookingDefaultsForm } from '@/components/admin/BookingDefaultsForm';
 import { OperatingSeasonForm } from '@/components/admin/OperatingSeasonForm';
 import { PropertyDetailsForm } from '@/components/admin/PropertyDetailsForm';
+import { PrivacySafetyForm } from '@/components/admin/PrivacySafetyForm';
 import { SETTINGS_TAB_DEFINITIONS, settingsTabHref, type SettingsTab } from '@/lib/settingsManager';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getSettingsOverview } from '@/server/settings/getSettingsOverview';
@@ -176,7 +177,10 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
               <OperatingSeasonForm operating={overview.operating} />
             </>
           ) : overview.activeTab === 'booking' ? (
-            <BookingDefaultsForm booking={overview.booking} />
+            <>
+              <BookingDefaultsForm booking={overview.booking} />
+              <PrivacySafetyForm privacy={overview.privacy} />
+            </>
           ) : (
             <div className="mt-6 rounded-xl border border-admin-border bg-white p-5">
               <p className="text-sm font-bold text-forest-900">
