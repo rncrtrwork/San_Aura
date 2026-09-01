@@ -4,7 +4,6 @@ import { LoaderCircle, Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import type {
-  ContentPageSlug,
   ContentSectionDetail,
   ContentSectionMutationResponse,
   RichTextSectionMutationRequest,
@@ -13,7 +12,7 @@ import { richTextReplacement, type RichTextAction } from '@/lib/richTextToolbar'
 import { RichTextToolbar } from '@/components/admin/RichTextToolbar';
 
 type RichTextSectionEditorProps = {
-  pageSlug: ContentPageSlug;
+  pageSlug: string;
   selectedSection: ContentSectionDetail | null;
 };
 

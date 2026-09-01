@@ -321,7 +321,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build Timeline layout controls (Background color, Layout alternating/stacked, Show on navigation)
 - [x] Build CTA section editor
 - [x] Build "Add Section" picker (choose section type to append to a page)
-- [ ] Build "Add Page" flow (creates new `Page` doc with slug)
+- [x] Build "Add Page" flow (creates new `Page` doc with slug)
 - [ ] Build autosave-draft behavior + "Draft changes" indicator in header
 - [ ] Build Preview Website action (renders draft content in an isolated preview route)
 - [ ] Build Publish action (flips `publishStatus` to published, snapshots to ActivityLog)

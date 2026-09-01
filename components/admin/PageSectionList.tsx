@@ -4,14 +4,13 @@ import { Copy, GripVertical, LoaderCircle, Pencil, Power, Trash2 } from 'lucide-
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import type {
-  ContentPageSlug,
   ContentSectionMutationResponse,
   ContentSectionOrderResponse,
   ContentSectionSummary,
 } from '@/lib/contentManager';
 
 type PageSectionListProps = {
-  pageSlug: ContentPageSlug;
+  pageSlug: string;
   pageExists: boolean;
   sections: ContentSectionSummary[];
   selectedSectionKey: string;
@@ -27,7 +26,7 @@ function reorderKeys(keys: string[], fromKey: string, toKey: string): string[] {
   return nextKeys;
 }
 
-function sectionEditHref(pageSlug: ContentPageSlug, sectionKey: string): string {
+function sectionEditHref(pageSlug: string, sectionKey: string): string {
   const params = new URLSearchParams({ page: pageSlug, section: sectionKey });
   if (pageSlug === 'home') params.delete('page');
   const query = params.toString();

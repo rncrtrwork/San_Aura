@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import {
-  isContentPageSlug,
+  isValidContentPageSlug,
   type ContentSectionOrderRequest,
   type ContentSectionOrderResponse,
 } from '@/lib/contentManager';
@@ -21,7 +21,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
   if (!authorization.authorized) return authorization.response;
 
   const { slug } = await context.params;
-  if (!isContentPageSlug(slug)) {
+  if (!isValidContentPageSlug(slug)) {
     return NextResponse.json<ContentSectionOrderResponse>(
       { message: 'Content page not found.' },
       { status: 404 },

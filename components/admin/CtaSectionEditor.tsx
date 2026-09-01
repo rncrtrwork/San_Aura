@@ -4,14 +4,13 @@ import { LoaderCircle, Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type {
-  ContentPageSlug,
   ContentSectionDetail,
   ContentSectionMutationResponse,
   CtaSectionMutationRequest,
 } from '@/lib/contentManager';
 
 type CtaSectionEditorProps = {
-  pageSlug: ContentPageSlug;
+  pageSlug: string;
   selectedSection: ContentSectionDetail | null;
 };
 

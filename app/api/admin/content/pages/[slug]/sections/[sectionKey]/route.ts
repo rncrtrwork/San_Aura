@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
 import {
-  isContentPageSlug,
+  isValidContentPageSlug,
   type ContentSectionMutationResponse,
   type ContentSectionStatusRequest,
 } from '@/lib/contentManager';
@@ -22,7 +22,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
   if (!authorization.authorized) return authorization.response;
 
   const { slug, sectionKey } = await context.params;
-  if (!isContentPageSlug(slug)) {
+  if (!isValidContentPageSlug(slug)) {
     return NextResponse.json<ContentSectionMutationResponse>(
       { message: 'Content page not found.' },
       { status: 404 },
@@ -82,7 +82,7 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
   if (!authorization.authorized) return authorization.response;
 
   const { slug, sectionKey } = await context.params;
-  if (!isContentPageSlug(slug)) {
+  if (!isValidContentPageSlug(slug)) {
     return NextResponse.json<ContentSectionMutationResponse>(
       { message: 'Content page not found.' },
       { status: 404 },

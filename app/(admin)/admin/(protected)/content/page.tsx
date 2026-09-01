@@ -1,4 +1,5 @@
 import { FileText, Layers3 } from 'lucide-react';
+import { AddPageForm } from '@/components/admin/AddPageForm';
 import { AddSectionPicker } from '@/components/admin/AddSectionPicker';
 import { CtaSectionEditor } from '@/components/admin/CtaSectionEditor';
 import { HeroSectionEditor } from '@/components/admin/HeroSectionEditor';
@@ -94,6 +95,8 @@ export default async function ContentPage({ searchParams }: ContentPageProps) {
               );
             })}
           </nav>
+
+          <AddPageForm />
         </aside>
 
         <section className="admin-card p-6" aria-labelledby="content-selected-heading">

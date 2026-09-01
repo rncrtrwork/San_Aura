@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { connectToDatabase } from '@/lib/db';
-import { isContentPageSlug, type ContentSectionMutationResponse } from '@/lib/contentManager';
+import { isValidContentPageSlug, type ContentSectionMutationResponse } from '@/lib/contentManager';
 import { Page, type PageSection } from '@/models/Page';
 import { logActivity } from '@/server/activity/logActivity';
 import { authorizeRequest } from '@/server/auth/authorization';
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
   if (!authorization.authorized) return authorization.response;
 
   const { slug, sectionKey } = await context.params;
-  if (!isContentPageSlug(slug)) {
+  if (!isValidContentPageSlug(slug)) {
     return NextResponse.json<ContentSectionMutationResponse>(
       { message: 'Content page not found.' },
       { status: 404 },

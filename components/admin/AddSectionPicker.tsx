@@ -2,11 +2,10 @@ import { FileImage, FileText, ListPlus, Milestone, MousePointerClick } from 'luc
 import {
   CONTENT_EDITOR_SECTION_TYPES,
   type ContentEditorSectionType,
-  type ContentPageSlug,
 } from '@/lib/contentManager';
 
 type AddSectionPickerProps = {
-  pageSlug: ContentPageSlug;
+  pageSlug: string;
   activeType: ContentEditorSectionType;
   editingSectionKey: string;
 };
@@ -32,7 +31,7 @@ const sectionTypeIcons = {
   cta: MousePointerClick,
 } as const;
 
-function pickerHref(pageSlug: ContentPageSlug, sectionType: ContentEditorSectionType): string {
+function pickerHref(pageSlug: string, sectionType: ContentEditorSectionType): string {
   const params = new URLSearchParams({ sectionType });
   if (pageSlug !== 'home') params.set('page', pageSlug);
   const query = params.toString();

@@ -5,14 +5,13 @@ import {
   parseContentPageSlug,
   type ContentOverview,
   type ContentPageListItem,
-  type ContentPageSlug,
   type ContentSectionDetail,
   type ContentSectionSummary,
 } from '@/lib/contentManager';
 import { Page, type PagePublishStatus, type PageSectionType } from '@/models/Page';
 
 type PageListItemLean = {
-  slug: ContentPageSlug;
+  slug: string;
   title: string;
   navLabel: string;
   publishStatus: PagePublishStatus;
@@ -109,11 +108,10 @@ function sectionDetail(
   };
 }
 
-function pageListItem(
-  slug: ContentPageSlug,
-  page: PageListItemLean | undefined,
-): ContentPageListItem {
-  const defaults = CONTENT_PAGE_DEFAULTS[slug];
+function pageListItem(slug: string, page: PageListItemLean | undefined): ContentPageListItem {
+  const defaults = CONTENT_PAGE_SLUGS.find((defaultSlug) => defaultSlug === slug)
+    ? CONTENT_PAGE_DEFAULTS[slug as keyof typeof CONTENT_PAGE_DEFAULTS]
+    : { title: page?.title ?? slug, navLabel: page?.navLabel ?? page?.title ?? slug };
   const sections = page?.sections?.map(sectionSummary) ?? [];
   const sectionTypes = sections.map((section) => section.type);
 
@@ -135,13 +133,18 @@ export async function getContentOverview(
 ): Promise<ContentOverview> {
   await connectToDatabase();
   const activeSlug = parseContentPageSlug(params.page);
-  const storedPages = await Page.find({ slug: { $in: [...CONTENT_PAGE_SLUGS] } })
+  const storedPages = await Page.find()
     .select(
       'slug title navLabel publishStatus lastEditedAt sections.key sections.type sections.active sections.hero.imageRef sections.hero.eyebrow sections.hero.heading sections.hero.body sections.richText.body sections.timeline.sectionLabel sections.timeline.backgroundColor sections.timeline.layout sections.timeline.showOnNavigation sections.timeline.items sections.cta.heading sections.cta.body sections.cta.buttonLabel sections.cta.buttonUrl sections.gallery.heading',
     )
     .lean<PageListItemLean[]>();
   const pagesBySlug = new Map(storedPages.map((page) => [page.slug, page]));
-  const pages = CONTENT_PAGE_SLUGS.map((slug) => pageListItem(slug, pagesBySlug.get(slug)));
+  const defaultPages = CONTENT_PAGE_SLUGS.map((slug) => pageListItem(slug, pagesBySlug.get(slug)));
+  const customPages = storedPages
+    .filter((page) => !CONTENT_PAGE_SLUGS.some((slug) => slug === page.slug))
+    .sort((left, right) => left.title.localeCompare(right.title))
+    .map((page) => pageListItem(page.slug, page));
+  const pages = [...defaultPages, ...customPages];
   const selectedPage = pages.find((page) => page.slug === activeSlug) ?? pages[0];
   const selectedPageSource = pagesBySlug.get(selectedPage.slug);
   const requestedSectionKey = typeof params.section === 'string' ? params.section : '';

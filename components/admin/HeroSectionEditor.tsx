@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { CloudinarySignatureResponse, CloudinaryWidgetConfig } from '@/lib/cloudinaryUpload';
 import type {
-  ContentPageSlug,
   ContentSectionDetail,
   ContentSectionMutationResponse,
   HeroSectionMutationRequest,
@@ -14,7 +13,7 @@ import type {
 import type { MediaAssetCreateRequest, MediaAssetMutationResponse } from '@/lib/mediaForms';
 
 type HeroSectionEditorProps = {
-  pageSlug: ContentPageSlug;
+  pageSlug: string;
   selectedSection: ContentSectionDetail | null;
 };
 

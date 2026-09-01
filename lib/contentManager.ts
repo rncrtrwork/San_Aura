@@ -1,5 +1,6 @@
 import type { PagePublishStatus, PageSectionType } from '@/models/Page';
 
+export const CONTENT_PAGE_PUBLISH_STATUSES = ['draft', 'published'] as const;
 export const CONTENT_EDITOR_SECTION_TYPES = ['hero', 'richText', 'timeline', 'cta'] as const;
 export const CONTENT_PAGE_SLUGS = [
   'home',
@@ -14,7 +15,7 @@ export type ContentPageSlug = (typeof CONTENT_PAGE_SLUGS)[number];
 export type ContentEditorSectionType = (typeof CONTENT_EDITOR_SECTION_TYPES)[number];
 
 export type ContentPageListItem = {
-  slug: ContentPageSlug;
+  slug: string;
   title: string;
   navLabel: string;
   publishStatus: PagePublishStatus;
@@ -26,7 +27,7 @@ export type ContentPageListItem = {
 };
 
 export type ContentOverview = {
-  activeSlug: ContentPageSlug;
+  activeSlug: string;
   pages: ContentPageListItem[];
   selectedPage: ContentPageListItem;
   selectedSection: ContentSectionDetail | null;
@@ -142,13 +143,41 @@ export type ContentSectionMutationResponse = {
   section?: ContentSectionSummary;
 };
 
-export function parseContentPageSlug(value: string | string[] | undefined): ContentPageSlug {
-  const slug = typeof value === 'string' ? value : '';
-  return CONTENT_PAGE_SLUGS.find((entry) => entry === slug) ?? 'home';
+export type ContentPageCreateRequest = {
+  title: string;
+  slug: string;
+  navLabel: string;
+  navVisibility: boolean;
+  seoTitle: string;
+  metaDescription: string;
+  publishStatus: PagePublishStatus;
+};
+
+export type ContentPageCreateResponse = {
+  page?: ContentPageListItem;
+  message?: string;
+};
+
+export function normalizeContentPageSlug(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 160);
+}
+
+export function parseContentPageSlug(value: string | string[] | undefined): string {
+  const slug = typeof value === 'string' ? normalizeContentPageSlug(value) : '';
+  return slug || 'home';
 }
 
 export function isContentPageSlug(value: string): value is ContentPageSlug {
   return CONTENT_PAGE_SLUGS.some((entry) => entry === value);
+}
+
+export function isValidContentPageSlug(value: string): boolean {
+  return normalizeContentPageSlug(value) === value && value.length > 0;
 }
 
 export function parseContentEditorSectionType(

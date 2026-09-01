@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import {
   CONTENT_PAGE_DEFAULTS,
   isContentPageSlug,
+  isValidContentPageSlug,
   type ContentSectionMutationResponse,
   type TimelineSectionMutationRequest,
 } from '@/lib/contentManager';
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
   if (!authorization.authorized) return authorization.response;
 
   const { slug } = await context.params;
-  if (!isContentPageSlug(slug)) {
+  if (!isValidContentPageSlug(slug)) {
     return NextResponse.json<ContentSectionMutationResponse>(
       { message: 'Content page not found.' },
       { status: 404 },
@@ -78,9 +79,18 @@ export async function POST(request: NextRequest, context: RouteContext) {
   }
 
   await connectToDatabase();
-  const defaults = CONTENT_PAGE_DEFAULTS[slug];
+  const storedPage = await Page.findOne({ slug }).select('slug title sections lastEditedAt');
+  if (!storedPage && !isContentPageSlug(slug)) {
+    return NextResponse.json<ContentSectionMutationResponse>(
+      { message: 'Content page not found.' },
+      { status: 404 },
+    );
+  }
+  const defaults = isContentPageSlug(slug)
+    ? CONTENT_PAGE_DEFAULTS[slug]
+    : { title: slug, navLabel: slug };
   const page =
-    (await Page.findOne({ slug }).select('slug title sections lastEditedAt')) ??
+    storedPage ??
     new Page({
       slug,
       title: defaults.title,

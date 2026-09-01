@@ -4,7 +4,6 @@ import { LoaderCircle, Plus, Save, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type {
-  ContentPageSlug,
   ContentSectionDetail,
   ContentSectionMutationResponse,
   ContentTimelineItem,
@@ -12,7 +11,7 @@ import type {
 } from '@/lib/contentManager';
 
 type TimelineSectionEditorProps = {
-  pageSlug: ContentPageSlug;
+  pageSlug: string;
   selectedSection: ContentSectionDetail | null;
 };
 

@@ -4,6 +4,8 @@ import {
   CONTENT_PAGE_DEFAULTS,
   CONTENT_PAGE_SLUGS,
   isContentPageSlug,
+  isValidContentPageSlug,
+  normalizeContentPageSlug,
   parseContentEditorSectionType,
   parseContentPageSlug,
 } from '@/lib/contentManager';
@@ -13,6 +15,7 @@ import {
 } from '@/server/content/sectionValidation';
 import { validateCtaSection } from '@/server/content/ctaSectionValidation';
 import { validateHeroSection } from '@/server/content/heroSectionValidation';
+import { validateContentPage } from '@/server/content/pageValidation';
 import { validateRichTextSection } from '@/server/content/richTextSectionValidation';
 import { validateTimelineSection } from '@/server/content/timelineSectionValidation';
 
@@ -21,8 +24,8 @@ test('content page parser accepts known CMS pages', () => {
   assert.equal(parseContentPageSlug('first-visit'), 'first-visit');
 });
 
-test('content page parser defaults to home for invalid input', () => {
-  assert.equal(parseContentPageSlug('rates'), 'home');
+test('content page parser defaults to home for non-slug input', () => {
+  assert.equal(parseContentPageSlug('@@@'), 'home');
   assert.equal(parseContentPageSlug(['history']), 'home');
   assert.equal(parseContentPageSlug(undefined), 'home');
 });
@@ -42,6 +45,13 @@ test('content page defaults include the required shell pages', () => {
 test('content page slug guard narrows valid page slugs', () => {
   assert.equal(isContentPageSlug('contact'), true);
   assert.equal(isContentPageSlug('book-online'), false);
+  assert.equal(isValidContentPageSlug('seasonal-rates'), true);
+  assert.equal(isValidContentPageSlug('Seasonal Rates'), false);
+});
+
+test('content page slug normalization supports custom pages', () => {
+  assert.equal(normalizeContentPageSlug('Seasonal Rates & Fees'), 'seasonal-rates-fees');
+  assert.equal(parseContentPageSlug(' Seasonal Rates '), 'seasonal-rates');
 });
 
 test('content editor section parser accepts implemented editor types', () => {
@@ -226,6 +236,38 @@ test('cta section validation rejects unsafe button links', () => {
     buttonLabel: 'Book a Stay',
     buttonUrl: 'javascript:alert(1)',
     active: true,
+  });
+
+  assert.equal(result.valid, false);
+});
+
+test('content page validation accepts custom page details', () => {
+  const result = validateContentPage({
+    title: 'Seasonal Rates',
+    slug: '',
+    navLabel: '',
+    navVisibility: true,
+    seoTitle: 'Seasonal Rates',
+    metaDescription: 'Review seasonal rates at Sun Aura Resort.',
+    publishStatus: 'draft',
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.slug, 'seasonal-rates');
+    assert.equal(result.data.navLabel, 'Seasonal Rates');
+  }
+});
+
+test('content page validation rejects invalid publish status', () => {
+  const result = validateContentPage({
+    title: 'Seasonal Rates',
+    slug: '',
+    navLabel: '',
+    navVisibility: true,
+    seoTitle: '',
+    metaDescription: '',
+    publishStatus: 'archived',
   });
 
   assert.equal(result.valid, false);
