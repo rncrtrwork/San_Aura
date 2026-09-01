@@ -5,6 +5,7 @@ import {
   memberBalanceLabel,
   memberCurrencyLabel,
   memberDateLabel,
+  memberDocumentStatusLabel,
   memberRenewalMonthLabel,
   parseMemberPortalTab,
 } from '@/lib/memberPortal';
@@ -312,7 +313,13 @@ test('member portal dashboard helpers format balance and renewal month', () => {
 test('member portal tabs and display helpers format member ledger values', () => {
   assert.equal(parseMemberPortalTab('payments'), 'payments');
   assert.equal(parseMemberPortalTab('electric'), 'electric');
+  assert.equal(parseMemberPortalTab('documents'), 'documents');
   assert.equal(parseMemberPortalTab('bad'), 'dashboard');
   assert.equal(memberCurrencyLabel(42.5), '$42.50');
   assert.equal(memberDateLabel('2026-09-01T12:00:00.000Z'), 'Sep 1, 2026');
+});
+
+test('member document status labels flag missing and invalid expiry dates', () => {
+  assert.equal(memberDocumentStatusLabel(null), 'On file');
+  assert.equal(memberDocumentStatusLabel('not-a-date'), 'Date unavailable');
 });

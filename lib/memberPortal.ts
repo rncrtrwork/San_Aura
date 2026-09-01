@@ -13,7 +13,7 @@ export type MemberPortalDashboard = {
   balance: number;
 };
 
-export const MEMBER_PORTAL_TABS = ['dashboard', 'payments', 'electric'] as const;
+export const MEMBER_PORTAL_TABS = ['dashboard', 'payments', 'electric', 'documents'] as const;
 
 export type MemberPortalTab = (typeof MEMBER_PORTAL_TABS)[number];
 
@@ -21,6 +21,7 @@ export const MEMBER_PORTAL_TAB_DEFINITIONS: Array<{ value: MemberPortalTab; labe
   { value: 'dashboard', label: 'Dashboard' },
   { value: 'payments', label: 'Payment History' },
   { value: 'electric', label: 'Electric Billing' },
+  { value: 'documents', label: 'Documents' },
 ];
 
 export const MEMBER_STATUS_LABELS: Record<MemberStatus, string> = {
@@ -61,6 +62,16 @@ export function memberDateLabel(value: string): string {
     day: 'numeric',
     year: 'numeric',
   }).format(date);
+}
+
+export function memberDocumentStatusLabel(expiresAt: string | null): string {
+  if (!expiresAt) return 'On file';
+  const expiration = new Date(expiresAt);
+  if (Number.isNaN(expiration.getTime())) return 'Date unavailable';
+  const daysRemaining = Math.ceil((expiration.getTime() - Date.now()) / 86_400_000);
+  if (daysRemaining < 0) return 'Expired';
+  if (daysRemaining <= 30) return 'Renews soon';
+  return 'Current';
 }
 
 export function memberRenewalMonthLabel(month: number): string {
