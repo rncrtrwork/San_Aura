@@ -278,14 +278,14 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 ### Phase 6 — Events
 
-- [ ] Build Events list page with status tabs (All/Drafts/Scheduled/Published/Past) and date-range filter
-- [ ] Build "Create Event" form (title, date/time, location, capacity, registration required, description, image)
-- [ ] Build Event edit panel matching mockup (image header with "Change Image", details form, mini calendar date picker)
-- [ ] Wire Cloudinary upload for event image
-- [ ] Build "Feature on homepage" and "Send reminder" toggles
-- [ ] Build Registrations count widget + progress bar on event edit panel
-- [ ] Build "Save Draft" vs "Publish Changes" flow with distinct status values
-- [ ] Build public-facing event registration capture (creates `EventRegistration`, decrements capacity)
+- [x] Build Events list page with status tabs (All/Drafts/Scheduled/Published/Past) and date-range filter
+- [x] Build "Create Event" form (title, date/time, location, capacity, registration required, description, image)
+- [x] Build Event edit panel matching mockup (image header with "Change Image", details form, mini calendar date picker)
+- [x] Wire Cloudinary upload for event image
+- [x] Build "Feature on homepage" and "Send reminder" toggles
+- [x] Build Registrations count widget + progress bar on event edit panel
+- [x] Build "Save Draft" vs "Publish Changes" flow with distinct status values
+- [x] Build public-facing event registration capture (creates `EventRegistration`, decrements capacity)
 
 ### Phase 7 — Gallery / Media Manager
 
