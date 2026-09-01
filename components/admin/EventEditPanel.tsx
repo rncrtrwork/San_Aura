@@ -50,6 +50,18 @@ function capacityValue(value: string): number | null {
   return Number.isInteger(parsed) ? parsed : null;
 }
 
+function submittedStatus(
+  formEvent: FormEvent<HTMLFormElement>,
+  currentStatus: EventListItem['status'],
+): EventListItem['status'] {
+  const nativeEvent = formEvent.nativeEvent as SubmitEvent;
+  const submitter =
+    nativeEvent.submitter instanceof HTMLButtonElement ? nativeEvent.submitter : null;
+  if (submitter?.value === 'draft') return 'draft';
+  if (submitter?.value === 'published') return 'published';
+  return currentStatus;
+}
+
 function daysForMiniCalendar(month: CalendarMonth): Date[] {
   const firstDay = new Date(Date.UTC(month.year, month.monthIndex, 1));
   const dayCount = new Date(Date.UTC(month.year, month.monthIndex + 1, 0)).getUTCDate();
@@ -94,6 +106,7 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
   function buildPayload(
     form: FormData,
     image: { url: string; publicId: string },
+    status: EventListItem['status'],
   ): EventMutationRequest {
     const date = fieldValue(form, 'date');
     const startTime = fieldValue(form, 'startTime');
@@ -110,7 +123,7 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
       imagePublicId: image.publicId,
       featureOnHomepage: form.get('featureOnHomepage') === 'on',
       sendReminder: form.get('sendReminder') === 'on',
-      status: event.status,
+      status,
     };
   }
 
@@ -133,10 +146,14 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
     setError('');
     setMessage('');
     const form = new FormData(formEvent.currentTarget);
-    const payload = buildPayload(form, {
-      url: fieldValue(form, 'imageUrl'),
-      publicId: imagePublicId,
-    });
+    const payload = buildPayload(
+      form,
+      {
+        url: fieldValue(form, 'imageUrl'),
+        publicId: imagePublicId,
+      },
+      submittedStatus(formEvent, event.status),
+    );
 
     try {
       const result = await saveEvent(payload);
@@ -153,10 +170,14 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
     if (!formRef.current) {
       throw new Error('Event form is unavailable.');
     }
-    const payload = buildPayload(new FormData(formRef.current), {
-      url: info.secure_url,
-      publicId: info.public_id,
-    });
+    const payload = buildPayload(
+      new FormData(formRef.current),
+      {
+        url: info.secure_url,
+        publicId: info.public_id,
+      },
+      event.status,
+    );
     await saveEvent(payload);
     setImageUrl(info.secure_url);
     setImagePublicId(info.public_id);
@@ -475,6 +496,17 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
       <div className="flex justify-end">
         <button
           type="submit"
+          name="status"
+          value="draft"
+          disabled={submitting}
+          className="mr-2 inline-flex h-11 items-center gap-2 rounded-lg border border-admin-border px-5 text-sm font-bold text-forest-900 hover:border-admin-accent hover:text-admin-accent disabled:opacity-60"
+        >
+          Save Draft
+        </button>
+        <button
+          type="submit"
+          name="status"
+          value="published"
           disabled={submitting}
           className="inline-flex h-11 items-center gap-2 rounded-lg bg-admin-sidebar px-5 text-sm font-bold text-white hover:bg-admin-sidebar-active disabled:opacity-60"
         >
@@ -483,7 +515,7 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
           ) : (
             <Save aria-hidden="true" className="size-4" />
           )}
-          Save Details
+          Publish Changes
         </button>
       </div>
     </form>
