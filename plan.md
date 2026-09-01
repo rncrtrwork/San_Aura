@@ -361,7 +361,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 ### Phase 12 — Member Self-Service Portal
 
-- [ ] Build member auth (email + password or magic link) separate from staff auth
+- [x] Build member auth (email + password or magic link) separate from staff auth
 - [ ] Build member dashboard: current balance, membership type, status, renewal month
 - [ ] Build member "Payment History" tab (Payments filtered to that member, no staff notes)
 - [ ] Build member "Electric Billing" tab (ElectricReading + resulting charges history)

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { isValidMemberEmail, normalizeMemberEmail } from '@/lib/memberAuth';
 import { publicAddressLines, publicMailtoHref, publicTelHref } from '@/lib/publicContact';
 import {
   calculatePublicReservationTotal,
@@ -286,4 +287,10 @@ test('public redirect map preserves legacy Weebly URLs as 301s', () => {
     ).map((redirect) => redirect.destination),
     ['/', '/book', '/faq', '/rules', '/resort-map', '/gallery', '/stays-and-rates', '/our-story'],
   );
+});
+
+test('member auth normalizes and validates member email input', () => {
+  assert.equal(normalizeMemberEmail(' Member@Example.COM '), 'member@example.com');
+  assert.equal(isValidMemberEmail('member@example.com'), true);
+  assert.equal(isValidMemberEmail('member'), false);
 });
