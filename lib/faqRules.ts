@@ -1,6 +1,8 @@
 export const FAQ_RULE_TABS = ['faq', 'rules', 'policies'] as const;
+export const FAQ_PUBLISH_STATUSES = ['draft', 'published'] as const;
 
 export type FaqRuleTab = (typeof FAQ_RULE_TABS)[number];
+export type FaqPublishStatus = (typeof FAQ_PUBLISH_STATUSES)[number];
 
 export type FaqRuleTabCounts = Record<FaqRuleTab, number>;
 
@@ -44,6 +46,10 @@ export type FaqItemCreateRequest = {
   answer: string;
   relatedLinks: FaqRelatedLinkInput[];
   displayOrder: number;
+  status: FaqPublishStatus;
+  seoTitle: string;
+  metaDescription: string;
+  featured: boolean;
 };
 
 export type FaqItemCreateResponse = {

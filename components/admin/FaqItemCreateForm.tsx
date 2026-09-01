@@ -6,9 +6,11 @@ import { useMemo, useRef, useState } from 'react';
 import type {
   FaqItemCreateRequest,
   FaqItemCreateResponse,
+  FaqPublishStatus,
   FaqRelatedLinkInput,
   FaqRuleCategorySummary,
 } from '@/lib/faqRules';
+import { FAQ_PUBLISH_STATUSES } from '@/lib/faqRules';
 import { richTextReplacement, type RichTextAction } from '@/lib/richTextToolbar';
 import { RichTextToolbar } from '@/components/admin/RichTextToolbar';
 
@@ -40,6 +42,10 @@ export function FaqItemCreateForm({ categories }: FaqItemCreateFormProps) {
   const [slug, setSlug] = useState('');
   const [answer, setAnswer] = useState('');
   const [displayOrder, setDisplayOrder] = useState(0);
+  const [status, setStatus] = useState<FaqPublishStatus>('draft');
+  const [seoTitle, setSeoTitle] = useState('');
+  const [metaDescription, setMetaDescription] = useState('');
+  const [featured, setFeatured] = useState(false);
   const [relatedLinks, setRelatedLinks] = useState<FaqRelatedLinkInput[]>(emptyRelatedLinks);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState('');
@@ -80,6 +86,10 @@ export function FaqItemCreateForm({ categories }: FaqItemCreateFormProps) {
       answer,
       relatedLinks,
       displayOrder,
+      status,
+      seoTitle,
+      metaDescription,
+      featured,
     };
 
     try {
@@ -96,6 +106,10 @@ export function FaqItemCreateForm({ categories }: FaqItemCreateFormProps) {
       setSlug('');
       setAnswer('');
       setDisplayOrder(0);
+      setStatus('draft');
+      setSeoTitle('');
+      setMetaDescription('');
+      setFeatured(false);
       setRelatedLinks(emptyRelatedLinks);
       setNotice(`Created FAQ item: ${result.item.question}`);
       router.refresh();
@@ -176,6 +190,69 @@ export function FaqItemCreateForm({ categories }: FaqItemCreateFormProps) {
             className="mt-2 h-11 w-full rounded-lg border border-admin-border bg-white px-3 text-sm text-forest-900"
           />
         </label>
+      </div>
+
+      <div className="mt-4 rounded-lg border border-admin-border bg-white p-4">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-admin-muted">Publishing</p>
+        <div className="mt-4 grid gap-4 lg:grid-cols-2">
+          <label>
+            <span className="text-xs font-bold uppercase tracking-[0.14em] text-admin-muted">
+              Status
+            </span>
+            <select
+              value={status}
+              onChange={(event) => setStatus(event.target.value as FaqPublishStatus)}
+              className="mt-2 h-11 w-full rounded-lg border border-admin-border bg-white px-3 text-sm text-forest-900"
+            >
+              {FAQ_PUBLISH_STATUSES.map((entry) => (
+                <option key={entry} value={entry}>
+                  {entry.charAt(0).toUpperCase()}
+                  {entry.slice(1)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="flex items-start gap-3 rounded-lg bg-cream-alt p-3 text-sm text-forest-900">
+            <input
+              type="checkbox"
+              checked={featured}
+              onChange={(event) => setFeatured(event.target.checked)}
+              className="mt-1 size-4 rounded border-admin-border text-admin-accent"
+            />
+            <span>
+              <span className="font-bold">Featured FAQ</span>
+              <span className="mt-1 block text-xs leading-relaxed text-admin-muted">
+                Pin this answer near the top of the public FAQ once published.
+              </span>
+            </span>
+          </label>
+        </div>
+        <div className="mt-4 grid gap-4 lg:grid-cols-2">
+          <label>
+            <span className="flex justify-between gap-3 text-xs font-bold uppercase tracking-[0.14em] text-admin-muted">
+              SEO title
+              <span>{seoTitle.length}/60</span>
+            </span>
+            <input
+              value={seoTitle}
+              onChange={(event) => setSeoTitle(event.target.value.slice(0, 60))}
+              maxLength={60}
+              className="mt-2 h-11 w-full rounded-lg border border-admin-border bg-white px-3 text-sm text-forest-900"
+            />
+          </label>
+          <label>
+            <span className="flex justify-between gap-3 text-xs font-bold uppercase tracking-[0.14em] text-admin-muted">
+              Meta description
+              <span>{metaDescription.length}/160</span>
+            </span>
+            <textarea
+              value={metaDescription}
+              onChange={(event) => setMetaDescription(event.target.value.slice(0, 160))}
+              maxLength={160}
+              className="mt-2 min-h-20 w-full rounded-lg border border-admin-border bg-white px-3 py-2 text-sm text-forest-900"
+            />
+          </label>
+        </div>
       </div>
 
       <label className="mt-4 block">

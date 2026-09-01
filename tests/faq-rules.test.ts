@@ -46,6 +46,10 @@ test('faq item validation accepts a complete draft item', () => {
     answer: '<p>Check-in begins at 2 PM.</p>',
     relatedLinks: [{ label: 'Rates', url: 'https://sunauraresort.net/rates' }],
     displayOrder: 10,
+    status: 'published',
+    seoTitle: 'Sun Aura Resort check-in',
+    metaDescription: 'Learn when check-in begins at Sun Aura Resort.',
+    featured: true,
   });
 
   assert.equal(result.valid, true);
@@ -62,6 +66,27 @@ test('faq item validation rejects incomplete related links', () => {
     answer: 'Check-in begins at 2 PM.',
     relatedLinks: [{ label: 'Rates', url: 'not-a-url' }],
     displayOrder: 10,
+    status: 'draft',
+    seoTitle: '',
+    metaDescription: '',
+    featured: false,
+  });
+
+  assert.equal(result.valid, false);
+});
+
+test('faq item validation rejects invalid publishing status', () => {
+  const result = validateFaqItemCreate({
+    category: 'Reservations',
+    question: 'What time is check-in?',
+    slug: '',
+    answer: 'Check-in begins at 2 PM.',
+    relatedLinks: [],
+    displayOrder: 10,
+    status: 'archived',
+    seoTitle: '',
+    metaDescription: '',
+    featured: false,
   });
 
   assert.equal(result.valid, false);

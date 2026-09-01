@@ -43,10 +43,10 @@ export const POST = requirePermission('content.write', async (request: NextReque
     answer: validation.data.answer,
     relatedLinks: validation.data.relatedLinks,
     displayOrder: validation.data.displayOrder,
-    status: 'draft',
-    featured: false,
-    seoTitle: '',
-    metaDescription: '',
+    status: validation.data.status,
+    featured: validation.data.featured,
+    seoTitle: validation.data.seoTitle,
+    metaDescription: validation.data.metaDescription,
     revisionHistory: [
       {
         title: validation.data.question,
@@ -68,6 +68,7 @@ export const POST = requirePermission('content.write', async (request: NextReque
       slug: item.slug,
       status: item.status,
       displayOrder: item.displayOrder,
+      featured: item.featured,
     },
   });
 

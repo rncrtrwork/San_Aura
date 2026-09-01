@@ -1,8 +1,16 @@
-import type { FaqItemCreateRequest, FaqRelatedLinkInput } from '@/lib/faqRules';
+import {
+  FAQ_PUBLISH_STATUSES,
+  type FaqItemCreateRequest,
+  type FaqRelatedLinkInput,
+} from '@/lib/faqRules';
 
 export type FaqItemValidationResult =
   | { valid: true; data: FaqItemCreateRequest }
   | { valid: false; message: string };
+
+type FaqItemCreateInput = Partial<Omit<FaqItemCreateRequest, 'status'>> & {
+  status?: string;
+};
 
 function textValue(value: string, maxLength: number): string {
   return value.trim().slice(0, maxLength);
@@ -45,9 +53,7 @@ function relatedLinks(input: FaqRelatedLinkInput[] | undefined): FaqRelatedLinkI
   return links;
 }
 
-export function validateFaqItemCreate(
-  input: Partial<FaqItemCreateRequest> | null,
-): FaqItemValidationResult {
+export function validateFaqItemCreate(input: FaqItemCreateInput | null): FaqItemValidationResult {
   if (!input || typeof input !== 'object') {
     return { valid: false, message: 'FAQ item details are required.' };
   }
@@ -62,6 +68,12 @@ export function validateFaqItemCreate(
     typeof requestedDisplayOrder === 'number' && Number.isInteger(requestedDisplayOrder)
       ? requestedDisplayOrder
       : 0;
+  const status = input.status;
+  const seoTitle = typeof input.seoTitle === 'string' ? textValue(input.seoTitle, 60) : '';
+  const metaDescription =
+    typeof input.metaDescription === 'string' ? textValue(input.metaDescription, 160) : '';
+  const featured = input.featured === true;
+  const validStatus = FAQ_PUBLISH_STATUSES.find((entry) => entry === status);
   const parsedLinks = relatedLinks(input.relatedLinks);
 
   if (!category || !question || !answer) {
@@ -72,6 +84,9 @@ export function validateFaqItemCreate(
   }
   if (displayOrder < 0 || displayOrder > 100000) {
     return { valid: false, message: 'Display order must be between 0 and 100000.' };
+  }
+  if (!validStatus) {
+    return { valid: false, message: 'Select a valid publishing status.' };
   }
   if (!parsedLinks) {
     return { valid: false, message: 'Related links must include labels and valid URLs.' };
@@ -86,6 +101,10 @@ export function validateFaqItemCreate(
       answer,
       relatedLinks: parsedLinks,
       displayOrder,
+      status: validStatus,
+      seoTitle,
+      metaDescription,
+      featured,
     },
   };
 }
