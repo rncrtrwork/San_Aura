@@ -1,0 +1,328 @@
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import {
+  CONTENT_PAGE_DEFAULTS,
+  CONTENT_PAGE_SLUGS,
+  isContentPageSlug,
+  isValidContentPageSlug,
+  normalizeContentPageSlug,
+  parseContentEditorSectionType,
+  parseContentPageSlug,
+} from '@/lib/contentManager';
+import { historyPageSeedMetadata, historyTimelineSection } from '@/server/content/historyPageSeed';
+import {
+  validateContentSectionOrder,
+  validateContentSectionStatus,
+} from '@/server/content/sectionValidation';
+import { validateCtaSection } from '@/server/content/ctaSectionValidation';
+import { validateHeroSection } from '@/server/content/heroSectionValidation';
+import { validateContentPage } from '@/server/content/pageValidation';
+import { contentPagePublishSnapshot } from '@/server/content/pagePublishSnapshot';
+import { validateRichTextSection } from '@/server/content/richTextSectionValidation';
+import { sanitizeRichTextPreviewHtml } from '@/server/content/richTextPreview';
+import { validateTimelineSection } from '@/server/content/timelineSectionValidation';
+
+test('content page parser accepts known CMS pages', () => {
+  assert.equal(parseContentPageSlug('history'), 'history');
+  assert.equal(parseContentPageSlug('first-visit'), 'first-visit');
+});
+
+test('content page parser defaults to home for non-slug input', () => {
+  assert.equal(parseContentPageSlug('@@@'), 'home');
+  assert.equal(parseContentPageSlug(['history']), 'home');
+  assert.equal(parseContentPageSlug(undefined), 'home');
+});
+
+test('content page defaults include the required shell pages', () => {
+  assert.deepEqual(CONTENT_PAGE_SLUGS, [
+    'home',
+    'our-story',
+    'history',
+    'first-visit',
+    'contact',
+    'footer',
+  ]);
+  assert.equal(CONTENT_PAGE_DEFAULTS.history.title, 'History');
+});
+
+test('content page slug guard narrows valid page slugs', () => {
+  assert.equal(isContentPageSlug('contact'), true);
+  assert.equal(isContentPageSlug('book-online'), false);
+  assert.equal(isValidContentPageSlug('seasonal-rates'), true);
+  assert.equal(isValidContentPageSlug('Seasonal Rates'), false);
+});
+
+test('content page slug normalization supports custom pages', () => {
+  assert.equal(normalizeContentPageSlug('Seasonal Rates & Fees'), 'seasonal-rates-fees');
+  assert.equal(parseContentPageSlug(' Seasonal Rates '), 'seasonal-rates');
+});
+
+test('content editor section parser accepts implemented editor types', () => {
+  assert.equal(parseContentEditorSectionType('hero'), 'hero');
+  assert.equal(parseContentEditorSectionType('richText'), 'richText');
+  assert.equal(parseContentEditorSectionType('gallery'), null);
+  assert.equal(parseContentEditorSectionType(['hero']), null);
+});
+
+test('content section order validation accepts unique keys', () => {
+  const result = validateContentSectionOrder({
+    sectionKeys: ['hero-main', 'history-timeline', 'footer-cta'],
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.deepEqual(result.data.sectionKeys, ['hero-main', 'history-timeline', 'footer-cta']);
+  }
+});
+
+test('content section order validation rejects duplicate keys', () => {
+  const result = validateContentSectionOrder({
+    sectionKeys: ['hero-main', 'hero-main'],
+  });
+
+  assert.equal(result.valid, false);
+});
+
+test('content section status validation requires a boolean active state', () => {
+  assert.equal(validateContentSectionStatus({ active: true }).valid, true);
+  assert.equal(validateContentSectionStatus({}).valid, false);
+});
+
+test('hero section validation accepts H1 copy and optional media id', () => {
+  const result = validateHeroSection({
+    sectionKey: 'Hero Main',
+    imageId: '',
+    eyebrow: 'Welcome',
+    heading: 'A quiet resort getaway',
+    body: 'Relax under the trees.',
+    active: true,
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.sectionKey, 'hero-main');
+  }
+});
+
+test('hero section validation rejects missing H1 copy and invalid image ids', () => {
+  assert.equal(
+    validateHeroSection({
+      sectionKey: '',
+      imageId: '',
+      eyebrow: '',
+      heading: '',
+      body: '',
+      active: true,
+    }).valid,
+    false,
+  );
+  assert.equal(
+    validateHeroSection({
+      sectionKey: '',
+      imageId: 'not-an-object-id',
+      eyebrow: '',
+      heading: 'Valid heading',
+      body: '',
+      active: true,
+    }).valid,
+    false,
+  );
+});
+
+test('rich text section validation accepts formatted body copy', () => {
+  const result = validateRichTextSection({
+    sectionKey: 'Intro Copy',
+    body: '<p>Plan your first quiet weekend at Sun Aura.</p>',
+    active: true,
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.sectionKey, 'intro-copy');
+  }
+});
+
+test('rich text section validation rejects empty body copy', () => {
+  assert.equal(
+    validateRichTextSection({
+      sectionKey: '',
+      body: '',
+      active: true,
+    }).valid,
+    false,
+  );
+});
+
+test('timeline section validation accepts complete timeline items', () => {
+  const result = validateTimelineSection({
+    sectionKey: 'History Timeline',
+    sectionLabel: 'Resort History',
+    backgroundColor: 'ivory',
+    layout: 'alternating',
+    showOnNavigation: true,
+    active: true,
+    items: [
+      {
+        year: '1998',
+        title: 'The resort opens',
+        description: 'Sun Aura welcomes its first seasonal guests.',
+      },
+    ],
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.sectionKey, 'history-timeline');
+  }
+});
+
+test('timeline section validation rejects incomplete timeline items', () => {
+  const result = validateTimelineSection({
+    sectionKey: '',
+    sectionLabel: 'History',
+    backgroundColor: 'ivory',
+    layout: 'alternating',
+    showOnNavigation: true,
+    active: true,
+    items: [{ year: '1998', title: '', description: 'Missing title.' }],
+  });
+
+  assert.equal(result.valid, false);
+});
+
+test('timeline section validation preserves layout controls', () => {
+  const result = validateTimelineSection({
+    sectionKey: 'Stacked Timeline',
+    sectionLabel: 'Milestones',
+    backgroundColor: 'forest',
+    layout: 'stacked',
+    showOnNavigation: false,
+    active: true,
+    items: [
+      {
+        year: '2026',
+        title: 'New website rebuild',
+        description: 'The content system begins powering public pages.',
+      },
+    ],
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.backgroundColor, 'forest');
+    assert.equal(result.data.layout, 'stacked');
+    assert.equal(result.data.showOnNavigation, false);
+  }
+});
+
+test('cta section validation accepts relative button links', () => {
+  const result = validateCtaSection({
+    sectionKey: 'Booking CTA',
+    heading: 'Ready to visit?',
+    body: 'Send the office your preferred dates.',
+    buttonLabel: 'Book a Stay',
+    buttonUrl: '/reservations',
+    active: true,
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.sectionKey, 'booking-cta');
+  }
+});
+
+test('cta section validation rejects unsafe button links', () => {
+  const result = validateCtaSection({
+    sectionKey: '',
+    heading: 'Ready to visit?',
+    body: '',
+    buttonLabel: 'Book a Stay',
+    buttonUrl: 'javascript:alert(1)',
+    active: true,
+  });
+
+  assert.equal(result.valid, false);
+});
+
+test('content page validation accepts custom page details', () => {
+  const result = validateContentPage({
+    title: 'Seasonal Rates',
+    slug: '',
+    navLabel: '',
+    navVisibility: true,
+    seoTitle: 'Seasonal Rates',
+    metaDescription: 'Review seasonal rates at Sun Aura Resort.',
+    publishStatus: 'draft',
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.slug, 'seasonal-rates');
+    assert.equal(result.data.navLabel, 'Seasonal Rates');
+  }
+});
+
+test('content page validation rejects invalid publish status', () => {
+  const result = validateContentPage({
+    title: 'Seasonal Rates',
+    slug: '',
+    navLabel: '',
+    navVisibility: true,
+    seoTitle: '',
+    metaDescription: '',
+    publishStatus: 'archived',
+  });
+
+  assert.equal(result.valid, false);
+});
+
+test('rich text preview sanitizer preserves safe formatting', () => {
+  const result = sanitizeRichTextPreviewHtml(
+    '<h2>Welcome</h2><p>Plan a <strong>quiet</strong> stay.</p>',
+  );
+
+  assert.equal(result, '<h2>Welcome</h2><p>Plan a <strong>quiet</strong> stay.</p>');
+});
+
+test('rich text preview sanitizer strips unsafe markup', () => {
+  const result = sanitizeRichTextPreviewHtml(
+    '<p onclick="alert(1)">Hello<script>alert(1)</script><a href="javascript:alert(1)">link</a></p>',
+  );
+
+  assert.equal(result, '<p>Helloalert(1)<a href="#" target="_blank" rel="noreferrer">link</a></p>');
+});
+
+test('content publish snapshot summarizes active draft sections', () => {
+  const snapshot = contentPagePublishSnapshot({
+    slug: 'history',
+    title: 'History',
+    publishStatus: 'draft',
+    lastEditedAt: new Date('2026-09-01T12:00:00.000Z'),
+    sections: [
+      { key: 'hero-history', type: 'hero', active: true },
+      { key: 'history-timeline', type: 'timeline', active: true },
+      { key: 'footer-cta', type: 'cta', active: false },
+    ],
+  });
+
+  assert.equal(snapshot.slug, 'history');
+  assert.equal(snapshot.sectionCount, 3);
+  assert.equal(snapshot.activeSectionCount, 2);
+  assert.deepEqual(snapshot.sectionTypes, ['hero', 'timeline', 'cta']);
+  assert.deepEqual(snapshot.activeSectionKeys, ['hero-history', 'history-timeline']);
+});
+
+test('history page seed creates a dedicated active timeline section', () => {
+  const metadata = historyPageSeedMetadata();
+  const section = historyTimelineSection();
+
+  assert.equal(metadata.slug, 'history');
+  assert.equal(metadata.publishStatus, 'draft');
+  assert.equal(section.key, 'history-timeline');
+  assert.equal(section.type, 'timeline');
+  assert.equal(section.active, true);
+  assert.equal(section.timeline?.layout, 'alternating');
+  assert.equal(section.timeline?.showOnNavigation, true);
+  assert.equal(section.timeline?.items.length, 5);
+  assert.equal(section.timeline?.items[0].year, '1930s');
+});

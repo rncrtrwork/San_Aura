@@ -313,19 +313,19 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 ### Phase 9 — Website Content Manager
 
-- [ ] Build Content page shell: left Pages list (Home/Our Story/History/First Visit/Contact/Footer) with last-edited timestamps
-- [ ] Build page section list (draggable order) with per-section active toggle, edit, duplicate, delete
-- [ ] Build Hero section editor (image upload, H1 text)
-- [ ] Build Rich Text section editor
-- [ ] Build Timeline section editor: Section Label + repeatable Year/Title/Description items with Add Item
-- [ ] Build Timeline layout controls (Background color, Layout alternating/stacked, Show on navigation)
-- [ ] Build CTA section editor
-- [ ] Build "Add Section" picker (choose section type to append to a page)
-- [ ] Build "Add Page" flow (creates new `Page` doc with slug)
-- [ ] Build autosave-draft behavior + "Draft changes" indicator in header
-- [ ] Build Preview Website action (renders draft content in an isolated preview route)
-- [ ] Build Publish action (flips `publishStatus` to published, snapshots to ActivityLog)
-- [ ] Seed the dedicated **History** page with the Timeline section per the client's explicit request
+- [x] Build Content page shell: left Pages list (Home/Our Story/History/First Visit/Contact/Footer) with last-edited timestamps
+- [x] Build page section list (draggable order) with per-section active toggle, edit, duplicate, delete
+- [x] Build Hero section editor (image upload, H1 text)
+- [x] Build Rich Text section editor
+- [x] Build Timeline section editor: Section Label + repeatable Year/Title/Description items with Add Item
+- [x] Build Timeline layout controls (Background color, Layout alternating/stacked, Show on navigation)
+- [x] Build CTA section editor
+- [x] Build "Add Section" picker (choose section type to append to a page)
+- [x] Build "Add Page" flow (creates new `Page` doc with slug)
+- [x] Build autosave-draft behavior + "Draft changes" indicator in header
+- [x] Build Preview Website action (renders draft content in an isolated preview route)
+- [x] Build Publish action (flips `publishStatus` to published, snapshots to ActivityLog)
+- [x] Seed the dedicated **History** page with the Timeline section per the client's explicit request
 
 ### Phase 10 — Settings, Staff & Roles, Activity Log
 

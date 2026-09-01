@@ -2,6 +2,7 @@ import { connectToDatabase } from '@/lib/db';
 import { PropertySettings } from '@/models/PropertySettings';
 import { Role } from '@/models/Role';
 import { User } from '@/models/User';
+import { seedHistoryPage } from '@/scripts/seed-history-page';
 import { seedRoles } from '@/scripts/seed-roles';
 
 type InitialAdminEnvironment = {
@@ -94,6 +95,8 @@ async function seedInitialData(): Promise<void> {
     },
     { upsert: true, setDefaultsOnInsert: true },
   );
+
+  await seedHistoryPage();
 }
 
 seedInitialData()
