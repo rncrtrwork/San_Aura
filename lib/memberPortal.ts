@@ -13,7 +13,13 @@ export type MemberPortalDashboard = {
   balance: number;
 };
 
-export const MEMBER_PORTAL_TABS = ['dashboard', 'payments', 'electric', 'documents'] as const;
+export const MEMBER_PORTAL_TABS = [
+  'dashboard',
+  'payments',
+  'electric',
+  'documents',
+  'membership',
+] as const;
 
 export type MemberPortalTab = (typeof MEMBER_PORTAL_TABS)[number];
 
@@ -22,6 +28,7 @@ export const MEMBER_PORTAL_TAB_DEFINITIONS: Array<{ value: MemberPortalTab; labe
   { value: 'payments', label: 'Payment History' },
   { value: 'electric', label: 'Electric Billing' },
   { value: 'documents', label: 'Documents' },
+  { value: 'membership', label: 'Membership Info' },
 ];
 
 export const MEMBER_STATUS_LABELS: Record<MemberStatus, string> = {
