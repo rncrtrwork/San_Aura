@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  Activity,
   CalendarDays,
   CircleHelp,
   FileText,
@@ -36,6 +37,7 @@ const navItems: NavItem[] = [
   { label: 'Gallery', href: '/admin/gallery', icon: GalleryHorizontalEnd },
   { label: 'FAQ & Rules', href: '/admin/faq-rules', icon: CircleHelp },
   { label: 'Content', href: '/admin/content', icon: FileText },
+  { label: 'Activity Log', href: '/admin/activity', icon: Activity },
   { label: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 

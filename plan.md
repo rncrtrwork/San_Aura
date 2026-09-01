@@ -329,17 +329,17 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 ### Phase 10 — Settings, Staff & Roles, Activity Log
 
-- [ ] Build Settings page shell with tabs (Property/Booking/Payments/Notifications/Staff & Roles/Integrations)
-- [ ] Build Property Details form (name, logo upload via Cloudinary, address, timezone, phone, email, check-in/out time)
-- [ ] Build Operating Season section (open year-round toggle, tax rate, currency, date format)
-- [ ] Build Booking Defaults form (cancellation window, deposit requirement, minimum age, default minimum stay)
-- [ ] Build Privacy & Safety toggles (photography prohibited, video prohibited, show privacy notice at booking) + live Privacy Policy Summary preview text
-- [ ] Build Notifications toggle list (New Reservation/Cancellation/Payment Failed/Arrival Reminder) — flag Payment Failed as N/A copy until Phase-2 payments exist, or repurpose as "Payment Recorded"
-- [ ] Build Staff Access summary table (Role/Permission count) linking to "Manage Roles"
-- [ ] Build Manage Roles modal/page: permission checklist editor per role
-- [ ] Build Staff user management (invite/deactivate staff, assign role) — likely under Staff & Roles tab
-- [ ] Build full Activity Log page (searchable/filterable list, beyond the Overview widget) reading `ActivityLog`
-- [ ] Build Payments tab placeholder explaining PayPal-link-only flow for MVP (no processor keys) with a field for the resort's PayPal.me link to surface to guests/members
+- [x] Build Settings page shell with tabs (Property/Booking/Payments/Notifications/Staff & Roles/Integrations)
+- [x] Build Property Details form (name, logo upload via Cloudinary, address, timezone, phone, email, check-in/out time)
+- [x] Build Operating Season section (open year-round toggle, tax rate, currency, date format)
+- [x] Build Booking Defaults form (cancellation window, deposit requirement, minimum age, default minimum stay)
+- [x] Build Privacy & Safety toggles (photography prohibited, video prohibited, show privacy notice at booking) + live Privacy Policy Summary preview text
+- [x] Build Notifications toggle list (New Reservation/Cancellation/Payment Failed/Arrival Reminder) — flag Payment Failed as N/A copy until Phase-2 payments exist, or repurpose as "Payment Recorded"
+- [x] Build Staff Access summary table (Role/Permission count) linking to "Manage Roles"
+- [x] Build Manage Roles modal/page: permission checklist editor per role
+- [x] Build Staff user management (invite/deactivate staff, assign role) — likely under Staff & Roles tab
+- [x] Build full Activity Log page (searchable/filterable list, beyond the Overview widget) reading `ActivityLog`
+- [x] Build Payments tab placeholder explaining PayPal-link-only flow for MVP (no processor keys) with a field for the resort's PayPal.me link to surface to guests/members
 
 ### Phase 11 — Public Website Rebuild
 
