@@ -323,7 +323,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build "Add Section" picker (choose section type to append to a page)
 - [x] Build "Add Page" flow (creates new `Page` doc with slug)
 - [x] Build autosave-draft behavior + "Draft changes" indicator in header
-- [ ] Build Preview Website action (renders draft content in an isolated preview route)
+- [x] Build Preview Website action (renders draft content in an isolated preview route)
 - [ ] Build Publish action (flips `publishStatus` to published, snapshots to ActivityLog)
 - [ ] Seed the dedicated **History** page with the Timeline section per the client's explicit request
 

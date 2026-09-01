@@ -1,4 +1,5 @@
-import { FileText, Layers3 } from 'lucide-react';
+import { ExternalLink, FileText, Layers3 } from 'lucide-react';
+import Link from 'next/link';
 import { AddPageForm } from '@/components/admin/AddPageForm';
 import { AddSectionPicker } from '@/components/admin/AddSectionPicker';
 import { CtaSectionEditor } from '@/components/admin/CtaSectionEditor';
@@ -61,6 +62,16 @@ export default async function ContentPage({ searchParams }: ContentPageProps) {
               ? dateFormatter.format(new Date(overview.selectedPage.lastEditedAt))
               : 'Not created'}
           </span>
+          {overview.selectedPage.exists ? (
+            <Link
+              href={`/admin/content-preview/${overview.selectedPage.slug}`}
+              target="_blank"
+              className="inline-flex items-center gap-2 rounded-full border border-admin-accent px-3 py-1 text-xs font-bold text-admin-accent transition-colors hover:bg-admin-accent hover:text-white"
+            >
+              Preview Website
+              <ExternalLink aria-hidden="true" className="size-3.5" />
+            </Link>
+          ) : null}
         </div>
       </header>
 

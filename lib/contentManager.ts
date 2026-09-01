@@ -158,6 +158,55 @@ export type ContentPageCreateResponse = {
   message?: string;
 };
 
+export type ContentPreviewMedia = {
+  url: string;
+  altText: string;
+  focalPoint: { x: number; y: number };
+};
+
+export type ContentPreviewSection =
+  | {
+      key: string;
+      type: 'hero';
+      active: boolean;
+      hero: ContentHeroSection & { image: ContentPreviewMedia | null };
+    }
+  | {
+      key: string;
+      type: 'richText';
+      active: boolean;
+      richText: ContentRichTextSection;
+    }
+  | {
+      key: string;
+      type: 'timeline';
+      active: boolean;
+      timeline: ContentTimelineSection;
+    }
+  | {
+      key: string;
+      type: 'cta';
+      active: boolean;
+      cta: ContentCtaSection;
+    }
+  | {
+      key: string;
+      type: 'gallery';
+      active: boolean;
+      gallery: { heading: string };
+    };
+
+export type ContentPreviewPage = {
+  slug: string;
+  title: string;
+  navLabel: string;
+  seoTitle: string;
+  metaDescription: string;
+  publishStatus: PagePublishStatus;
+  lastEditedAt: string;
+  sections: ContentPreviewSection[];
+};
+
 export function normalizeContentPageSlug(value: string): string {
   return value
     .trim()

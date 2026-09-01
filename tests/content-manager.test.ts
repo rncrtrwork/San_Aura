@@ -17,6 +17,7 @@ import { validateCtaSection } from '@/server/content/ctaSectionValidation';
 import { validateHeroSection } from '@/server/content/heroSectionValidation';
 import { validateContentPage } from '@/server/content/pageValidation';
 import { validateRichTextSection } from '@/server/content/richTextSectionValidation';
+import { sanitizeRichTextPreviewHtml } from '@/server/content/richTextPreview';
 import { validateTimelineSection } from '@/server/content/timelineSectionValidation';
 
 test('content page parser accepts known CMS pages', () => {
@@ -271,4 +272,20 @@ test('content page validation rejects invalid publish status', () => {
   });
 
   assert.equal(result.valid, false);
+});
+
+test('rich text preview sanitizer preserves safe formatting', () => {
+  const result = sanitizeRichTextPreviewHtml(
+    '<h2>Welcome</h2><p>Plan a <strong>quiet</strong> stay.</p>',
+  );
+
+  assert.equal(result, '<h2>Welcome</h2><p>Plan a <strong>quiet</strong> stay.</p>');
+});
+
+test('rich text preview sanitizer strips unsafe markup', () => {
+  const result = sanitizeRichTextPreviewHtml(
+    '<p onclick="alert(1)">Hello<script>alert(1)</script><a href="javascript:alert(1)">link</a></p>',
+  );
+
+  assert.equal(result, '<p>Helloalert(1)<a href="#" target="_blank" rel="noreferrer">link</a></p>');
 });
