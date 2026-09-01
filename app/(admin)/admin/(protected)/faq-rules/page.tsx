@@ -2,6 +2,7 @@ import { CircleHelp, FileText, Scale } from 'lucide-react';
 import { FaqCategoryTree } from '@/components/admin/FaqCategoryTree';
 import { FaqItemCreateForm } from '@/components/admin/FaqItemCreateForm';
 import { FaqRevisionHistoryPanel } from '@/components/admin/FaqRevisionHistoryPanel';
+import { ManagedContentTabPanel } from '@/components/admin/ManagedContentTabPanel';
 import { FAQ_RULE_TABS, type FaqRuleTab } from '@/lib/faqRules';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getFaqRulesOverview } from '@/server/faqRules/getFaqRulesOverview';
@@ -111,6 +112,15 @@ export default async function FaqRulesPage({ searchParams }: FaqRulesPageProps) 
                 selectedItem={overview.selectedRevisionItem}
               />
             </>
+          ) : null}
+          {overview.activeTab === 'rules' ? (
+            <ManagedContentTabPanel
+              tab="rules"
+              label="Resort Rules"
+              singularLabel="Resort Rule"
+              categories={overview.categories}
+              items={overview.managedContentItems}
+            />
           ) : null}
         </section>
       </div>

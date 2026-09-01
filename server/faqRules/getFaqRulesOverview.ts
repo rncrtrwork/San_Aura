@@ -5,6 +5,8 @@ import type {
   FaqRuleCategorySummary,
   FaqRuleTab,
   FaqRulesOverview,
+  ManagedContentItemSummary,
+  ManagedContentRuleTab,
 } from '@/lib/faqRules';
 import { faqRevisionPreview, parseFaqRuleTab } from '@/lib/faqRules';
 import type { ManagedContentStatus } from '@/models/managedContentFields';
@@ -37,6 +39,20 @@ type FaqRevisionItemLean = {
   category: string;
   slug: string;
   status: FaqPublishStatus;
+  revisionHistory?: FaqRevisionLean[];
+};
+
+type ManagedContentItemLean = {
+  _id: string;
+  category: string;
+  title: string;
+  slug: string;
+  body: string;
+  relatedLinks?: { label: string; url: string }[];
+  displayOrder: number;
+  status: FaqPublishStatus;
+  seoTitle: string;
+  metaDescription: string;
   revisionHistory?: FaqRevisionLean[];
 };
 
@@ -123,6 +139,39 @@ async function getFaqRevisionItems(): Promise<FaqRevisionItem[]> {
   return serializeFaqRevisionItems(items);
 }
 
+function serializeManagedContentItems(
+  items: ManagedContentItemLean[],
+): ManagedContentItemSummary[] {
+  return items.map((item) => ({
+    id: item._id.toString(),
+    category: item.category,
+    title: item.title,
+    slug: item.slug,
+    body: item.body,
+    relatedLinks: item.relatedLinks ?? [],
+    displayOrder: item.displayOrder,
+    status: item.status,
+    seoTitle: item.seoTitle,
+    metaDescription: item.metaDescription,
+    revisionCount: item.revisionHistory?.length ?? 0,
+  }));
+}
+
+async function getManagedContentItems(
+  tab: ManagedContentRuleTab,
+): Promise<ManagedContentItemSummary[]> {
+  const model = tab === 'rules' ? ResortRule : Policy;
+  const items = await model
+    .find()
+    .select(
+      'category title slug body relatedLinks displayOrder status seoTitle metaDescription revisionHistory',
+    )
+    .sort({ displayOrder: 1, category: 1, title: 1 })
+    .lean<ManagedContentItemLean[]>();
+
+  return serializeManagedContentItems(items);
+}
+
 export async function getFaqRulesOverview(
   params: Record<string, string | string[] | undefined>,
 ): Promise<FaqRulesOverview> {
@@ -139,6 +188,7 @@ export async function getFaqRulesOverview(
     faqRevisionItems.find((item) => item.id === requestedRevisionItemId) ??
     faqRevisionItems[0] ??
     null;
+  const managedContentItems = activeTab === 'rules' ? await getManagedContentItems(activeTab) : [];
 
   return {
     activeTab,
@@ -150,5 +200,6 @@ export async function getFaqRulesOverview(
     categories: summarizeCategories(await getCategoryItems(activeTab)),
     faqRevisionItems,
     selectedRevisionItem,
+    managedContentItems,
   };
 }

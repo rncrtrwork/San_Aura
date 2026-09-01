@@ -4,6 +4,7 @@ import { faqRevisionPreview, parseFaqRuleTab } from '@/lib/faqRules';
 import { richTextReplacement } from '@/lib/richTextToolbar';
 import { validateFaqCategoryReorder } from '@/server/faqRules/categoryValidation';
 import { validateFaqItemCreate } from '@/server/faqRules/faqItemValidation';
+import { validateManagedContentItem } from '@/server/faqRules/managedContentValidation';
 
 test('faq rules tab parser accepts known tabs', () => {
   assert.equal(parseFaqRuleTab('faq'), 'faq');
@@ -104,4 +105,39 @@ test('faq revision preview strips markup and truncates long copy', () => {
   assert.equal(preview.includes('<p>'), false);
   assert.equal(preview.length, 120);
   assert.equal(preview.endsWith('...'), true);
+});
+
+test('managed content validation accepts a complete resort rule', () => {
+  const result = validateManagedContentItem({
+    category: 'Privacy',
+    title: 'No photography on property',
+    slug: '',
+    body: '<p>Guest privacy comes first at Sun Aura Resort.</p>',
+    relatedLinks: [{ label: 'Privacy policy', url: 'https://sunauraresort.net/privacy' }],
+    displayOrder: 20,
+    status: 'published',
+    seoTitle: 'Sun Aura Resort privacy rule',
+    metaDescription: 'Review the no photography resort rule before arrival.',
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.slug, 'no-photography-on-property');
+  }
+});
+
+test('managed content validation rejects incomplete resort rules', () => {
+  const result = validateManagedContentItem({
+    category: 'Privacy',
+    title: '',
+    slug: '',
+    body: '',
+    relatedLinks: [],
+    displayOrder: 20,
+    status: 'draft',
+    seoTitle: '',
+    metaDescription: '',
+  });
+
+  assert.equal(result.valid, false);
 });

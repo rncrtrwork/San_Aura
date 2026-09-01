@@ -19,6 +19,7 @@ export type FaqRulesOverview = {
   categories: FaqRuleCategorySummary[];
   faqRevisionItems: FaqRevisionItem[];
   selectedRevisionItem: FaqRevisionItem | null;
+  managedContentItems: ManagedContentItemSummary[];
 };
 
 export function parseFaqRuleTab(value: string | string[] | undefined): FaqRuleTab {
@@ -76,6 +77,33 @@ export type FaqRevisionItem = {
   status: FaqPublishStatus;
   revisionCount: number;
   revisions: FaqRevisionSummary[];
+};
+
+export type ManagedContentRuleTab = Exclude<FaqRuleTab, 'faq'>;
+
+export type ManagedContentItemRequest = {
+  category: string;
+  title: string;
+  slug: string;
+  body: string;
+  relatedLinks: FaqRelatedLinkInput[];
+  displayOrder: number;
+  status: FaqPublishStatus;
+  seoTitle: string;
+  metaDescription: string;
+};
+
+export type ManagedContentItemSummary = ManagedContentItemRequest & {
+  id: string;
+  revisionCount: number;
+};
+
+export type ManagedContentItemResponse = {
+  item?: {
+    id: string;
+    title: string;
+  };
+  message?: string;
 };
 
 export function faqRevisionPreview(value: string): string {
