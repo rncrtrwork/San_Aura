@@ -7,6 +7,7 @@ import {
   validateMediaAssetCreate,
   validateMediaAssetUpdate,
   validateMediaBulkAction,
+  validateMediaAlbumCreate,
 } from '@/server/media/mediaValidation';
 
 const validUpload: MediaAssetCreateRequest = {
@@ -190,6 +191,27 @@ test('media bulk validation requires an album for bulk album assignment', () => 
     mediaIds: ['64f5f5f5f5f5f5f5f5f5f5f5'],
     albumId: '',
     privacyConfirmedNoPeople: false,
+  });
+
+  assert.equal(result.valid, false);
+});
+
+test('media album validation creates stable nested album slugs', () => {
+  const result = validateMediaAlbumCreate({
+    name: 'Stay Types > Cabins',
+    parentId: '64f5f5f5f5f5f5f5f5f5f5f5',
+  });
+
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.slug, 'stay-types-cabins');
+  }
+});
+
+test('media album validation rejects invalid parent ids', () => {
+  const result = validateMediaAlbumCreate({
+    name: 'Cabins',
+    parentId: 'not-an-id',
   });
 
   assert.equal(result.valid, false);

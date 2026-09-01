@@ -4,6 +4,7 @@ import type {
   MediaAssetUpdateRequest,
   MediaBulkAction,
   MediaBulkActionRequest,
+  MediaAlbumCreateRequest,
 } from '@/lib/mediaForms';
 import { MEDIA_APPROVAL_STATUSES, MEDIA_USAGE_TYPES, type MediaUsage } from '@/lib/mediaOptions';
 
@@ -17,6 +18,10 @@ export type MediaUpdateValidationResult =
 
 export type MediaBulkValidationResult =
   | { valid: true; data: MediaBulkActionRequest }
+  | { valid: false; message: string };
+
+export type MediaAlbumValidationResult =
+  | { valid: true; data: MediaAlbumCreateRequest & { slug: string } }
   | { valid: false; message: string };
 
 const MEDIA_BULK_ACTIONS: MediaBulkAction[] = [
@@ -45,6 +50,15 @@ function isValidMediaPublicId(value: string): boolean {
 
 function focalValue(value: number): number | null {
   return Number.isInteger(value) && value >= 0 && value <= 100 ? value : null;
+}
+
+export function mediaAlbumSlug(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 120);
 }
 
 export function validateMediaAssetCreate(
@@ -104,6 +118,34 @@ export function validateMediaAssetCreate(
       usage,
       privacyConfirmedNoPeople: true,
       dimensions,
+    },
+  };
+}
+
+export function validateMediaAlbumCreate(
+  input: Partial<MediaAlbumCreateRequest> | null,
+): MediaAlbumValidationResult {
+  if (!input || typeof input !== 'object') {
+    return { valid: false, message: 'Album details are required.' };
+  }
+
+  const name = typeof input.name === 'string' ? textValue(input.name, 120) : '';
+  const parentId = typeof input.parentId === 'string' ? input.parentId.trim() : '';
+  const slug = mediaAlbumSlug(name);
+
+  if (!name || !slug) {
+    return { valid: false, message: 'Album name is required.' };
+  }
+  if (parentId && !Types.ObjectId.isValid(parentId)) {
+    return { valid: false, message: 'Selected parent album is invalid.' };
+  }
+
+  return {
+    valid: true,
+    data: {
+      name,
+      parentId,
+      slug,
     },
   };
 }

@@ -52,3 +52,16 @@ export type MediaBulkActionResponse = {
   updatedCount?: number;
   message?: string;
 };
+
+export type MediaAlbumCreateRequest = {
+  name: string;
+  parentId: string;
+};
+
+export type MediaAlbumCreateResponse = {
+  album?: {
+    id: string;
+    name: string;
+  };
+  message?: string;
+};

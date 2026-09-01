@@ -295,7 +295,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Build bulk-select toolbar (Approve/Unapprove/Add to Album/Archive/Delete)
 - [x] Build Approval Status + "Publish to website" toggle logic — enforce that publish requires `approved: true`
 - [x] Add manual "no people" confirmation checkbox required at upload/approval time as a lightweight enforcement step for the privacy policy
-- [ ] Build Album management (Create Album, assign media, nested albums e.g. "Stay Types > Cabins")
+- [x] Build Album management (Create Album, assign media, nested albums e.g. "Stay Types > Cabins")
 - [ ] Build "Archived" and tab views (All Media/Homepage Gallery/Stay Types/Events/Map Assets/Archived)
 - [ ] Wire persistent Privacy First banner on Gallery page
 

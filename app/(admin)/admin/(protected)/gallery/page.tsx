@@ -1,6 +1,7 @@
 import { MediaDetailPanel } from '@/components/admin/MediaDetailPanel';
 import { MediaLibraryGrid } from '@/components/admin/MediaLibraryGrid';
 import { MediaUploadPanel } from '@/components/admin/MediaUploadPanel';
+import { AlbumManagementPanel } from '@/components/admin/AlbumManagementPanel';
 import { Search } from 'lucide-react';
 import type { MediaLibraryFilters, MediaTypeFilter } from '@/lib/mediaLibrary';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
@@ -68,6 +69,8 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
       </header>
 
       <MediaUploadPanel albums={albums} />
+
+      <AlbumManagementPanel albums={albums} />
 
       <form className="admin-card grid gap-4 p-4 lg:grid-cols-[minmax(14rem,1.4fr)_repeat(3,minmax(11rem,1fr))_auto]">
         {filters.mediaType !== 'all' ? (
