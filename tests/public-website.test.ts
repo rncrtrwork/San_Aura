@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { groupedPublicFaqItems, type PublicFaqItem } from '@/lib/publicFaq';
+import { groupedPublicGalleryAssets, type PublicGalleryAsset } from '@/lib/publicGallery';
 import {
   groupedPublicManagedContentItems,
   type PublicManagedContentItem,
@@ -140,4 +141,34 @@ test('public map status summary counts read-only site states', () => {
     maintenance: 0,
     blocked: 0,
   });
+});
+
+const galleryAssets: PublicGalleryAsset[] = [
+  {
+    id: 'one',
+    url: 'https://res.cloudinary.com/demo/image/upload/one.jpg',
+    altText: 'Cabin',
+    caption: '',
+    mediaType: 'image',
+    album: { id: 'cabins', path: 'Stay Types > Cabins' },
+    focalPoint: { x: 50, y: 50 },
+  },
+  {
+    id: 'two',
+    url: 'https://res.cloudinary.com/demo/image/upload/two.jpg',
+    altText: 'Pool',
+    caption: '',
+    mediaType: 'image',
+    album: null,
+    focalPoint: { x: 50, y: 50 },
+  },
+];
+
+test('public gallery assets group by album with resort highlights fallback', () => {
+  const groups = groupedPublicGalleryAssets(galleryAssets);
+
+  assert.deepEqual(
+    groups.map((group) => group.albumLabel),
+    ['Resort Highlights', 'Stay Types > Cabins'],
+  );
 });
