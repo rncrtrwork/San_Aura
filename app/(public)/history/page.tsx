@@ -287,24 +287,24 @@ function faqPreviewItems(
 function HistoryFaq({ items }: { items: HistoryFaqItem[] }) {
   return (
     <section className="bg-cream-alt px-6 py-20 md:px-10 md:py-24 lg:px-12">
-      <div className="mx-auto grid max-w-[1360px] gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+      <div className="mx-auto grid max-w-[1360px] gap-24 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
         <div>
           <p className="text-sm uppercase tracking-[0.18em] text-forest-900">FAQ</p>
-          <h2 className="mt-4 font-serif text-5xl leading-tight text-gold-700 md:text-6xl">
+          <h2 className="mt-4 font-serif text-2xl leading-tight text-gold-700 md:text-3xl">
             You’ve Got Questions.
             <br />
             We’ve Got Answers.
           </h2>
           <div
             aria-hidden="true"
-            className="mt-10 aspect-[1.62/1] max-w-xl rounded-lg bg-cover bg-center shadow-card"
-            style={{ backgroundImage: "url('/images/stay-cabin-enhanced-v2.png')" }}
+            className="mt-10 aspect-[1.5/1] max-w-xl rounded-lg bg-cover bg-center shadow-card"
+            style={{ backgroundImage: "url('/images/12.jpg')" }}
           />
         </div>
         <div className="rounded-xl border border-line bg-[#fbfaf6]">
           {items.map((item) => (
             <details key={item.id} className="group border-b border-line last:border-b-0">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-6 px-6 py-6 text-left text-lg font-bold uppercase tracking-[0.12em] text-forest-900 md:px-8">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-6 px-6 py-6 text-left text-md uppercase tracking-[0.12em] text-forest-900 md:px-8">
                 <span>{item.question}</span>
                 <ChevronRight
                   aria-hidden="true"

@@ -6,7 +6,7 @@ export function OutdoorFeature() {
   return (
     <section className="relative isolate min-h-[420px] overflow-hidden bg-forest-900 px-6 py-16 text-white md:px-10 md:py-20 lg:px-12">
       <Image
-        src="/images/outdoors-aerial.png"
+        src="/images/3.png"
         alt="Aerial view of Sun Aura Resort surrounded by forest"
         fill
         sizes="100vw"
@@ -22,10 +22,10 @@ export function OutdoorFeature() {
       <div className="relative mx-auto max-w-[1360px]">
         <div className="max-w-xl">
           <p className="font-serif text-4xl italic leading-none text-cream md:text-5xl">
-            we ♡ the
+            we ♡ outdoors at 
           </p>
-          <h2 className="mt-1 text-6xl font-black uppercase leading-[0.88] tracking-[0.08em] text-cream md:text-7xl lg:text-8xl">
-            Outdoors
+          <h2 className="mt-1 text-5xl font-black uppercase leading-[0.88] tracking-[0.08em] text-cream md:text-6xl lg:text-7xl">
+            San Aura
           </h2>
           <div className="mt-10 flex flex-wrap items-center gap-4 text-sm font-black uppercase tracking-[0.08em] text-white">
             <span>Sun Aura Resort</span>
