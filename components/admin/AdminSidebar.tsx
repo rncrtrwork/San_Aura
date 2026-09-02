@@ -68,7 +68,7 @@ export function AdminSidebar() {
 
   return (
     <>
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col bg-admin-sidebar px-4 py-6 text-white lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col overflow-y-auto overscroll-contain bg-admin-sidebar px-4 py-6 text-white lg:flex">
         <Link href="/admin" className="mb-7 flex flex-col items-center gap-3">
           <Image
             src="/images/logo-enhanced.png"
@@ -85,7 +85,7 @@ export function AdminSidebar() {
         </nav>
       </aside>
 
-      <details className="group sticky top-0 z-50 bg-admin-sidebar text-white lg:hidden">
+      <details className="group sticky top-0 z-50 max-h-screen overflow-y-auto bg-admin-sidebar text-white lg:hidden">
         <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4">
           <span className="font-serif text-lg tracking-wide">Sun Aura Admin</span>
           <Menu aria-hidden="true" className="size-6" />

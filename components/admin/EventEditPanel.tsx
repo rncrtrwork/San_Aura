@@ -6,6 +6,7 @@ import Script from 'next/script';
 import { useMemo, useRef, useState, type FormEvent } from 'react';
 import { CLOUDINARY_FOLDERS } from '@/lib/cloudinaryFolders';
 import type { CloudinarySignatureResponse, CloudinaryWidgetConfig } from '@/lib/cloudinaryUpload';
+import { restoreDocumentScroll } from '@/lib/documentScroll';
 import { buildEventDateTimeRange } from '@/lib/eventDateTime';
 import type { EventMutationRequest, EventMutationResponse } from '@/lib/eventForms';
 import type { EventListItem } from '@/lib/eventFilters';
@@ -225,6 +226,7 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
               .catch(() => {
                 setError('Unable to authorize the upload.');
                 setUploading(false);
+                restoreDocumentScroll();
                 widget.close();
               });
           },
@@ -245,12 +247,14 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
           }
           if (result.event === 'close' || result.event === 'abort') {
             setUploading(false);
+            restoreDocumentScroll();
           }
           if (result.event === 'success' && result.info) {
             void persistUpload(result.info)
               .catch((uploadError: Error) => setError(uploadError.message))
               .finally(() => {
                 setUploading(false);
+                restoreDocumentScroll();
                 widget.destroy();
               });
           }
@@ -262,6 +266,7 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
         uploadError instanceof Error ? uploadError.message : 'Event image uploads are unavailable.',
       );
       setUploading(false);
+      restoreDocumentScroll();
     }
   }
 

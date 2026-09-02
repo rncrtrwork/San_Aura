@@ -6,6 +6,7 @@ import Script from 'next/script';
 import { useState, type FormEvent } from 'react';
 import { CLOUDINARY_FOLDERS } from '@/lib/cloudinaryFolders';
 import type { CloudinarySignatureResponse, CloudinaryWidgetConfig } from '@/lib/cloudinaryUpload';
+import { restoreDocumentScroll } from '@/lib/documentScroll';
 import { buildEventDateTimeRange } from '@/lib/eventDateTime';
 import type { EventMutationRequest, EventMutationResponse } from '@/lib/eventForms';
 
@@ -119,6 +120,7 @@ export function EventCreateForm() {
               .catch(() => {
                 setError('Unable to authorize the upload.');
                 setUploading(false);
+                restoreDocumentScroll();
                 widget.close();
               });
           },
@@ -139,12 +141,14 @@ export function EventCreateForm() {
           }
           if (result.event === 'close' || result.event === 'abort') {
             setUploading(false);
+            restoreDocumentScroll();
           }
           if (result.event === 'success' && result.info) {
             setImageUrl(result.info.secure_url);
             setImagePublicId(result.info.public_id);
             setMessage('Event image uploaded. Create the draft to save it.');
             setUploading(false);
+            restoreDocumentScroll();
             widget.destroy();
           }
         },
@@ -155,6 +159,7 @@ export function EventCreateForm() {
         uploadError instanceof Error ? uploadError.message : 'Event image uploads are unavailable.',
       );
       setUploading(false);
+      restoreDocumentScroll();
     }
   }
 
