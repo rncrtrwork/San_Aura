@@ -58,7 +58,7 @@ export function Header({ navigation }: HeaderProps) {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 h-[82px] border-b border-line bg-cream lg:h-[96px]">
+    <header className="sticky top-0 z-50 h-[75px] border-b border-line bg-cream lg:h-[75px]">
       <div className="mx-auto flex h-full max-w-[1536px] items-center px-4 sm:px-6 lg:px-8">
         <Logo />
 
@@ -115,7 +115,7 @@ export function Header({ navigation }: HeaderProps) {
           </Link>
           <Link
             href="/book"
-            className="rounded px-7 py-4 text-[12px] bg-[#E47A3F] font-semibold uppercase tracking-[.06em] text-white transition-colors hover:bg-orange-400"
+            className="rounded px-6 py-3 text-[12px] bg-[#E47A3F] font-semibold uppercase tracking-[.06em] text-white transition-colors hover:bg-orange-400"
           >
             Book Now
           </Link>

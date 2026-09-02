@@ -99,8 +99,6 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
         </p>
       </header>
 
-      <PrivacyBanner />
-
       <MediaUploadPanel albums={albums} />
 
       <AlbumManagementPanel albums={albums} />

@@ -63,7 +63,7 @@ export function BookingSearchCard() {
       </label>
       <div className="flex items-center p-1 pt-3 md:p-4">
         <button
-          className="h-14 w-full rounded bg-[#E47A3F] text-xs font-semibold uppercase tracking-[.06em] text-white transition-colors hover:bg-orange-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          className="h-12 w-full rounded bg-[#E47A3F] text-xs font-semibold uppercase tracking-[.06em] text-white transition-colors hover:bg-orange-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           type="submit"
         >
           Search

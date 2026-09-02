@@ -55,8 +55,6 @@ export default async function FaqRulesPage({ searchParams }: FaqRulesPageProps) 
         </p>
       </header>
 
-      <PrivacyBanner />
-
       <nav
         aria-label="FAQ and rules sections"
         className="flex overflow-x-auto border-b border-admin-border"
