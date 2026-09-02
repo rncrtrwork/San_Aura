@@ -177,7 +177,7 @@ function HistoryTimeline({ items }: { items: ContentTimelineItem[] }) {
     .filter(({ index }) => index % 2 === 1);
 
   return (
-    <section className="bg-white px-6 pb-20 pt-0 md:px-10 md:pb-24 lg:px-12">
+    <section className="bg-white px-6 pb-10 pt-10 md:px-10 md:pb-24 lg:px-12">
       <div className="relative mx-auto max-w-[1530px] lg:grid lg:grid-cols-[minmax(0,1fr)_72px_minmax(0,1fr)]">
         <div
           aria-hidden="true"

@@ -6,7 +6,7 @@ export function OutdoorFeature() {
   return (
     <section className="relative isolate min-h-[420px] overflow-hidden bg-forest-900 px-6 py-16 text-white md:px-10 md:py-20 lg:px-12">
       <Image
-        src="/images/3.png"
+        src="/images/567.png"
         alt="Aerial view of Sun Aura Resort surrounded by forest"
         fill
         sizes="100vw"
