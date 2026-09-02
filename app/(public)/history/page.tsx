@@ -176,7 +176,7 @@ function HistoryTimeline({ items }: { items: ContentTimelineItem[] }) {
           aria-hidden="true"
           className="absolute left-1/2 top-0 hidden h-full w-1 -translate-x-1/2 rounded-full bg-[#dddddd] lg:block"
         />
-        <ol className="grid gap-6 md:gap-7">
+        <ol className="grid gap-10 md:gap-12">
           {items.map((item, index) => {
             const align = index % 2 === 0 ? 'left' : 'right';
             const imageUrl = timelineImageUrls[index % timelineImageUrls.length];
@@ -188,7 +188,7 @@ function HistoryTimeline({ items }: { items: ContentTimelineItem[] }) {
               >
                 <div
                   aria-hidden="true"
-                  className="absolute bottom-[-1.75rem] left-1 top-8 w-px bg-[#dddddd] lg:hidden"
+                  className="absolute bottom-[-3rem] left-1 top-8 w-px bg-[#dddddd] lg:hidden"
                 />
                 <span
                   aria-hidden="true"
