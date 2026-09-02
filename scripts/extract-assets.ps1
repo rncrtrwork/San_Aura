@@ -3,6 +3,7 @@ $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
 
 $sourcePath = (Resolve-Path "$PSScriptRoot/../design.png").Path
+$mapSourcePath = (Resolve-Path "$PSScriptRoot/../design/img-assets/newmap3_orig.jpg").Path
 $outputDir = Join-Path $PSScriptRoot '../public/images'
 New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
 
@@ -16,7 +17,6 @@ $crops = @(
   @{ Name = 'event-lake.png'; X = 247; Y = 905; W = 179; H = 110 },
   @{ Name = 'event-lights.png'; X = 436; Y = 905; W = 177; H = 110 },
   @{ Name = 'event-flowers.png'; X = 623; Y = 905; W = 178; H = 110 },
-  @{ Name = 'resort-map.png'; X = 239; Y = 1116; W = 585; H = 216 },
   @{ Name = 'gallery-aerial.png'; X = 29; Y = 1392; W = 164; H = 132 },
   @{ Name = 'gallery-pool.png'; X = 198; Y = 1392; W = 163; H = 132 },
   @{ Name = 'gallery-sign.png'; X = 366; Y = 1392; W = 162; H = 132 },
@@ -34,3 +34,5 @@ foreach ($crop in $crops) {
 }
 
 $source.Dispose()
+
+Copy-Item -LiteralPath $mapSourcePath -Destination (Join-Path $outputDir 'resort-map.jpg') -Force

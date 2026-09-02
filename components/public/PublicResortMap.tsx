@@ -33,7 +33,7 @@ export function PublicResortMap({ sites }: PublicResortMapProps) {
           </p>
           <div className="relative aspect-[980/361] min-w-[900px] overflow-hidden rounded-[1.5rem] bg-forest-800">
             <Image
-              src="/images/resort-map.png"
+              src="/images/resort-map.jpg"
               alt="Illustrated map of Sun Aura Resort"
               fill
               priority

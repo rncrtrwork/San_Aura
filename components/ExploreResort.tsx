@@ -64,7 +64,7 @@ export function ExploreResort() {
         </div>
         <div className="relative aspect-[2.7/1] min-h-[190px] overflow-hidden rounded-lg shadow-sm">
           <Image
-            src="/images/resort-map.png"
+            src="/images/resort-map.jpg"
             alt="Illustrated map of Sun Aura Resort"
             fill
             sizes="(min-width: 1024px) 75vw, 100vw"

@@ -27,7 +27,7 @@ export function ResortMapCanvas({ sites, selectedSiteId }: ResortMapCanvasProps)
     <section className="admin-card overflow-hidden" aria-label="Interactive resort site map">
       <div className="relative aspect-[980/361] min-w-[900px] bg-forest-800">
         <Image
-          src="/images/resort-map.png"
+          src="/images/resort-map.jpg"
           alt="Illustrated map of Sun Aura Resort"
           fill
           priority

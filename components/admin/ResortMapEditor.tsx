@@ -126,7 +126,7 @@ export function ResortMapEditor({ sites }: ResortMapEditorProps) {
           onClick={placeMarker}
         >
           <Image
-            src="/images/resort-map.png"
+            src="/images/resort-map.jpg"
             alt="Sun Aura Resort marker placement map"
             fill
             priority
