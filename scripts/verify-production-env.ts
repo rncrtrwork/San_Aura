@@ -2,6 +2,7 @@ import {
   hasFailedReadinessChecks,
   validateProductionCloudinaryEnvironment,
   validateProductionHostingEnvironment,
+  validateProductionMonitoringEnvironment,
   validateProductionMongoEnvironment,
 } from '@/lib/productionReadiness';
 
@@ -9,6 +10,7 @@ const checks = [
   ...validateProductionHostingEnvironment(process.env),
   ...validateProductionMongoEnvironment(process.env),
   ...validateProductionCloudinaryEnvironment(process.env),
+  ...validateProductionMonitoringEnvironment(process.env),
 ];
 
 const report = checks

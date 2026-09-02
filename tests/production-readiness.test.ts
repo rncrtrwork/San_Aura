@@ -5,6 +5,7 @@ import {
   hasFailedReadinessChecks,
   validateProductionCloudinaryEnvironment,
   validateProductionHostingEnvironment,
+  validateProductionMonitoringEnvironment,
   validateProductionMongoEnvironment,
   type ProductionReadinessCheck,
 } from '@/lib/productionReadiness';
@@ -129,6 +130,36 @@ describe('production readiness checks', () => {
     assert.equal(checkStatus(checks, 'site-url-https'), 'fail');
     assert.equal(checkStatus(checks, 'session-secret-length'), 'fail');
     assert.equal(checkStatus(checks, 'smtp-config-complete'), 'fail');
+    assert.equal(hasFailedReadinessChecks(checks), true);
+  });
+
+  it('accepts a configured production monitoring environment', () => {
+    const checks = validateProductionMonitoringEnvironment({
+      SENTRY_DSN: 'https://examplePublicKey@o0.ingest.sentry.io/0',
+      NEXT_PUBLIC_SENTRY_DSN: 'https://examplePublicKey@o0.ingest.sentry.io/0',
+      SENTRY_ENVIRONMENT: 'production',
+      NEXT_PUBLIC_SENTRY_ENVIRONMENT: 'production',
+      SENTRY_ORG: 'sun-aura',
+      SENTRY_PROJECT: 'resort-platform',
+      SENTRY_AUTH_TOKEN: 'sentry-token',
+    });
+
+    assert.equal(hasFailedReadinessChecks(checks), false);
+  });
+
+  it('rejects incomplete production monitoring values', () => {
+    const checks = validateProductionMonitoringEnvironment({
+      SENTRY_DSN: 'not-a-url',
+      NEXT_PUBLIC_SENTRY_DSN: '',
+      SENTRY_ENVIRONMENT: 'preview',
+      SENTRY_ORG: '',
+      SENTRY_PROJECT: '',
+      SENTRY_AUTH_TOKEN: '',
+    });
+
+    assert.equal(checkStatus(checks, 'sentry-dsn-configured'), 'fail');
+    assert.equal(checkStatus(checks, 'sentry-environment-production'), 'fail');
+    assert.equal(checkStatus(checks, 'sentry-source-map-configured'), 'fail');
     assert.equal(hasFailedReadinessChecks(checks), true);
   });
 });

@@ -171,6 +171,47 @@ export function validateProductionHostingEnvironment(
   ];
 }
 
+export function validateProductionMonitoringEnvironment(
+  env: ProductionEnvironment,
+): ProductionReadinessCheck[] {
+  const dsn = env.SENTRY_DSN?.trim();
+  const publicDsn = env.NEXT_PUBLIC_SENTRY_DSN?.trim();
+  const environment = env.SENTRY_ENVIRONMENT?.trim() ?? env.NEXT_PUBLIC_SENTRY_ENVIRONMENT?.trim();
+  const authToken = env.SENTRY_AUTH_TOKEN?.trim();
+  const org = env.SENTRY_ORG?.trim();
+  const project = env.SENTRY_PROJECT?.trim();
+  const hasRuntimeDsn = isValidHttpsUrl(dsn) && isValidHttpsUrl(publicDsn);
+  const hasSourceMapConfig = hasValue(authToken) && hasValue(org) && hasValue(project);
+  const validEnvironment = environment === 'production';
+
+  return [
+    createCheck(
+      'sentry-dsn-configured',
+      'Sentry runtime DSNs are configured',
+      hasRuntimeDsn ? 'pass' : 'fail',
+      hasRuntimeDsn
+        ? 'Server and browser Sentry DSNs are configured.'
+        : 'Set SENTRY_DSN and NEXT_PUBLIC_SENTRY_DSN to the production Sentry DSN.',
+    ),
+    createCheck(
+      'sentry-environment-production',
+      'Sentry environment is production',
+      validEnvironment ? 'pass' : 'fail',
+      validEnvironment
+        ? 'Sentry environment is set to production.'
+        : 'Set SENTRY_ENVIRONMENT and NEXT_PUBLIC_SENTRY_ENVIRONMENT to production.',
+    ),
+    createCheck(
+      'sentry-source-map-configured',
+      'Sentry source map upload is configured',
+      hasSourceMapConfig ? 'pass' : 'fail',
+      hasSourceMapConfig
+        ? 'Sentry org, project, and auth token are present for source maps.'
+        : 'Set SENTRY_ORG, SENTRY_PROJECT, and SENTRY_AUTH_TOKEN for production builds.',
+    ),
+  ];
+}
+
 export function hasFailedReadinessChecks(checks: ProductionReadinessCheck[]): boolean {
   return checks.some((check) => check.status === 'fail');
 }

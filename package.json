@@ -20,6 +20,7 @@
     "seed:initial": "tsx scripts/seed-initial-data.ts"
   },
   "dependencies": {
+    "@sentry/nextjs": "^10.73.0",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.8.0",
     "jose": "^5.9.6",
