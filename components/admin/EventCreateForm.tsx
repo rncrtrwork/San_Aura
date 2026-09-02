@@ -1,8 +1,11 @@
 'use client';
 
-import { CalendarPlus, LoaderCircle } from 'lucide-react';
+import { CalendarPlus, FileUp, ImageIcon, LoaderCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Script from 'next/script';
 import { useState, type FormEvent } from 'react';
+import { CLOUDINARY_FOLDERS } from '@/lib/cloudinaryFolders';
+import type { CloudinarySignatureResponse, CloudinaryWidgetConfig } from '@/lib/cloudinaryUpload';
 import type { EventMutationRequest, EventMutationResponse } from '@/lib/eventForms';
 
 const inputClass =
@@ -28,6 +31,11 @@ function capacityValue(value: string): number | null {
 
 export function EventCreateForm() {
   const router = useRouter();
+  const [imageUrl, setImageUrl] = useState('');
+  const [imagePublicId, setImagePublicId] = useState('');
+  const [widgetReady, setWidgetReady] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -35,6 +43,7 @@ export function EventCreateForm() {
     event.preventDefault();
     setSubmitting(true);
     setError('');
+    setMessage('');
     const form = new FormData(event.currentTarget);
     const date = fieldValue(form, 'date');
     const startTime = fieldValue(form, 'startTime');
@@ -47,8 +56,8 @@ export function EventCreateForm() {
       capacity: capacityValue(fieldValue(form, 'capacity')),
       registrationRequired: form.get('registrationRequired') === 'on',
       description: fieldValue(form, 'description'),
-      imageUrl: fieldValue(form, 'imageUrl'),
-      imagePublicId: '',
+      imageUrl,
+      imagePublicId,
       featureOnHomepage: false,
       sendReminder: false,
       status: 'draft',
@@ -74,8 +83,86 @@ export function EventCreateForm() {
     }
   }
 
+  async function openUploadWidget() {
+    setUploading(true);
+    setMessage('');
+    setError('');
+    try {
+      const configResponse = await fetch('/api/admin/events/upload-signature');
+      const config = (await configResponse.json()) as CloudinaryWidgetConfig;
+      if (!configResponse.ok || !config.cloudName || !config.apiKey) {
+        throw new Error(config.message ?? 'Event image uploads are unavailable.');
+      }
+      if (!window.cloudinary) {
+        throw new Error('The upload service is still loading.');
+      }
+
+      const widget = window.cloudinary.createUploadWidget(
+        {
+          cloudName: config.cloudName,
+          apiKey: config.apiKey,
+          uploadSignature: (callback, paramsToSign) => {
+            void fetch('/api/admin/events/upload-signature', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ paramsToSign }),
+            })
+              .then((response) => response.json())
+              .then((result: CloudinarySignatureResponse) => {
+                if (!result.signature) {
+                  throw new Error(result.message ?? 'Unable to authorize the upload.');
+                }
+                callback(result.signature);
+              })
+              .catch(() => {
+                setError('Unable to authorize the upload.');
+                setUploading(false);
+                widget.close();
+              });
+          },
+          folder: CLOUDINARY_FOLDERS.events,
+          tags: ['event', 'draft'],
+          context: { usage: 'event_image' },
+          sources: ['local', 'camera'],
+          resourceType: 'auto',
+          clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
+          maxFileSize: 10_000_000,
+          multiple: false,
+        },
+        (widgetError, result) => {
+          if (widgetError) {
+            setError('The upload could not be completed.');
+            setUploading(false);
+            return;
+          }
+          if (result.event === 'close' || result.event === 'abort') {
+            setUploading(false);
+          }
+          if (result.event === 'success' && result.info) {
+            setImageUrl(result.info.secure_url);
+            setImagePublicId(result.info.public_id);
+            setMessage('Event image uploaded. Create the draft to save it.');
+            setUploading(false);
+            widget.destroy();
+          }
+        },
+      );
+      widget.open();
+    } catch (uploadError) {
+      setError(
+        uploadError instanceof Error ? uploadError.message : 'Event image uploads are unavailable.',
+      );
+      setUploading(false);
+    }
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form method="post" onSubmit={handleSubmit} className="space-y-6">
+      <Script
+        src="https://upload-widget.cloudinary.com/global/all.js"
+        strategy="afterInteractive"
+        onReady={() => setWidgetReady(true)}
+      />
       <section className="admin-card p-5 sm:p-6">
         <h2 className="font-serif text-2xl text-forest-900">Event Details</h2>
         <div className="mt-5 grid gap-4 md:grid-cols-2">
@@ -138,16 +225,43 @@ export function EventCreateForm() {
             />
             Registration required
           </label>
-          <label className="text-sm font-semibold text-forest-900 md:col-span-2">
-            Image URL
-            <input
-              name="imageUrl"
-              type="url"
-              maxLength={2000}
-              className={inputClass}
-              placeholder="https://..."
-            />
-          </label>
+          <div className="md:col-span-2">
+            <span className="text-sm font-semibold text-forest-900">Event image</span>
+            <div className="mt-1.5 overflow-hidden rounded-lg border border-admin-border bg-white">
+              {imageUrl ? (
+                <div
+                  className="min-h-56 bg-cover bg-center"
+                  style={{ backgroundImage: `url("${imageUrl}")` }}
+                  aria-label="Uploaded event image preview"
+                />
+              ) : (
+                <div className="grid min-h-56 place-items-center bg-cream-alt text-admin-muted">
+                  <div className="text-center">
+                    <ImageIcon aria-hidden="true" className="mx-auto size-12" />
+                    <p className="mt-3 text-sm font-semibold">No event image uploaded yet.</p>
+                  </div>
+                </div>
+              )}
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-admin-border p-4">
+                <p className="text-sm text-admin-muted">
+                  Upload a JPG, PNG, WebP, or AVIF image directly from this form.
+                </p>
+                <button
+                  type="button"
+                  onClick={openUploadWidget}
+                  disabled={!widgetReady || uploading}
+                  className="inline-flex h-10 items-center gap-2 rounded-lg bg-admin-sidebar px-4 text-sm font-bold text-white hover:bg-admin-sidebar-active disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {uploading ? (
+                    <LoaderCircle aria-hidden="true" className="size-4 animate-spin" />
+                  ) : (
+                    <FileUp aria-hidden="true" className="size-4" />
+                  )}
+                  {imageUrl ? 'Replace Image' : widgetReady ? 'Upload Image' : 'Loading Uploader'}
+                </button>
+              </div>
+            </div>
+          </div>
           <label className="text-sm font-semibold text-forest-900 md:col-span-2">
             Description
             <textarea
@@ -166,6 +280,11 @@ export function EventCreateForm() {
           className="rounded-lg border border-admin-danger/30 bg-red-50 px-4 py-3 text-sm font-semibold text-admin-danger"
         >
           {error}
+        </p>
+      ) : null}
+      {message ? (
+        <p role="status" className="text-sm font-semibold text-admin-success">
+          {message}
         </p>
       ) : null}
 

@@ -3,7 +3,6 @@ import { FaqCategoryTree } from '@/components/admin/FaqCategoryTree';
 import { FaqItemCreateForm } from '@/components/admin/FaqItemCreateForm';
 import { FaqRevisionHistoryPanel } from '@/components/admin/FaqRevisionHistoryPanel';
 import { ManagedContentTabPanel } from '@/components/admin/ManagedContentTabPanel';
-import { PrivacyBanner } from '@/components/admin/PrivacyBanner';
 import { FAQ_RULE_TABS, type FaqRuleTab } from '@/lib/faqRules';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getFaqRulesOverview } from '@/server/faqRules/getFaqRulesOverview';

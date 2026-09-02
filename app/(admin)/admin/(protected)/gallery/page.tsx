@@ -2,7 +2,6 @@ import { AlbumManagementPanel } from '@/components/admin/AlbumManagementPanel';
 import { MediaDetailPanel } from '@/components/admin/MediaDetailPanel';
 import { MediaLibraryGrid } from '@/components/admin/MediaLibraryGrid';
 import { MediaUploadPanel } from '@/components/admin/MediaUploadPanel';
-import { PrivacyBanner } from '@/components/admin/PrivacyBanner';
 import { Search } from 'lucide-react';
 import type { MediaLibraryFilters, MediaLibraryView, MediaTypeFilter } from '@/lib/mediaLibrary';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';

@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import { AdminSidebar } from './AdminSidebar';
 import { AdminTopbar } from './AdminTopbar';
-import { PrivacyBanner } from './PrivacyBanner';
 
 type AdminShellProps = Readonly<{
   children: ReactNode;
