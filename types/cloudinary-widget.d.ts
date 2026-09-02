@@ -29,9 +29,9 @@ type CloudinaryUploadWidgetOptions = {
   ): void;
   folder: string;
   tags: string[];
-  context: Record<string, string>;
+  context?: Record<string, string>;
   sources: string[];
-  resourceType: 'auto';
+  resourceType: 'auto' | 'image' | 'video';
   clientAllowedFormats: string[];
   maxFileSize: number;
   multiple: boolean;

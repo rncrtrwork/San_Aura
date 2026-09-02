@@ -81,6 +81,10 @@ export const POST = requirePermission('media.write', async (request: NextRequest
       asset.publishToWebsite = false;
       await asset.save();
     }
+    if (validation.data.action === 'restore') {
+      asset.archived = false;
+      await asset.save();
+    }
     if (validation.data.action === 'delete') {
       await asset.deleteOne();
     }

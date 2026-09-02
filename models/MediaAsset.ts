@@ -82,10 +82,6 @@ mediaAssetSchema.pre('validate', function enforceMediaPrivacyApproval() {
     this.invalidate('publishToWebsite', 'Published media must be approved');
   }
 
-  if (this.publishToWebsite && !this.privacyConfirmedNoPeople) {
-    this.invalidate('privacyConfirmedNoPeople', 'Published media requires no-people confirmation');
-  }
-
   if (this.privacyConfirmedNoPeople && (!this.privacyConfirmedBy || !this.privacyConfirmedAt)) {
     this.invalidate('privacyConfirmedBy', 'Privacy confirmation requires an actor and timestamp');
   }

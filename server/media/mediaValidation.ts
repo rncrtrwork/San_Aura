@@ -30,6 +30,7 @@ const MEDIA_BULK_ACTIONS: MediaBulkAction[] = [
   'unapprove',
   'addToAlbum',
   'archive',
+  'restore',
   'delete',
 ];
 
@@ -84,6 +85,9 @@ export function validateMediaAssetCreate(
   if (!filename || !mimeType || !altText) {
     return { valid: false, message: 'Filename, MIME type, and alt text are required.' };
   }
+  if (!mimeType.startsWith('image/')) {
+    return { valid: false, message: 'Gallery uploads must be image files.' };
+  }
   if (!isValidMediaUrl(cloudinaryUrl) || !isValidMediaPublicId(cloudinaryPublicId)) {
     return { valid: false, message: 'Uploaded media must come from the resort media folder.' };
   }
@@ -102,10 +106,6 @@ export function validateMediaAssetCreate(
   ) {
     return { valid: false, message: 'Media dimensions are required.' };
   }
-  if (!input.privacyConfirmedNoPeople) {
-    return { valid: false, message: 'Confirm this upload contains no identifiable people.' };
-  }
-
   return {
     valid: true,
     data: {
@@ -117,7 +117,7 @@ export function validateMediaAssetCreate(
       caption,
       albumId,
       usage,
-      privacyConfirmedNoPeople: true,
+      privacyConfirmedNoPeople: input.privacyConfirmedNoPeople === true,
       dimensions,
     },
   };
@@ -184,12 +184,6 @@ export function validateMediaAssetUpdate(
   if (publishToWebsite && approvalStatus !== 'approved') {
     return { valid: false, message: 'Only approved media can publish to the website.' };
   }
-  if (approvalStatus === 'approved' && !privacyConfirmedNoPeople) {
-    return { valid: false, message: 'Confirm this media contains no identifiable people.' };
-  }
-  if (publishToWebsite && !privacyConfirmedNoPeople) {
-    return { valid: false, message: 'Published media requires no-people confirmation.' };
-  }
   if (focalX === null || focalY === null) {
     return { valid: false, message: 'Focal point must stay between 0 and 100.' };
   }
@@ -239,10 +233,6 @@ export function validateMediaBulkAction(
   if (action === 'addToAlbum' && (!albumId || !Types.ObjectId.isValid(albumId))) {
     return { valid: false, message: 'Choose an album for this bulk action.' };
   }
-  if (action === 'approve' && !input.privacyConfirmedNoPeople) {
-    return { valid: false, message: 'Confirm selected assets contain no identifiable people.' };
-  }
-
   return {
     valid: true,
     data: {

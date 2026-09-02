@@ -31,7 +31,13 @@ export type MediaAssetUpdateRequest = {
   };
 };
 
-export type MediaBulkAction = 'approve' | 'unapprove' | 'addToAlbum' | 'archive' | 'delete';
+export type MediaBulkAction =
+  | 'approve'
+  | 'unapprove'
+  | 'addToAlbum'
+  | 'archive'
+  | 'restore'
+  | 'delete';
 
 export type MediaBulkActionRequest = {
   action: MediaBulkAction;

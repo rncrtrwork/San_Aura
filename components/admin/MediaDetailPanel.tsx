@@ -1,87 +1,63 @@
 'use client';
 
-import { CameraOff, FileText, LoaderCircle, SlidersHorizontal, X } from 'lucide-react';
+import { Archive, LoaderCircle, RotateCcw, SlidersHorizontal, Trash2, X } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import type { MediaAssetUpdateRequest, MediaAssetMutationResponse } from '@/lib/mediaForms';
-import type { MediaAlbumOption, MediaAssetCard, MediaLibraryFilters } from '@/lib/mediaLibrary';
-import {
-  MEDIA_APPROVAL_STATUSES,
-  MEDIA_USAGE_TYPES,
-  type MediaApprovalStatus,
-  type MediaUsage,
-} from '@/lib/mediaOptions';
+import type {
+  MediaAssetMutationResponse,
+  MediaAssetUpdateRequest,
+  MediaBulkActionResponse,
+} from '@/lib/mediaForms';
+import type { MediaAssetCard, MediaLibraryFilters } from '@/lib/mediaLibrary';
 
 type MediaDetailPanelProps = {
   asset: MediaAssetCard;
-  albums: MediaAlbumOption[];
   filters: MediaLibraryFilters;
-};
-
-const usageLabels: Record<MediaUsage, string> = {
-  homepage: 'Homepage Gallery',
-  stayType: 'Stay Types',
-  event: 'Events',
-  mapAsset: 'Map Assets',
 };
 
 function closeHref(filters: MediaLibraryFilters): string {
   const params = new URLSearchParams();
-  if (filters.view !== 'all') params.set('view', filters.view);
-  if (filters.mediaType !== 'all') params.set('mediaType', filters.mediaType);
   if (filters.search) params.set('search', filters.search);
-  if (filters.albumId) params.set('albumId', filters.albumId);
-  if (filters.usage !== 'all') params.set('usage', filters.usage);
-  if (filters.approvalStatus !== 'all') params.set('approvalStatus', filters.approvalStatus);
+  if (filters.view === 'archived') params.set('view', 'archived');
   const query = params.toString();
   return query ? `/admin/gallery?${query}` : '/admin/gallery';
 }
 
-function formatFileSize(dimensions: MediaAssetCard['dimensions']): string {
+function formatDimensions(dimensions: MediaAssetCard['dimensions']): string {
   return `${dimensions.width} × ${dimensions.height}px`;
 }
 
-export function MediaDetailPanel({ asset, albums, filters }: MediaDetailPanelProps) {
+export function MediaDetailPanel({ asset, filters }: MediaDetailPanelProps) {
   const router = useRouter();
   const [altText, setAltText] = useState(asset.altText);
   const [caption, setCaption] = useState(asset.caption);
-  const [albumId, setAlbumId] = useState(asset.album?.id ?? '');
-  const [usage, setUsage] = useState<MediaUsage[]>(asset.usage);
-  const [approvalStatus, setApprovalStatus] = useState<MediaApprovalStatus>(asset.approvalStatus);
   const [publishToWebsite, setPublishToWebsite] = useState(asset.publishToWebsite);
-  const [privacyConfirmed, setPrivacyConfirmed] = useState(asset.privacyConfirmedNoPeople);
   const [focalX, setFocalX] = useState(asset.focalPoint.x);
   const [focalY, setFocalY] = useState(asset.focalPoint.y);
   const [saving, setSaving] = useState(false);
+  const [busyAction, setBusyAction] = useState<'archive' | 'restore' | 'delete' | null>(null);
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
 
-  function toggleUsage(nextUsage: MediaUsage) {
-    setUsage((current) =>
-      current.includes(nextUsage)
-        ? current.filter((entry) => entry !== nextUsage)
-        : [...current, nextUsage],
-    );
-  }
-
-  async function saveMedia() {
+  async function savePhoto() {
     setSaving(true);
     setError('');
     setNotice('');
     const payload: MediaAssetUpdateRequest = {
       altText,
       caption,
-      albumId,
-      usage,
-      approvalStatus,
+      albumId: '',
+      usage: ['homepage'],
+      approvalStatus: 'approved',
       publishToWebsite,
-      privacyConfirmedNoPeople: privacyConfirmed,
+      privacyConfirmedNoPeople: true,
       focalPoint: {
         x: focalX,
         y: focalY,
       },
     };
+
     try {
       const response = await fetch(`/api/admin/media/${asset.id}`, {
         method: 'PATCH',
@@ -90,14 +66,52 @@ export function MediaDetailPanel({ asset, albums, filters }: MediaDetailPanelPro
       });
       const result = (await response.json()) as MediaAssetMutationResponse;
       if (!response.ok || !result.media) {
-        throw new Error(result.message ?? 'Unable to save media details.');
+        throw new Error(result.message ?? 'Unable to save gallery photo.');
       }
-      setNotice('Media details saved.');
+      setNotice('Gallery photo saved.');
       router.refresh();
     } catch (saveError) {
-      setError(saveError instanceof Error ? saveError.message : 'Unable to save media details.');
+      setError(saveError instanceof Error ? saveError.message : 'Unable to save gallery photo.');
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function runRecordAction(action: 'archive' | 'restore' | 'delete') {
+    if (
+      action === 'delete' &&
+      !confirm('Delete this gallery photo record? The Cloudinary file will remain.')
+    ) {
+      return;
+    }
+
+    setBusyAction(action);
+    setError('');
+    setNotice('');
+
+    try {
+      const response = await fetch('/api/admin/media/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action,
+          mediaIds: [asset.id],
+          albumId: '',
+          privacyConfirmedNoPeople: true,
+        }),
+      });
+      const result = (await response.json()) as MediaBulkActionResponse;
+      if (!response.ok || typeof result.updatedCount !== 'number') {
+        throw new Error(result.message ?? 'Unable to update gallery photo.');
+      }
+      router.push('/admin/gallery');
+      router.refresh();
+    } catch (actionError) {
+      setError(
+        actionError instanceof Error ? actionError.message : 'Unable to update gallery photo.',
+      );
+    } finally {
+      setBusyAction(null);
     }
   }
 
@@ -106,16 +120,16 @@ export function MediaDetailPanel({ asset, albums, filters }: MediaDetailPanelPro
       <div className="flex items-start justify-between gap-4 border-b border-admin-border px-5 py-4">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-admin-accent">
-            Media Detail
+            Edit Photo
           </p>
           <h2 id="media-detail-heading" className="mt-1 font-serif text-2xl text-forest-900">
-            {asset.filename}
+            Gallery details
           </h2>
         </div>
         <Link
           href={closeHref(filters)}
           className="grid size-9 place-items-center rounded-full text-admin-muted hover:bg-cream-alt hover:text-forest-900"
-          aria-label="Close media detail"
+          aria-label="Close gallery photo detail"
         >
           <X aria-hidden="true" className="size-4" />
         </Link>
@@ -123,29 +137,24 @@ export function MediaDetailPanel({ asset, albums, filters }: MediaDetailPanelPro
 
       <div className="space-y-5 p-5">
         <div className="aspect-[4/3] overflow-hidden rounded-xl bg-cream-alt">
-          {asset.mediaType === 'image' ? (
-            <div
-              aria-hidden="true"
-              className="h-full w-full bg-cover"
-              style={{
-                backgroundImage: `url("${asset.cloudinaryUrl}")`,
-                backgroundPosition: `${focalX}% ${focalY}%`,
-              }}
-            />
-          ) : (
-            <span className="grid h-full place-items-center text-admin-muted">
-              <FileText aria-hidden="true" className="size-8" />
-            </span>
-          )}
+          <div
+            aria-hidden="true"
+            className="h-full w-full bg-cover"
+            style={{
+              backgroundImage: `url("${asset.cloudinaryUrl}")`,
+              backgroundPosition: `${focalX}% ${focalY}%`,
+            }}
+          />
         </div>
 
         <label className="block">
           <span className="text-xs font-bold uppercase tracking-[0.14em] text-admin-muted">
-            Alt Text
+            Image description
           </span>
           <input
             value={altText}
             onChange={(event) => setAltText(event.target.value)}
+            placeholder="Pool and lounge chairs under summer light"
             className="mt-2 h-11 w-full rounded-lg border border-admin-border bg-white px-3 text-sm text-forest-900"
             maxLength={300}
           />
@@ -158,126 +167,31 @@ export function MediaDetailPanel({ asset, albums, filters }: MediaDetailPanelPro
           <textarea
             value={caption}
             onChange={(event) => setCaption(event.target.value)}
+            placeholder="Optional short caption shown on the public gallery."
             className="mt-2 min-h-24 w-full rounded-lg border border-admin-border bg-white px-3 py-2 text-sm text-forest-900"
             maxLength={1000}
           />
         </label>
 
-        <label className="block">
-          <span className="text-xs font-bold uppercase tracking-[0.14em] text-admin-muted">
-            Album
+        <label className="flex items-start gap-3 rounded-xl bg-cream-alt p-4 text-sm text-forest-900">
+          <input
+            type="checkbox"
+            checked={publishToWebsite}
+            onChange={(event) => setPublishToWebsite(event.target.checked)}
+            className="mt-1 size-4 rounded border-admin-border text-admin-accent"
+          />
+          <span>
+            <span className="font-bold">Show this photo on the public gallery</span>
+            <span className="mt-1 block text-xs leading-relaxed text-admin-muted">
+              Turn this off to keep the photo saved in admin but hidden from guests.
+            </span>
           </span>
-          <select
-            value={albumId}
-            onChange={(event) => setAlbumId(event.target.value)}
-            className="mt-2 h-11 w-full rounded-lg border border-admin-border bg-white px-3 text-sm text-forest-900"
-          >
-            <option value="">Unassigned</option>
-            {albums.map((album) => (
-              <option key={album.id} value={album.id}>
-                {'— '.repeat(album.depth)}
-                {album.name}
-              </option>
-            ))}
-          </select>
         </label>
-
-        <fieldset>
-          <legend className="text-xs font-bold uppercase tracking-[0.14em] text-admin-muted">
-            Usage
-          </legend>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {MEDIA_USAGE_TYPES.map((entry) => (
-              <label
-                key={entry}
-                className={`inline-flex cursor-pointer items-center gap-2 rounded-full border px-3 py-2 text-xs font-bold ${
-                  usage.includes(entry)
-                    ? 'border-admin-accent bg-admin-accent text-white'
-                    : 'border-admin-border bg-white text-admin-muted'
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={usage.includes(entry)}
-                  onChange={() => toggleUsage(entry)}
-                  className="sr-only"
-                />
-                {usageLabels[entry]}
-              </label>
-            ))}
-          </div>
-        </fieldset>
-
-        <div className="grid gap-4 rounded-lg border border-admin-border p-4">
-          <label className="block">
-            <span className="text-xs font-bold uppercase tracking-[0.14em] text-admin-muted">
-              Approval Status
-            </span>
-            <select
-              value={approvalStatus}
-              onChange={(event) => {
-                const nextStatus = event.target.value as MediaApprovalStatus;
-                setApprovalStatus(nextStatus);
-                if (nextStatus !== 'approved') {
-                  setPublishToWebsite(false);
-                }
-              }}
-              className="mt-2 h-11 w-full rounded-lg border border-admin-border bg-white px-3 text-sm text-forest-900"
-            >
-              {MEDIA_APPROVAL_STATUSES.map((status) => (
-                <option key={status} value={status}>
-                  {status.charAt(0).toUpperCase()}
-                  {status.slice(1)}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="flex items-start gap-3 rounded-lg border border-admin-accent/25 bg-[#FFF7E8] p-3 text-sm text-forest-900">
-            <input
-              type="checkbox"
-              checked={privacyConfirmed}
-              onChange={(event) => {
-                setPrivacyConfirmed(event.target.checked);
-                if (!event.target.checked) {
-                  setPublishToWebsite(false);
-                }
-              }}
-              className="mt-1 size-4 rounded border-admin-border text-admin-accent"
-            />
-            <span>
-              <span className="flex items-center gap-2 font-bold">
-                <CameraOff aria-hidden="true" className="size-4 text-admin-accent" />
-                No identifiable people
-              </span>
-              <span className="mt-1 block text-xs leading-relaxed text-admin-muted">
-                Required before this asset can be approved or published.
-              </span>
-            </span>
-          </label>
-
-          <label className="flex items-start gap-3 rounded-lg bg-cream-alt p-3 text-sm text-forest-900">
-            <input
-              type="checkbox"
-              checked={publishToWebsite}
-              disabled={approvalStatus !== 'approved' || !privacyConfirmed}
-              onChange={(event) => setPublishToWebsite(event.target.checked)}
-              className="mt-1 size-4 rounded border-admin-border text-admin-accent disabled:opacity-50"
-            />
-            <span>
-              <span className="font-bold">Publish to website</span>
-              <span className="mt-1 block text-xs leading-relaxed text-admin-muted">
-                Media must be approved and privacy-confirmed before it can appear on the public
-                website.
-              </span>
-            </span>
-          </label>
-        </div>
 
         <fieldset>
           <legend className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-admin-muted">
             <SlidersHorizontal aria-hidden="true" className="size-4" />
-            Focal Point
+            Crop focus
           </legend>
           <div className="mt-3 grid gap-4 sm:grid-cols-2">
             <label>
@@ -304,23 +218,23 @@ export function MediaDetailPanel({ asset, albums, filters }: MediaDetailPanelPro
             </label>
           </div>
           <p className="mt-2 text-xs text-admin-muted">
-            Current focal point: {focalX}% / {focalY}%
+            Current focus: {focalX}% / {focalY}%
           </p>
         </fieldset>
 
         <dl className="grid gap-3 rounded-lg bg-cream-alt p-4 text-sm">
           <div className="flex justify-between gap-3">
-            <dt className="text-admin-muted">File type</dt>
-            <dd className="font-semibold text-forest-900">{asset.mimeType}</dd>
+            <dt className="text-admin-muted">File</dt>
+            <dd className="max-w-44 truncate font-semibold text-forest-900">{asset.filename}</dd>
           </div>
           <div className="flex justify-between gap-3">
             <dt className="text-admin-muted">Dimensions</dt>
-            <dd className="font-semibold text-forest-900">{formatFileSize(asset.dimensions)}</dd>
+            <dd className="font-semibold text-forest-900">{formatDimensions(asset.dimensions)}</dd>
           </div>
           <div className="flex justify-between gap-3">
-            <dt className="text-admin-muted">Cloudinary ID</dt>
-            <dd className="max-w-44 truncate font-semibold text-forest-900">
-              {asset.cloudinaryPublicId}
+            <dt className="text-admin-muted">Status</dt>
+            <dd className="font-semibold text-forest-900">
+              {asset.publishToWebsite ? 'Visible' : 'Hidden'}
             </dd>
           </div>
         </dl>
@@ -330,13 +244,58 @@ export function MediaDetailPanel({ asset, albums, filters }: MediaDetailPanelPro
 
         <button
           type="button"
-          onClick={saveMedia}
-          disabled={saving}
+          onClick={savePhoto}
+          disabled={saving || !altText.trim()}
           className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-admin-sidebar px-4 text-sm font-bold text-white hover:bg-admin-sidebar-active disabled:cursor-not-allowed disabled:opacity-60"
         >
           {saving ? <LoaderCircle aria-hidden="true" className="size-4 animate-spin" /> : null}
-          Save Details
+          Save Photo
         </button>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          {asset.archived ? (
+            <button
+              type="button"
+              onClick={() => runRecordAction('restore')}
+              disabled={busyAction !== null}
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-admin-border bg-white px-4 text-xs font-bold text-admin-muted hover:bg-cream-alt disabled:opacity-60"
+            >
+              {busyAction === 'restore' ? (
+                <LoaderCircle aria-hidden="true" className="size-3 animate-spin" />
+              ) : (
+                <RotateCcw aria-hidden="true" className="size-3" />
+              )}
+              Restore
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => runRecordAction('archive')}
+              disabled={busyAction !== null}
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-admin-border bg-white px-4 text-xs font-bold text-admin-muted hover:bg-cream-alt disabled:opacity-60"
+            >
+              {busyAction === 'archive' ? (
+                <LoaderCircle aria-hidden="true" className="size-3 animate-spin" />
+              ) : (
+                <Archive aria-hidden="true" className="size-3" />
+              )}
+              Archive
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => runRecordAction('delete')}
+            disabled={busyAction !== null}
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-admin-danger/40 bg-white px-4 text-xs font-bold text-admin-danger hover:bg-admin-danger/5 disabled:opacity-60"
+          >
+            {busyAction === 'delete' ? (
+              <LoaderCircle aria-hidden="true" className="size-3 animate-spin" />
+            ) : (
+              <Trash2 aria-hidden="true" className="size-3" />
+            )}
+            Delete
+          </button>
+        </div>
       </div>
     </aside>
   );

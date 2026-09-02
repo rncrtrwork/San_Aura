@@ -83,10 +83,20 @@ test('media upload validation accepts Cloudinary media folder uploads', () => {
   assert.equal(result.valid, true);
 });
 
-test('media upload validation requires no people confirmation', () => {
+test('media upload validation allows admin gallery uploads without privacy confirmation', () => {
   const result = validateMediaAssetCreate({
     ...validUpload,
     privacyConfirmedNoPeople: false,
+  });
+
+  assert.equal(result.valid, true);
+});
+
+test('media upload validation rejects non-image gallery uploads', () => {
+  const result = validateMediaAssetCreate({
+    ...validUpload,
+    filename: 'brochure.pdf',
+    mimeType: 'application/pdf',
   });
 
   assert.equal(result.valid, false);
@@ -155,7 +165,7 @@ test('media detail validation rejects publishing unapproved assets', () => {
   assert.equal(result.valid, false);
 });
 
-test('media detail validation requires no people confirmation before approval', () => {
+test('media detail validation allows approval without privacy confirmation', () => {
   const result = validateMediaAssetUpdate({
     altText: 'Cabin porch at sunset',
     caption: '',
@@ -170,10 +180,10 @@ test('media detail validation requires no people confirmation before approval', 
     },
   });
 
-  assert.equal(result.valid, false);
+  assert.equal(result.valid, true);
 });
 
-test('media bulk validation accepts approve actions with privacy confirmation', () => {
+test('media bulk validation accepts approve actions', () => {
   const result = validateMediaBulkAction({
     action: 'approve',
     mediaIds: ['64f5f5f5f5f5f5f5f5f5f5f5'],
@@ -184,7 +194,7 @@ test('media bulk validation accepts approve actions with privacy confirmation', 
   assert.equal(result.valid, true);
 });
 
-test('media bulk validation requires privacy confirmation before approval', () => {
+test('media bulk validation accepts approve actions without privacy confirmation', () => {
   const result = validateMediaBulkAction({
     action: 'approve',
     mediaIds: ['64f5f5f5f5f5f5f5f5f5f5f5'],
@@ -192,7 +202,7 @@ test('media bulk validation requires privacy confirmation before approval', () =
     privacyConfirmedNoPeople: false,
   });
 
-  assert.equal(result.valid, false);
+  assert.equal(result.valid, true);
 });
 
 test('media bulk validation requires an album for bulk album assignment', () => {
@@ -204,6 +214,17 @@ test('media bulk validation requires an album for bulk album assignment', () => 
   });
 
   assert.equal(result.valid, false);
+});
+
+test('media bulk validation accepts gallery photo restore actions', () => {
+  const result = validateMediaBulkAction({
+    action: 'restore',
+    mediaIds: ['64f5f5f5f5f5f5f5f5f5f5f5'],
+    albumId: '',
+    privacyConfirmedNoPeople: false,
+  });
+
+  assert.equal(result.valid, true);
 });
 
 test('media album validation creates stable nested album slugs', () => {

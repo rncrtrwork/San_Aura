@@ -1,6 +1,5 @@
 import { Types } from 'mongoose';
 import { groupedPublicGalleryAssets, type PublicGalleryAlbumGroup } from '@/lib/publicGallery';
-import { mediaTypeFromMime } from '@/lib/mediaLibrary';
 import { connectToDatabase } from '@/lib/db';
 import { Album } from '@/models/Album';
 import { MediaAsset } from '@/models/MediaAsset';
@@ -44,8 +43,7 @@ export async function getPublicGalleryPage(): Promise<PublicGalleryAlbumGroup[]>
         archived: false,
         approvalStatus: 'approved',
         publishToWebsite: true,
-        privacyConfirmedNoPeople: true,
-        mimeType: /^(image|video)\//,
+        mimeType: /^image\//,
       })
         .select('cloudinaryUrl mimeType altText caption albumRef focalPoint uploadedAt createdAt')
         .sort({ uploadedAt: -1, createdAt: -1 })
@@ -57,14 +55,13 @@ export async function getPublicGalleryPage(): Promise<PublicGalleryAlbumGroup[]>
     return groupedPublicGalleryAssets(
       assets.map((asset) => {
         const album = asset.albumRef ? (albumById.get(asset.albumRef.toString()) ?? null) : null;
-        const mediaType = mediaTypeFromMime(asset.mimeType);
 
         return {
           id: asset._id.toString(),
           url: asset.cloudinaryUrl,
           altText: asset.altText,
           caption: asset.caption,
-          mediaType: mediaType === 'video' ? 'video' : 'image',
+          mediaType: 'image',
           album: album
             ? {
                 id: album._id.toString(),
