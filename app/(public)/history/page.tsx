@@ -169,14 +169,21 @@ function TimelineCard({
 }
 
 function HistoryTimeline({ items }: { items: ContentTimelineItem[] }) {
+  const leftItems = items
+    .map((item, index) => ({ item, index }))
+    .filter(({ index }) => index % 2 === 0);
+  const rightItems = items
+    .map((item, index) => ({ item, index }))
+    .filter(({ index }) => index % 2 === 1);
+
   return (
     <section className="bg-white px-6 pb-20 pt-0 md:px-10 md:pb-24 lg:px-12">
-      <div className="relative mx-auto max-w-[1530px]">
+      <div className="relative mx-auto max-w-[1530px] lg:grid lg:grid-cols-[minmax(0,1fr)_72px_minmax(0,1fr)]">
         <div
           aria-hidden="true"
           className="absolute left-1/2 top-0 hidden h-full w-1 -translate-x-1/2 rounded-full bg-[#dddddd] lg:block"
         />
-        <ol className="grid gap-10 md:gap-12">
+        <ol className="grid gap-10 md:gap-12 lg:hidden">
           {items.map((item, index) => {
             const align = index % 2 === 0 ? 'left' : 'right';
             const imageUrl = timelineImageUrls[index % timelineImageUrls.length];
@@ -215,6 +222,43 @@ function HistoryTimeline({ items }: { items: ContentTimelineItem[] }) {
               </li>
             );
           })}
+        </ol>
+        <ol className="hidden flex-col gap-12 pr-8 lg:flex">
+          {leftItems.map(({ item, index }) => (
+            <li key={`${item.year}-${item.title}`} className="relative">
+              <TimelineCard
+                item={item}
+                imageUrl={timelineImageUrls[index % timelineImageUrls.length]}
+                align="left"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute right-[-36px] top-1/2 z-10 flex w-[68px] -translate-y-1/2 items-center"
+              >
+                <span className="h-px flex-1 bg-[#dddddd]" />
+                <span className="size-3 rounded-full bg-[#d97706] ring-8 ring-white" />
+              </div>
+            </li>
+          ))}
+        </ol>
+        <div aria-hidden="true" className="hidden lg:block" />
+        <ol className="hidden flex-col gap-12 pl-8 lg:flex lg:pt-28">
+          {rightItems.map(({ item, index }) => (
+            <li key={`${item.year}-${item.title}`} className="relative">
+              <TimelineCard
+                item={item}
+                imageUrl={timelineImageUrls[index % timelineImageUrls.length]}
+                align="right"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute left-[-36px] top-1/2 z-10 flex w-[68px] -translate-y-1/2 items-center"
+              >
+                <span className="size-3 rounded-full bg-[#d97706] ring-8 ring-white" />
+                <span className="h-px flex-1 bg-[#dddddd]" />
+              </div>
+            </li>
+          ))}
         </ol>
       </div>
     </section>
