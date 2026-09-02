@@ -6,6 +6,7 @@ import Script from 'next/script';
 import { useState, type FormEvent } from 'react';
 import { CLOUDINARY_FOLDERS } from '@/lib/cloudinaryFolders';
 import type { CloudinarySignatureResponse, CloudinaryWidgetConfig } from '@/lib/cloudinaryUpload';
+import { buildEventDateTimeRange } from '@/lib/eventDateTime';
 import type { EventMutationRequest, EventMutationResponse } from '@/lib/eventForms';
 
 const inputClass =
@@ -48,10 +49,11 @@ export function EventCreateForm() {
     const date = fieldValue(form, 'date');
     const startTime = fieldValue(form, 'startTime');
     const endTime = fieldValue(form, 'endTime');
+    const dateTimeRange = buildEventDateTimeRange(date, startTime, endTime);
     const payload: EventMutationRequest = {
       title: fieldValue(form, 'title'),
-      startsAt: `${date}T${startTime}:00`,
-      endsAt: `${date}T${endTime}:00`,
+      startsAt: dateTimeRange.startsAt,
+      endsAt: dateTimeRange.endsAt,
       location: fieldValue(form, 'location'),
       capacity: capacityValue(fieldValue(form, 'capacity')),
       registrationRequired: form.get('registrationRequired') === 'on',
@@ -230,27 +232,27 @@ export function EventCreateForm() {
             <div className="mt-1.5 overflow-hidden rounded-lg border border-admin-border bg-white">
               {imageUrl ? (
                 <div
-                  className="min-h-56 bg-cover bg-center"
+                  className="min-h-32 bg-cover bg-center sm:min-h-40"
                   style={{ backgroundImage: `url("${imageUrl}")` }}
                   aria-label="Uploaded event image preview"
                 />
               ) : (
-                <div className="grid min-h-56 place-items-center bg-cream-alt text-admin-muted">
+                <div className="grid min-h-32 place-items-center bg-cream-alt text-admin-muted sm:min-h-40">
                   <div className="text-center">
-                    <ImageIcon aria-hidden="true" className="mx-auto size-12" />
-                    <p className="mt-3 text-sm font-semibold">No event image uploaded yet.</p>
+                    <ImageIcon aria-hidden="true" className="mx-auto size-8" />
+                    <p className="mt-2 text-sm font-semibold">No event image uploaded yet.</p>
                   </div>
                 </div>
               )}
-              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-admin-border p-4">
-                <p className="text-sm text-admin-muted">
-                  Upload a JPG, PNG, WebP, or AVIF image directly from this form.
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-admin-border px-4 py-3">
+                <p className="text-xs text-admin-muted">
+                  JPG, PNG, WebP, or AVIF. Upload is optional.
                 </p>
                 <button
                   type="button"
                   onClick={openUploadWidget}
                   disabled={!widgetReady || uploading}
-                  className="inline-flex h-10 items-center gap-2 rounded-lg bg-admin-sidebar px-4 text-sm font-bold text-white hover:bg-admin-sidebar-active disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex h-9 items-center gap-2 rounded-lg bg-admin-sidebar px-3 text-xs font-bold text-white hover:bg-admin-sidebar-active disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {uploading ? (
                     <LoaderCircle aria-hidden="true" className="size-4 animate-spin" />

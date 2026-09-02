@@ -6,6 +6,7 @@ import Script from 'next/script';
 import { useMemo, useRef, useState, type FormEvent } from 'react';
 import { CLOUDINARY_FOLDERS } from '@/lib/cloudinaryFolders';
 import type { CloudinarySignatureResponse, CloudinaryWidgetConfig } from '@/lib/cloudinaryUpload';
+import { buildEventDateTimeRange } from '@/lib/eventDateTime';
 import type { EventMutationRequest, EventMutationResponse } from '@/lib/eventForms';
 import type { EventListItem } from '@/lib/eventFilters';
 
@@ -115,10 +116,11 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
     const date = fieldValue(form, 'date');
     const startTime = fieldValue(form, 'startTime');
     const endTime = fieldValue(form, 'endTime');
+    const dateTimeRange = buildEventDateTimeRange(date, startTime, endTime);
     return {
       title: fieldValue(form, 'title'),
-      startsAt: `${date}T${startTime}:00`,
-      endsAt: `${date}T${endTime}:00`,
+      startsAt: dateTimeRange.startsAt,
+      endsAt: dateTimeRange.endsAt,
       location: fieldValue(form, 'location'),
       capacity: capacityValue(fieldValue(form, 'capacity')),
       registrationRequired: form.get('registrationRequired') === 'on',
