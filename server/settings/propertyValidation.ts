@@ -1,4 +1,5 @@
 import type { PropertySettingsMutationRequest } from '@/lib/settingsManager';
+import { CLOUDINARY_FOLDERS, isCloudinaryPublicIdInFolder } from '@/lib/cloudinaryFolders';
 
 export type PropertySettingsValidationResult =
   | { valid: true; data: PropertySettingsMutationRequest }
@@ -60,7 +61,7 @@ export function validatePropertySettings(
   if (!validUrl(logoUrl)) {
     return { valid: false, message: 'Logo URL must be a valid http or https URL.' };
   }
-  if (logoUrl && !logoPublicId.startsWith('sun-aura/settings/')) {
+  if (logoUrl && !isCloudinaryPublicIdInFolder(logoPublicId, CLOUDINARY_FOLDERS.settings)) {
     return { valid: false, message: 'Logo uploads must use the settings folder.' };
   }
   if (

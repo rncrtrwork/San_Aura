@@ -4,6 +4,7 @@ import { CameraOff, ImageUp, LoaderCircle } from 'lucide-react';
 import Script from 'next/script';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { CLOUDINARY_FOLDERS } from '@/lib/cloudinaryFolders';
 import type { CloudinarySignatureResponse, CloudinaryWidgetConfig } from '@/lib/cloudinaryUpload';
 import type { MediaAssetCreateRequest, MediaAssetMutationResponse } from '@/lib/mediaForms';
 import type { MediaAlbumOption } from '@/lib/mediaLibrary';
@@ -125,7 +126,7 @@ export function MediaUploadPanel({ albums }: MediaUploadPanelProps) {
                 widget.close();
               });
           },
-          folder: 'sun-aura/media',
+          folder: CLOUDINARY_FOLDERS.media,
           tags: ['media-library'],
           context: { privacy_confirmed_no_people: String(privacyConfirmed) },
           sources: ['local', 'camera'],

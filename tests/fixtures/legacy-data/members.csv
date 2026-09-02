@@ -1,0 +1,2 @@
+legacyId,name,email,phone,address,membershipTier,status,renewalMonth,joinDate,emergencyContactName,emergencyContactRelationship,emergencyContactPhone,electricBillingMode,assignedSiteCode,staffNotes
+M-1,Maureen Guest,maureen@example.com,219-555-0100,Lot 1,2850,active,5,2024-05-01,Pat Guest,Spouse,219-555-0101,flat25,,Founding member

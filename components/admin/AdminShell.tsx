@@ -13,7 +13,7 @@ export function AdminShell({ children }: AdminShellProps) {
       <AdminSidebar />
       <div className="min-w-0">
         <AdminTopbar />
-        <main className="p-5 lg:p-8">
+        <main id="main-content" className="p-5 lg:p-8">
           <PrivacyBanner />
           {children}
         </main>

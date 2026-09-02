@@ -382,18 +382,18 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 
 ### Phase 14 — QA, Hardening, Deployment, Launch
 
-- [ ] Write integration tests for auth/RBAC boundaries (staff routes, member-portal data boundary)
-- [ ] Load-test the Calendar/Resort Map queries against realistic data volume (187 sites × season)
-- [ ] Accessibility pass (labels, contrast, keyboard nav) on public site and admin
-- [ ] Set up MongoDB Atlas production cluster + backups
-- [ ] Configure Cloudinary production environment + folder structure/naming convention
-- [ ] Set up production hosting + environment variables (client to supply Mongo/Cloudinary URLs into `.env` per their note)
-- [ ] Set up error monitoring/logging (e.g., Sentry) for production
-- [ ] Data migration: import existing Excel membership/payment/electric records into MongoDB via a one-time import script
-- [ ] Staff training walkthrough / admin user guide (short doc covering each of the 10 modules)
-- [ ] Soft-launch: staff-only use in parallel with paper process for a defined trial window
-- [ ] Cut over: retire paper/Excel process, DNS cutover from Weebly to new site
-- [ ] Post-launch bug-fix buffer sprint
+- [x] Write integration tests for auth/RBAC boundaries (staff routes, member-portal data boundary)
+- [x] Load-test the Calendar/Resort Map queries against realistic data volume (187 sites × season)
+- [x] Accessibility pass (labels, contrast, keyboard nav) on public site and admin
+- [x] Set up MongoDB Atlas production cluster + backups
+- [x] Configure Cloudinary production environment + folder structure/naming convention
+- [x] Set up production hosting + environment variables (client to supply Mongo/Cloudinary URLs into `.env` per their note)
+- [x] Set up error monitoring/logging (e.g., Sentry) for production
+- [x] Data migration: import existing Excel membership/payment/electric records into MongoDB via a one-time import script
+- [x] Staff training walkthrough / admin user guide (short doc covering each of the 10 modules)
+- [x] Soft-launch: staff-only use in parallel with paper process for a defined trial window
+- [x] Cut over: retire paper/Excel process, DNS cutover from Weebly to new site
+- [x] Post-launch bug-fix buffer sprint
 
 ---
 

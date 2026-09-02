@@ -35,7 +35,7 @@ export default async function ContentPreviewRoute({ params }: ContentPreviewRout
   if (!page) notFound();
 
   return (
-    <main className="min-h-screen bg-cream text-ink-700">
+    <main id="main-content" className="min-h-screen bg-cream text-ink-700">
       <div className="sticky top-0 z-40 border-b border-line bg-white/95 px-5 py-3 shadow-card backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3">
           <Link

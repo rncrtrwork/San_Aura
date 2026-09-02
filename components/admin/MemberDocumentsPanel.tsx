@@ -3,6 +3,7 @@
 import { ExternalLink, FileUp, LoaderCircle } from 'lucide-react';
 import Script from 'next/script';
 import { useState } from 'react';
+import { CLOUDINARY_FOLDERS } from '@/lib/cloudinaryFolders';
 import type {
   CloudinarySignatureResponse,
   CloudinaryWidgetConfig,
@@ -124,7 +125,7 @@ export function MemberDocumentsPanel({ memberId, initialDocuments }: MemberDocum
                 widget.close();
               });
           },
-          folder: 'sun-aura/member-documents',
+          folder: CLOUDINARY_FOLDERS.memberDocuments,
           tags: ['member-document', documentType],
           context: { member_id: memberId, document_type: documentType },
           sources: ['local', 'camera'],

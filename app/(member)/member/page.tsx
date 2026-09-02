@@ -41,7 +41,7 @@ export default async function MemberPage({ searchParams }: MemberPageProps) {
   const profile = activeTab === 'membership' ? await getMemberProfile(session.memberId) : null;
 
   return (
-    <main className="min-h-screen bg-cream px-6 py-8 text-forest-900 md:px-10">
+    <main id="main-content" className="min-h-screen bg-cream px-6 py-8 text-forest-900 md:px-10">
       <div className="mx-auto max-w-[1180px]">
         <header className="flex flex-wrap items-start justify-between gap-4">
           <div>

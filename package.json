@@ -14,11 +14,14 @@
     "test": "tsx --test tests/**/*.test.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "verify:production": "tsx scripts/verify-production-env.ts",
+    "import:legacy": "tsx scripts/import-legacy-data.ts",
     "seed:roles": "tsx scripts/seed-roles.ts",
     "seed:history": "tsx scripts/seed-history-page.ts",
     "seed:initial": "tsx scripts/seed-initial-data.ts"
   },
   "dependencies": {
+    "@sentry/nextjs": "^10.73.0",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.8.0",
     "jose": "^5.9.6",

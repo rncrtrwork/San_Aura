@@ -4,6 +4,7 @@ import { FileUp, ImageIcon, LoaderCircle, Save } from 'lucide-react';
 import Script from 'next/script';
 import { useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
+import { CLOUDINARY_FOLDERS } from '@/lib/cloudinaryFolders';
 import type { CloudinarySignatureResponse, CloudinaryWidgetConfig } from '@/lib/cloudinaryUpload';
 import type {
   PropertySettingsMutationRequest,
@@ -119,7 +120,7 @@ export function PropertyDetailsForm({ property, booking }: PropertyDetailsFormPr
                 widget.close();
               });
           },
-          folder: 'sun-aura/settings',
+          folder: CLOUDINARY_FOLDERS.settings,
           tags: ['settings', 'logo'],
           context: { usage: 'property_logo' },
           sources: ['local'],
