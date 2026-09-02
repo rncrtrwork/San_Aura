@@ -22,28 +22,19 @@ function galleryImages(albumGroups: PublicGalleryAlbumGroup[]): GalleryImage[] {
 
 export function PublicGalleryShowcase({ albumGroups }: PublicGalleryShowcaseProps) {
   const images = useMemo(() => galleryImages(albumGroups), [albumGroups]);
-  const albumLabels = useMemo(
-    () => Array.from(new Set(images.map((image) => image.albumLabel))),
-    [images],
-  );
-  const [selectedAlbum, setSelectedAlbum] = useState('all');
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
-  const visibleImages =
-    selectedAlbum === 'all'
-      ? images
-      : images.filter((image) => image.albumLabel === selectedAlbum);
   const selectedImage = selectedImageId
-    ? (visibleImages.find((image) => image.id === selectedImageId) ?? null)
+    ? (images.find((image) => image.id === selectedImageId) ?? null)
     : null;
   const selectedIndex = selectedImage
-    ? visibleImages.findIndex((image) => image.id === selectedImage.id)
+    ? images.findIndex((image) => image.id === selectedImage.id)
     : -1;
 
   function selectRelativeImage(direction: 'previous' | 'next') {
-    if (selectedIndex < 0 || visibleImages.length === 0) return;
+    if (selectedIndex < 0 || images.length === 0) return;
     const offset = direction === 'previous' ? -1 : 1;
-    const nextIndex = (selectedIndex + offset + visibleImages.length) % visibleImages.length;
-    setSelectedImageId(visibleImages[nextIndex]?.id ?? null);
+    const nextIndex = (selectedIndex + offset + images.length) % images.length;
+    setSelectedImageId(images[nextIndex]?.id ?? null);
   }
 
   if (images.length === 0) {
@@ -76,74 +67,24 @@ export function PublicGalleryShowcase({ albumGroups }: PublicGalleryShowcaseProp
           }}
         />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-forest-900 via-forest-900/75 to-forest-900/20" />
-        <div className="mx-auto grid max-w-[1360px] gap-10 lg:grid-cols-[1fr_0.72fr] lg:items-end">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gold-600">
-              Gallery
-            </p>
-            <h1 className="mt-4 max-w-4xl font-serif text-5xl leading-tight sm:text-6xl lg:text-7xl">
-              A closer look at the resort.
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-cream">
-              Browse public gallery photos selected by the Sun Aura team — from wooded paths and
-              cabins to poolside days and quiet golden-hour views.
-            </p>
-          </div>
-          <div className="grid grid-cols-3 gap-3 rounded-[2rem] border border-white/15 bg-white/10 p-4 backdrop-blur">
-            <div className="rounded-2xl bg-white/95 p-5 text-forest-900">
-              <p className="font-serif text-4xl">{images.length}</p>
-              <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-ink-700">
-                Photos
-              </p>
-            </div>
-            <div className="rounded-2xl bg-white/15 p-5">
-              <p className="font-serif text-4xl">{albumLabels.length}</p>
-              <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-cream">
-                Albums
-              </p>
-            </div>
-            <div className="rounded-2xl bg-gold-600 p-5">
-              <p className="font-serif text-4xl">100%</p>
-              <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-white">
-                Resort
-              </p>
-            </div>
-          </div>
+        <div className="mx-auto max-w-[1360px]">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gold-600">
+            Gallery
+          </p>
+          <h1 className="mt-4 max-w-4xl font-serif text-5xl leading-tight sm:text-6xl lg:text-7xl">
+            A closer look at the resort.
+          </h1>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-cream">
+            Browse public gallery photos selected by the Sun Aura team — from wooded paths and
+            cabins to poolside days and quiet golden-hour views.
+          </p>
         </div>
       </section>
 
       <section className="bg-cream px-6 py-14 md:px-10 md:py-20 lg:px-12">
         <div className="mx-auto max-w-[1360px]">
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setSelectedAlbum('all')}
-              className={`rounded-full border px-5 py-2.5 text-sm font-bold transition ${
-                selectedAlbum === 'all'
-                  ? 'border-forest-900 bg-forest-900 text-white'
-                  : 'border-line bg-white text-forest-900 hover:border-gold-600'
-              }`}
-            >
-              All Photos
-            </button>
-            {albumLabels.map((albumLabel) => (
-              <button
-                key={albumLabel}
-                type="button"
-                onClick={() => setSelectedAlbum(albumLabel)}
-                className={`rounded-full border px-5 py-2.5 text-sm font-bold transition ${
-                  selectedAlbum === albumLabel
-                    ? 'border-forest-900 bg-forest-900 text-white'
-                    : 'border-line bg-white text-forest-900 hover:border-gold-600'
-                }`}
-              >
-                {albumLabel}
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-8 grid auto-rows-[12rem] gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {visibleImages.map((image, index) => {
+          <div className="grid auto-rows-[12rem] gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {images.map((image, index) => {
               const largeTile = index % 7 === 0;
               const tallTile = index % 7 === 3;
 
@@ -195,7 +136,7 @@ export function PublicGalleryShowcase({ albumGroups }: PublicGalleryShowcaseProp
                   {selectedImage.albumLabel}
                 </p>
                 <p className="mt-1 text-sm text-cream">
-                  {selectedIndex + 1} of {visibleImages.length}
+                  {selectedIndex + 1} of {images.length}
                 </p>
               </div>
               <button
