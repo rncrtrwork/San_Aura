@@ -1,5 +1,3 @@
-import Image from 'next/image';
-
 type Props = { date: string; title: string; time: string; image: string };
 
 export function EventCard({ date, title, time, image }: Props) {
@@ -8,15 +6,12 @@ export function EventCard({ date, title, time, image }: Props) {
   return (
     <article className="group overflow-hidden rounded-lg border border-line bg-[#fbfaf6]">
       <div className="relative aspect-[1.42/1]">
-        <div className="absolute inset-0 overflow-hidden rounded-t-lg">
-          <Image
-            src={image}
-            alt={title}
-            fill
-            sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
-            className="object-cover transition duration-500 "
-          />
-        </div>
+        <div
+          role="img"
+          aria-label={title}
+          className="absolute inset-0 overflow-hidden rounded-t-lg bg-cover bg-center transition duration-500 group-hover:scale-[1.03]"
+          style={{ backgroundImage: `url("${image}")` }}
+        />
         <div className="absolute -bottom-2 left-4 z-10 flex h-[68px] w-[62px] flex-col items-center justify-center rounded-t-md bg-white text-forest-900">
           <span className="text-[15px] font-semibold uppercase tracking-[.08em]">{month}</span>
           <span className="mt-0.5 font-semibold text-[28px] leading-none">{day}</span>
