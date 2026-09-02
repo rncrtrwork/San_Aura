@@ -227,32 +227,30 @@ export function EventCreateForm() {
             />
             Registration required
           </label>
-          <div className="md:col-span-2">
+          <div className="max-w-md">
             <span className="text-sm font-semibold text-forest-900">Event image</span>
             <div className="mt-1.5 overflow-hidden rounded-lg border border-admin-border bg-white">
               {imageUrl ? (
                 <div
-                  className="min-h-32 bg-cover bg-center sm:min-h-40"
+                  className="min-h-28 bg-cover bg-center sm:min-h-32"
                   style={{ backgroundImage: `url("${imageUrl}")` }}
                   aria-label="Uploaded event image preview"
                 />
               ) : (
-                <div className="grid min-h-32 place-items-center bg-cream-alt text-admin-muted sm:min-h-40">
+                <div className="grid min-h-28 place-items-center bg-cream-alt text-admin-muted sm:min-h-32">
                   <div className="text-center">
                     <ImageIcon aria-hidden="true" className="mx-auto size-8" />
                     <p className="mt-2 text-sm font-semibold">No event image uploaded yet.</p>
                   </div>
                 </div>
               )}
-              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-admin-border px-4 py-3">
-                <p className="text-xs text-admin-muted">
-                  JPG, PNG, WebP, or AVIF. Upload is optional.
-                </p>
+              <div className="grid gap-3 border-t border-admin-border px-4 py-3">
+                <p className="text-xs text-admin-muted">JPG, PNG, WebP, or AVIF. Optional.</p>
                 <button
                   type="button"
                   onClick={openUploadWidget}
                   disabled={!widgetReady || uploading}
-                  className="inline-flex h-9 items-center gap-2 rounded-lg bg-admin-sidebar px-3 text-xs font-bold text-white hover:bg-admin-sidebar-active disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex h-9 w-fit items-center gap-2 rounded-lg bg-admin-sidebar px-3 text-xs font-bold text-white hover:bg-admin-sidebar-active disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {uploading ? (
                     <LoaderCircle aria-hidden="true" className="size-4 animate-spin" />
