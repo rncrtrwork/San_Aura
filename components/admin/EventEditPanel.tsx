@@ -97,7 +97,6 @@ function registrationPercent(event: EventListItem): number {
 export function EventEditPanel({ event }: EventEditPanelProps) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
-  const imageInputRef = useRef<HTMLInputElement>(null);
   const [selectedDate, setSelectedDate] = useState(dateInputValue(event.startsAt));
   const [imageUrl, setImageUrl] = useState(event.imageUrl);
   const [imagePublicId, setImagePublicId] = useState(event.imagePublicId);
@@ -156,7 +155,7 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
     const payload = buildPayload(
       form,
       {
-        url: fieldValue(form, 'imageUrl'),
+        url: imageUrl,
         publicId: imagePublicId,
       },
       submittedStatus(formEvent, event.status),
@@ -404,19 +403,6 @@ export function EventEditPanel({ event }: EventEditPanelProps) {
                 className="size-4 rounded border-admin-border text-admin-accent"
               />
               Send reminder
-            </label>
-            <label className="text-sm font-semibold text-forest-900 md:col-span-2">
-              Image URL
-              <input
-                ref={imageInputRef}
-                name="imageUrl"
-                type="url"
-                maxLength={2000}
-                value={imageUrl}
-                onChange={(inputEvent) => setImageUrl(inputEvent.target.value)}
-                className={inputClass}
-                placeholder="https://..."
-              />
             </label>
             <label className="text-sm font-semibold text-forest-900 md:col-span-2">
               Description
