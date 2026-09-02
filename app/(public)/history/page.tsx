@@ -136,7 +136,7 @@ function TimelineCard({
 }) {
   return (
     <article
-      className={`rounded-xl border border-line bg-white p-7 shadow-card md:p-9 ${
+      className={`min-h-[190px] rounded-md border border-[#d9d9d9] bg-white px-7 py-7 md:px-10 md:py-9 ${
         align === 'left' ? 'lg:text-right' : ''
       }`}
     >
@@ -147,18 +147,22 @@ function TimelineCard({
       >
         <div
           aria-hidden="true"
-          className="h-20 w-28 shrink-0 rounded-lg bg-cover bg-center"
+          className="h-[74px] w-[100px] shrink-0 rounded-md bg-cover bg-center"
           style={{ backgroundImage: `url("${imageUrl}")` }}
         />
-        <p className="font-serif text-5xl leading-none text-forest-900">{item.year}</p>
+        <p className="text-[42px] font-light leading-none tracking-[-0.04em] text-[#10284a] md:text-[46px]">
+          {item.year}
+        </p>
       </div>
-      <h2 className="mt-7 font-serif text-3xl text-forest-900">{item.title}</h2>
       <ul
-        className={`mt-5 space-y-3 text-left text-lg leading-8 text-ink-700 ${
+        className={`mt-8 space-y-3 text-left text-[20px] leading-8 text-[#545b64] ${
           align === 'left' ? 'lg:ml-auto lg:max-w-[90%]' : ''
         }`}
       >
-        <li>{item.description}</li>
+        <li>
+          <span className="font-medium text-[#46505a]">{item.title}</span>
+          {item.description ? ` — ${item.description}` : ''}
+        </li>
       </ul>
     </article>
   );
@@ -166,13 +170,13 @@ function TimelineCard({
 
 function HistoryTimeline({ items }: { items: ContentTimelineItem[] }) {
   return (
-    <section className="bg-white px-6 pb-24 pt-8 md:px-10 md:pb-28 lg:px-12">
-      <div className="relative mx-auto max-w-[1360px]">
+    <section className="bg-white px-6 pb-20 pt-0 md:px-10 md:pb-24 lg:px-12">
+      <div className="relative mx-auto max-w-[1530px]">
         <div
           aria-hidden="true"
-          className="absolute left-1/2 top-0 hidden h-full w-1 -translate-x-1/2 rounded-full bg-line lg:block"
+          className="absolute left-1/2 top-0 hidden h-full w-1 -translate-x-1/2 rounded-full bg-[#dddddd] lg:block"
         />
-        <ol className="grid gap-8 md:gap-10">
+        <ol className="grid gap-6 md:gap-7">
           {items.map((item, index) => {
             const align = index % 2 === 0 ? 'left' : 'right';
             const imageUrl = timelineImageUrls[index % timelineImageUrls.length];
@@ -180,15 +184,15 @@ function HistoryTimeline({ items }: { items: ContentTimelineItem[] }) {
             return (
               <li
                 key={`${item.year}-${item.title}`}
-                className="relative pl-9 lg:grid lg:grid-cols-[1fr_88px_1fr] lg:items-center lg:gap-0 lg:pl-0"
+                className="relative pl-8 lg:grid lg:grid-cols-[minmax(0,1fr)_72px_minmax(0,1fr)] lg:items-center lg:gap-0 lg:pl-0"
               >
                 <div
                   aria-hidden="true"
-                  className="absolute bottom-[-2rem] left-1 top-8 w-px bg-line lg:hidden"
+                  className="absolute bottom-[-1.75rem] left-1 top-8 w-px bg-[#dddddd] lg:hidden"
                 />
                 <span
                   aria-hidden="true"
-                  className="absolute left-[-1px] top-8 size-3 rounded-full bg-gold-600 ring-8 ring-white lg:hidden"
+                  className="absolute left-[-1px] top-8 size-3 rounded-full bg-[#d97706] ring-8 ring-white lg:hidden"
                 />
                 {align === 'left' ? (
                   <TimelineCard item={item} imageUrl={imageUrl} align={align} />
@@ -199,9 +203,9 @@ function HistoryTimeline({ items }: { items: ContentTimelineItem[] }) {
                   aria-hidden="true"
                   className="relative z-10 hidden items-center justify-center lg:flex"
                 >
-                  <span className="h-px flex-1 bg-line" />
-                  <span className="size-4 rounded-full bg-gold-600 ring-8 ring-white" />
-                  <span className="h-px flex-1 bg-line" />
+                  <span className="h-px flex-1 bg-[#dddddd]" />
+                  <span className="size-3 rounded-full bg-[#d97706] ring-8 ring-white" />
+                  <span className="h-px flex-1 bg-[#dddddd]" />
                 </div>
                 {align === 'right' ? (
                   <TimelineCard item={item} imageUrl={imageUrl} align={align} />
