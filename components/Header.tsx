@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import type { PublicNavigationItem } from '@/lib/publicWebsite';
 import { ChevronDown } from './icons';
@@ -38,9 +39,19 @@ type HeaderProps = {
 export function Header({ navigation }: HeaderProps) {
   const [open, setOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
   const moreRef = useRef<HTMLDivElement>(null);
   const primaryLinks = navigation.slice(0, 5);
   const moreLinks = navigation.slice(5);
+  const homeAtTop = pathname === '/' && !scrolled && !open;
+  const headerTheme = homeAtTop
+    ? 'border-white/15 bg-transparent text-white'
+    : 'border-line bg-white/95 text-forest-900 shadow-sm backdrop-blur-xl';
+  const navLinkTheme = homeAtTop
+    ? 'text-white hover:bg-white/10'
+    : 'text-forest-900 hover:bg-cream-alt';
+  const menuLineTheme = homeAtTop ? 'bg-white' : 'bg-forest-900';
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
@@ -57,8 +68,19 @@ export function Header({ navigation }: HeaderProps) {
     return () => document.removeEventListener('mousedown', closeMore);
   }, []);
 
+  useEffect(() => {
+    function updateScrolled() {
+      setScrolled(window.scrollY > 24);
+    }
+    updateScrolled();
+    window.addEventListener('scroll', updateScrolled, { passive: true });
+    return () => window.removeEventListener('scroll', updateScrolled);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 h-[75px] border-b border-line bg-cream lg:h-[75px]">
+    <header
+      className={`sticky top-0 z-50 h-[75px] border-b transition-all duration-300 lg:h-[75px] ${headerTheme}`}
+    >
       <div className="mx-auto flex h-full max-w-[1536px] items-center px-4 sm:px-6 lg:px-8">
         <Logo />
 
@@ -70,7 +92,7 @@ export function Header({ navigation }: HeaderProps) {
             <Link
               key={item.href}
               href={item.href}
-              className="whitespace-nowrap rounded px-3 py-3 text-[13px] text-forest-900 transition-colors hover:bg-cream-alt xl:px-4"
+              className={`whitespace-nowrap rounded px-3 py-3 text-[13px] transition-colors xl:px-4 ${navLinkTheme}`}
             >
               {item.label}
             </Link>
@@ -81,7 +103,7 @@ export function Header({ navigation }: HeaderProps) {
                 type="button"
                 aria-expanded={moreOpen}
                 onClick={() => setMoreOpen(!moreOpen)}
-                className="flex items-center gap-1 rounded px-3 py-3 text-[13px] text-forest-900 transition-colors hover:bg-cream-alt xl:px-4"
+                className={`flex items-center gap-1 rounded px-3 py-3 text-[13px] transition-colors xl:px-4 ${navLinkTheme}`}
               >
                 More{' '}
                 <ChevronDown
@@ -109,7 +131,9 @@ export function Header({ navigation }: HeaderProps) {
         <div className="ml-3 hidden shrink-0 items-center gap-3 xl:flex">
           <Link
             href="/member"
-            className="px-5 py-4 text-[12px] font-semibold uppercase tracking-[.06em] text-forest-900"
+            className={`px-5 py-4 text-[12px] font-semibold uppercase tracking-[.06em] transition-colors ${
+              homeAtTop ? 'text-white hover:text-cream' : 'text-forest-900 hover:text-gold-700'
+            }`}
           >
             Join Us
           </Link>
@@ -129,13 +153,13 @@ export function Header({ navigation }: HeaderProps) {
           className="absolute right-5 top-[19px] z-10 flex h-11 w-11 flex-col items-center justify-center gap-[6px] sm:right-6 xl:hidden"
         >
           <span
-            className={`h-px w-6 bg-forest-900 transition-transform ${open ? 'translate-y-[7px] rotate-45' : ''}`}
+            className={`h-px w-6 transition-transform ${menuLineTheme} ${open ? 'translate-y-[7px] rotate-45' : ''}`}
           />
           <span
-            className={`h-px w-6 bg-forest-900 transition-opacity ${open ? 'opacity-0' : ''}`}
+            className={`h-px w-6 transition-opacity ${menuLineTheme} ${open ? 'opacity-0' : ''}`}
           />
           <span
-            className={`h-px w-6 bg-forest-900 transition-transform ${open ? '-translate-y-[7px] -rotate-45' : ''}`}
+            className={`h-px w-6 transition-transform ${menuLineTheme} ${open ? '-translate-y-[7px] -rotate-45' : ''}`}
           />
         </button>
       </div>
