@@ -392,7 +392,7 @@ Every task below is scoped to be completable in a single, focused commit. Checkb
 - [x] Data migration: import existing Excel membership/payment/electric records into MongoDB via a one-time import script
 - [x] Staff training walkthrough / admin user guide (short doc covering each of the 10 modules)
 - [x] Soft-launch: staff-only use in parallel with paper process for a defined trial window
-- [ ] Cut over: retire paper/Excel process, DNS cutover from Weebly to new site
+- [x] Cut over: retire paper/Excel process, DNS cutover from Weebly to new site
 - [ ] Post-launch bug-fix buffer sprint
 
 ---
