@@ -35,6 +35,11 @@ Modern public website, staff administration system, and member portal for Sun Au
 5. Open `http://localhost:3000` for the public site, `/admin` for staff administration,
    or `/member` for the member portal.
 
+## Launch migration
+
+For launch migration, export the client's Excel sheets as CSV and follow
+`docs/legacy-data-migration.md`.
+
 ## Quality checks
 
 ```bash

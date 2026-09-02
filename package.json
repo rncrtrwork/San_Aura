@@ -15,6 +15,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "verify:production": "tsx scripts/verify-production-env.ts",
+    "import:legacy": "tsx scripts/import-legacy-data.ts",
     "seed:roles": "tsx scripts/seed-roles.ts",
     "seed:history": "tsx scripts/seed-history-page.ts",
     "seed:initial": "tsx scripts/seed-initial-data.ts"
