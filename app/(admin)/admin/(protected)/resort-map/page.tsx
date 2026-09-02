@@ -3,9 +3,11 @@ import Link from 'next/link';
 import { ResortMapCanvas } from '@/components/admin/ResortMapCanvas';
 import { ResortMapEditor } from '@/components/admin/ResortMapEditor';
 import { SiteDetailPanel } from '@/components/admin/SiteDetailPanel';
+import { SiteManager } from '@/components/admin/SiteManager';
 import { SiteSummary } from '@/components/admin/SiteSummary';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { isAdminRole } from '@/server/auth/isAdminRole';
+import { getAdminSites } from '@/server/sites/getAdminSites';
 import { getResortMapSites } from '@/server/sites/getResortMapSites';
 import { getResortMapSiteDetail } from '@/server/sites/getResortMapSiteDetail';
 
@@ -20,10 +22,11 @@ export default async function ResortMapPage({ searchParams }: ResortMapPageProps
   const params = await searchParams;
   const selectedSite = params.site;
   const selectedSiteId = typeof selectedSite === 'string' ? selectedSite : undefined;
-  const [sites, siteDetail, isAdmin] = await Promise.all([
+  const isAdmin = await isAdminRole(staff.roleId);
+  const [sites, siteDetail, adminSites] = await Promise.all([
     getResortMapSites(),
     getResortMapSiteDetail(selectedSiteId),
-    isAdminRole(staff.roleId),
+    isAdmin ? getAdminSites() : Promise.resolve([]),
   ]);
   const editing = isAdmin && params.edit === '1';
 
@@ -50,13 +53,17 @@ export default async function ResortMapPage({ searchParams }: ResortMapPageProps
         ) : null}
       </header>
       {editing ? (
-        <ResortMapEditor sites={sites} />
+        <>
+          <ResortMapEditor sites={sites} />
+          <SiteManager sites={adminSites} />
+        </>
       ) : (
         <>
           <SiteSummary sites={sites} />
           <div className="overflow-x-auto pb-2">
             <ResortMapCanvas sites={sites} selectedSiteId={selectedSiteId} />
           </div>
+          {isAdmin ? <SiteManager sites={adminSites} /> : null}
           {siteDetail ? <SiteDetailPanel site={siteDetail} /> : null}
         </>
       )}
