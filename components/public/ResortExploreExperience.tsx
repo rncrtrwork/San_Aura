@@ -426,9 +426,9 @@ export function ResortExploreExperience({ sites, stayTypes }: ResortExploreExper
         </div>
 
         <div className="mx-auto grid max-w-[1680px] lg:min-h-[calc(100vh-155px)] lg:grid-cols-[minmax(420px,1fr)_minmax(520px,1fr)]">
-          <div className="border-b border-line bg-forest-900 lg:sticky lg:top-[75px] lg:h-[calc(100vh-75px)] lg:border-b-0 lg:border-r">
-            <div className="flex h-full items-center p-3 md:p-4">
-              <div className="relative aspect-[983/749] w-full overflow-hidden rounded-2xl bg-white shadow-2xl">
+          <div className="border-b border-line lg:sticky lg:top-[75px] lg:h-[calc(100vh-75px)] lg:border-b-0 lg:border-r">
+            <div className="flex items-center ">
+              <div className="relative aspect-[983/749] w-full overflow-hidden bg-white">
                 <Image
                   src={mapImageSrc}
                   alt="Illustrated map of Sun Aura Resort"
@@ -505,7 +505,7 @@ export function ResortExploreExperience({ sites, stayTypes }: ResortExploreExper
               </p>
             ) : null}
 
-            <div className="grid gap-5 md:grid-cols-2">
+            <div className="grid gap-5 md:grid-cols-3">
               {filteredSites.map((site) => {
                 const stayType = stayTypesBySiteType.get(site.type);
                 const availability = siteAvailability(site, availabilitySearched, availableSiteIds);
@@ -524,7 +524,7 @@ export function ResortExploreExperience({ sites, stayTypes }: ResortExploreExper
                       active ? 'border-gold-600 ring-4 ring-gold-600/20' : 'border-line'
                     }`}
                   >
-                    <div className="h-28 bg-gradient-to-br from-forest-900 via-forest-800 to-gold-700 p-4 text-white">
+                    <div className="h-28 from-forest-900 via-forest-800 to-gold-700 p-4 text-white" style={{ backgroundImage: `url(/images/sitecard-bg.png)` }}>
                       <div className="flex items-start justify-between gap-3">
                         <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-bold backdrop-blur">
                           <MapPin aria-hidden="true" className="size-3.5" />

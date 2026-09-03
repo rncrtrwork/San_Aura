@@ -25,7 +25,7 @@ export function OutdoorFeature() {
             we ♡ outdoors at 
           </p>
           <h2 className="mt-1 text-5xl font-black uppercase leading-[0.88] tracking-[0.08em] text-cream md:text-6xl lg:text-7xl">
-            San Aura
+            Sun Aura
           </h2>
           <div className="mt-10 flex flex-wrap items-center gap-4 text-sm font-black uppercase tracking-[0.08em] text-white">
             <span>Sun Aura Resort</span>
