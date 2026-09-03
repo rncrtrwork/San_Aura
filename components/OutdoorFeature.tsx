@@ -14,10 +14,9 @@ export function OutdoorFeature() {
         priority={false}
       />
       <div
-        className="absolute inset-0 bg-gradient-to-r from-forest-900/95 via-forest-900/70 to-forest-900/10"
+        className="absolute inset-0 bg-gradient-to-r from-forest-900/95 via-forest-900/50 to-forest-900/0"
         aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-forest-900/20" aria-hidden="true" />
 
       <div className="relative mx-auto max-w-[1360px]">
         <div className="max-w-xl">

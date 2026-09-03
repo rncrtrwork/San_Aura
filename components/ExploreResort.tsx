@@ -53,7 +53,7 @@ export function ExploreResort() {
           <h2 className="font-serif text-[27px] leading-tight text-forest-900 md:text-[32px]">
             Explore the Resort
           </h2>
-          <p className="mt-5 max-w-[250px] text-[15px] leading-6 text-bold">
+          <p className="mt-5 mb-5 max-w-[250px] text-[15px] leading-6 text-bold">
             Discover amenities, trails, and gathering spaces across 300 acres of natural beauty.
           </p>
           <Link
