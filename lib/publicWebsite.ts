@@ -16,12 +16,12 @@ export type PublicNavigationPage = {
 
 const PUBLIC_NAVIGATION_ORDER = [
   'home',
-  'stays-and-rates',
+  'resort-explore',
   'events',
-  'resort-map',
   'gallery',
   'our-story',
   'history',
+  'join-us',
   'first-visit',
   'faq',
   'rules',
@@ -32,12 +32,12 @@ const PUBLIC_NAVIGATION_ORDER = [
 
 export const PUBLIC_DEFAULT_NAVIGATION: PublicNavigationItem[] = [
   { slug: 'home', label: 'Home', href: '/' },
-  { slug: 'stays-and-rates', label: 'Stays & Rates', href: '/stays-and-rates' },
+  { slug: 'resort-explore', label: 'Resort Explore', href: '/resort-explore' },
   { slug: 'events', label: 'Events', href: '/events' },
-  { slug: 'resort-map', label: 'Resort Map', href: '/resort-map' },
   { slug: 'gallery', label: 'Gallery', href: '/gallery' },
   { slug: 'our-story', label: 'Our Story', href: '/our-story' },
   { slug: 'history', label: 'History', href: '/history' },
+  { slug: 'join-us', label: 'Join Us', href: '/join-us' },
   { slug: 'first-visit', label: 'First Visit', href: '/first-visit' },
   { slug: 'faq', label: 'FAQ', href: '/faq' },
   { slug: 'rules', label: 'Rules', href: '/rules' },

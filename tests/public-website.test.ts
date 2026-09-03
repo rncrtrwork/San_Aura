@@ -150,9 +150,33 @@ test('public managed content groups published rules and policies by display orde
 });
 
 const mapSites: PublicMapSite[] = [
-  { id: 'one', code: 'Cabin 1', type: 'cabin', status: 'available', x: 10, y: 20 },
-  { id: 'two', code: 'RV 2', type: 'rv', status: 'occupied', x: 20, y: 30 },
-  { id: 'three', code: 'Tent 3', type: 'tent', status: 'available', x: 30, y: 40 },
+  {
+    id: 'one',
+    code: 'Cabin 1',
+    area: 'North Woods',
+    type: 'cabin',
+    status: 'available',
+    x: 10,
+    y: 20,
+  },
+  {
+    id: 'two',
+    code: 'RV 2',
+    area: 'Central Park',
+    type: 'rv',
+    status: 'occupied',
+    x: 20,
+    y: 30,
+  },
+  {
+    id: 'three',
+    code: 'Tent 3',
+    area: 'Tent City',
+    type: 'tent',
+    status: 'available',
+    x: 30,
+    y: 40,
+  },
 ];
 
 test('public map status summary counts read-only site states', () => {
@@ -296,7 +320,16 @@ test('public redirect map preserves legacy Weebly URLs as 301s', () => {
         '/about-sun-aura.html',
       ].includes(redirect.source),
     ).map((redirect) => redirect.destination),
-    ['/', '/book', '/faq', '/rules', '/resort-map', '/gallery', '/stays-and-rates', '/our-story'],
+    [
+      '/',
+      '/resort-explore',
+      '/faq',
+      '/rules',
+      '/resort-explore',
+      '/gallery',
+      '/resort-explore',
+      '/our-story',
+    ],
   );
 });
 

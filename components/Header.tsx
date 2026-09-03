@@ -130,7 +130,7 @@ export function Header({ navigation }: HeaderProps) {
 
         <div className="ml-3 hidden shrink-0 items-center gap-3 xl:flex">
           <Link
-            href="/member"
+            href="/join-us"
             className={`px-5 py-4 text-[12px] font-semibold uppercase tracking-[.06em] transition-colors ${
               homeAtTop ? 'text-white hover:text-cream' : 'text-forest-900 hover:text-gold-700'
             }`}
@@ -138,7 +138,7 @@ export function Header({ navigation }: HeaderProps) {
             Join Us
           </Link>
           <Link
-            href="/book"
+            href="/resort-explore"
             className="rounded px-6 py-3 text-[12px] bg-[#E47A3F] font-semibold uppercase tracking-[.06em] text-white transition-colors hover:bg-orange-400"
           >
             Book Now
@@ -197,14 +197,14 @@ export function Header({ navigation }: HeaderProps) {
           ) : null}
           <div className="mt-7 grid grid-cols-2 gap-3">
             <Link
-              href="/member"
+              href="/join-us"
               onClick={() => setOpen(false)}
               className="rounded border border-forest-900 px-4 py-4 text-xs font-semibold uppercase tracking-[.06em] text-forest-900"
             >
               Join Us
             </Link>
             <Link
-              href="/book"
+              href="/resort-explore"
               onClick={() => setOpen(false)}
               className="rounded bg-gold-600 px-4 py-4 text-xs font-semibold uppercase tracking-[.06em] text-white"
             >

@@ -4,6 +4,7 @@ import { Site, type SiteStatus, type SiteType } from '@/models/Site';
 export type ResortMapSite = {
   id: string;
   code: string;
+  area: string;
   type: SiteType;
   status: SiteStatus;
   x: number;
@@ -35,7 +36,7 @@ function fallbackPosition(type: SiteType, index: number): { x: number; y: number
 export async function getResortMapSites(): Promise<ResortMapSite[]> {
   await connectToDatabase();
   const sites = await Site.find({ active: true })
-    .select('code type status mapPosition')
+    .select('code area type status mapPosition')
     .sort({ type: 1, code: 1 })
     .lean();
   const typeIndexes: Record<SiteType, number> = { cabin: 0, rv: 0, tent: 0 };
@@ -46,6 +47,7 @@ export async function getResortMapSites(): Promise<ResortMapSite[]> {
     return {
       id: site._id.toString(),
       code: site.code,
+      area: site.area,
       type: site.type,
       status: site.status,
       x: site.mapPosition?.x ?? fallback.x,

@@ -3,6 +3,7 @@ import type { SiteStatus, SiteType } from '@/models/Site';
 export type PublicMapSite = {
   id: string;
   code: string;
+  area: string;
   type: SiteType;
   status: SiteStatus;
   x: number;

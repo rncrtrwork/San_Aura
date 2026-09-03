@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { ArrowRight } from './icons';
 
 function PrivacyWarning() {
@@ -55,12 +56,12 @@ export function ExploreResort() {
           <p className="mt-5 max-w-[250px] text-[15px] leading-6 text-bold">
             Discover amenities, trails, and gathering spaces across 300 acres of natural beauty.
           </p>
-          <button
-            type="button"
+          <Link
+            href="/resort-explore"
             className="mt-6 rounded bg-forest-900 px-8 py-4 text-[10px] font-semibold uppercase tracking-[.06em] text-white transition-colors hover:bg-forest-800"
           >
             View Resort Map
-          </button>
+          </Link>
         </div>
         <div className="relative aspect-[2.7/1] min-h-[190px] overflow-hidden rounded-lg shadow-sm">
           <Image

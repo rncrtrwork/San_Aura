@@ -2,14 +2,18 @@ import { withSentryConfig } from '@sentry/nextjs/config';
 
 const legacyPublicRedirects = [
   { source: '/index.html', destination: '/', statusCode: 301 },
-  { source: '/book-your-reservations-online.html', destination: '/book', statusCode: 301 },
+  {
+    source: '/book-your-reservations-online.html',
+    destination: '/resort-explore',
+    statusCode: 301,
+  },
   { source: '/frequently-asked-questions.html', destination: '/faq', statusCode: 301 },
   { source: '/rules-and-safety-information.html', destination: '/rules', statusCode: 301 },
-  { source: '/map-of-sun-aura-resort.html', destination: '/resort-map', statusCode: 301 },
+  { source: '/map-of-sun-aura-resort.html', destination: '/resort-explore', statusCode: 301 },
   { source: '/images-of-sun-aura.html', destination: '/gallery', statusCode: 301 },
   {
     source: '/camping-fees-and-rental-prices.html',
-    destination: '/stays-and-rates',
+    destination: '/resort-explore',
     statusCode: 301,
   },
   { source: '/about-sun-aura.html', destination: '/our-story', statusCode: 301 },

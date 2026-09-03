@@ -53,7 +53,7 @@ export default async function FirstVisitPage() {
             etiquette, and privacy-first policies.
           </p>
           <Link
-            href="/book"
+            href="/resort-explore"
             className="mt-8 inline-flex rounded-full bg-gold-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-gold-700"
           >
             Start a booking request
