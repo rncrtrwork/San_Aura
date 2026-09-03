@@ -25,7 +25,7 @@ const statusLabels: Record<SiteStatus, string> = {
 export function ResortMapCanvas({ sites, selectedSiteId }: ResortMapCanvasProps) {
   return (
     <section className="admin-card overflow-hidden" aria-label="Interactive resort site map">
-      <div className="relative aspect-[980/361] min-w-[900px] bg-forest-800">
+      <div className="relative aspect-[983/749] min-w-[900px] bg-forest-800">
         <Image
           src="/images/resort-map.jpg"
           alt="Illustrated map of Sun Aura Resort"
