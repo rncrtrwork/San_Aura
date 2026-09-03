@@ -122,7 +122,7 @@ export function ResortMapEditor({ sites }: ResortMapEditorProps) {
       ) : null}
       <div className="admin-card overflow-x-auto">
         <div
-          className="relative aspect-[980/361] min-w-[900px] cursor-crosshair bg-forest-800"
+          className="relative aspect-[983/749] min-w-[900px] cursor-crosshair bg-forest-800"
           onClick={placeMarker}
         >
           <Image
