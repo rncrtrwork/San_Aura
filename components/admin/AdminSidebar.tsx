@@ -16,7 +16,6 @@ import {
   Users,
   type LucideIcon,
 } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -69,17 +68,7 @@ export function AdminSidebar() {
   return (
     <>
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col overflow-y-auto overscroll-contain bg-admin-sidebar px-4 py-6 text-white lg:flex">
-        <Link href="/admin" className="mb-7 flex flex-col items-center gap-3">
-          <Image
-            src="/images/logo-enhanced.png"
-            alt="Sun Aura Resort"
-            width={86}
-            height={86}
-            priority
-            className="h-20 w-auto object-contain"
-          />
-          <span className="font-serif text-lg tracking-wide">SUN AURA ADMIN</span>
-        </Link>
+          <span className="font-serif text-lg tracking-wide text-center">SUN AURA ADMIN</span>
         <nav aria-label="Admin navigation" className="space-y-1.5">
           <NavigationLinks pathname={pathname} />
         </nav>
@@ -87,7 +76,7 @@ export function AdminSidebar() {
 
       <details className="group sticky top-0 z-50 max-h-screen overflow-y-auto bg-admin-sidebar text-white lg:hidden">
         <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4">
-          <span className="font-serif text-lg tracking-wide">Sun Aura Admin</span>
+          <span className="font-serif text-lg tracking-wide text-center">Sun Aura Admin</span>
           <Menu aria-hidden="true" className="size-6" />
         </summary>
         <nav
