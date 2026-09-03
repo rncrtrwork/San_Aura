@@ -1,6 +1,6 @@
 'use client';
 
-import { CalendarDays, LoaderCircle, MapPin, Send, X } from 'lucide-react';
+import { CalendarDays, ChevronLeft, ChevronRight, LoaderCircle, MapPin, Send, X } from 'lucide-react';
 import Image from 'next/image';
 import { useMemo, useRef, useState, type FormEvent } from 'react';
 import type {
@@ -23,6 +23,13 @@ type ResortExploreExperienceProps = {
 type SiteAvailabilityState = 'available' | 'unavailable' | 'not-searched';
 
 const mapImageSrc = '/images/resort-map.jpg';
+const weekdays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+const monthFormatter = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' });
+const rangeDateFormatter = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+});
 
 const statusStyles: Record<SiteStatus, string> = {
   available: 'bg-emerald-700',
@@ -31,8 +38,15 @@ const statusStyles: Record<SiteStatus, string> = {
   blocked: 'bg-stone-500',
 };
 
-const selectedRing =
-  'scale-125 ring-4 ring-gold-600 ring-offset-2 ring-offset-white shadow-[0_0_0_8px_rgba(197,126,27,.2)]';
+const statusDotStyles: Record<SiteStatus, string> = {
+  available: 'bg-emerald-300 shadow-[0_0_12px_rgba(110,231,183,.9)]',
+  occupied: 'bg-amber-300 shadow-[0_0_12px_rgba(252,211,77,.9)]',
+  maintenance: 'bg-red-300 shadow-[0_0_12px_rgba(252,165,165,.9)]',
+  blocked: 'bg-stone-300 shadow-[0_0_12px_rgba(214,211,209,.85)]',
+};
+
+const selectedDot =
+  'border-cyan-100 bg-cyan-300 shadow-[0_0_10px_3px_rgba(103,232,249,.95),0_0_26px_9px_rgba(34,211,238,.45)] ring-2 ring-cyan-100';
 
 function fieldValue(form: FormData, name: string): string {
   const value = form.get(name);
@@ -40,17 +54,56 @@ function fieldValue(form: FormData, name: string): string {
 }
 
 function todayValue(): string {
-  return new Date().toISOString().slice(0, 10);
+  return dateValue(new Date());
 }
 
 function defaultCheckOut(checkIn: string): string {
-  const date = new Date(`${checkIn}T12:00:00`);
+  const date = parseDateValue(checkIn) ?? new Date();
   date.setDate(date.getDate() + 2);
-  return date.toISOString().slice(0, 10);
+  return dateValue(date);
 }
 
-function shortSiteCode(code: string): string {
-  return code.replace(/^(Cabin|RV|Tent)\s*/i, '');
+function dateValue(date: Date): string {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('-');
+}
+
+function parseDateValue(value: string): Date | null {
+  const parts = value.split('-').map((part) => Number(part));
+  const [year, month, day] = parts;
+  if (!year || !month || !day) return null;
+  const date = new Date(year, month - 1, day);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function firstOfMonth(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
+function shiftMonth(date: Date, amount: number): Date {
+  return new Date(date.getFullYear(), date.getMonth() + amount, 1);
+}
+
+function dateRangeLabel(checkIn: string, checkOut: string): string {
+  const checkInDate = parseDateValue(checkIn);
+  const checkOutDate = parseDateValue(checkOut);
+  if (!checkInDate || !checkOutDate) return 'Select dates';
+  return `${rangeDateFormatter.format(checkInDate)} - ${rangeDateFormatter.format(checkOutDate)}`;
+}
+
+function calendarDays(month: Date): Date[] {
+  const firstDay = firstOfMonth(month);
+  const startDate = new Date(firstDay);
+  startDate.setDate(firstDay.getDate() - firstDay.getDay());
+
+  return Array.from({ length: 42 }, (_, index) => {
+    const date = new Date(startDate);
+    date.setDate(startDate.getDate() + index);
+    return date;
+  });
 }
 
 function siteAvailability(
@@ -67,6 +120,118 @@ function availabilityLabel(availability: SiteAvailabilityState): string {
   if (availability === 'available') return 'Available for selected dates';
   if (availability === 'unavailable') return 'Unavailable for selected dates';
   return 'Select dates to verify availability';
+}
+
+type DateRangePickerProps = {
+  checkIn: string;
+  checkOut: string;
+  onChange: (range: { checkIn: string; checkOut: string }) => void;
+};
+
+function DateRangePicker({ checkIn, checkOut, onChange }: DateRangePickerProps) {
+  const checkInDate = parseDateValue(checkIn) ?? new Date();
+  const [open, setOpen] = useState(false);
+  const [visibleMonth, setVisibleMonth] = useState(firstOfMonth(checkInDate));
+  const [pendingStart, setPendingStart] = useState<string | null>(null);
+  const days = calendarDays(visibleMonth);
+  const today = todayValue();
+
+  function selectDate(value: string) {
+    if (!pendingStart || value <= pendingStart) {
+      setPendingStart(value);
+      onChange({ checkIn: value, checkOut: value });
+      return;
+    }
+
+    onChange({ checkIn: pendingStart, checkOut: value });
+    setPendingStart(null);
+    setOpen(false);
+  }
+
+  return (
+    <div className="relative z-30">
+      <div className="text-xs font-bold text-forest-900">
+        <p>Dates</p>
+        <button
+          type="button"
+          onClick={() => {
+            setVisibleMonth(firstOfMonth(parseDateValue(checkIn) ?? new Date()));
+            setOpen(!open);
+          }}
+          className="mt-1 flex h-12 w-full items-center justify-between gap-3 rounded-lg border border-line bg-white px-4 text-left text-sm font-semibold text-forest-900 shadow-sm transition hover:border-gold-600"
+          aria-expanded={open}
+        >
+          <span className="flex min-w-0 items-center gap-3">
+            <CalendarDays aria-hidden="true" className="size-5 shrink-0 text-forest-900" />
+            <span className="truncate">{dateRangeLabel(checkIn, checkOut)}</span>
+          </span>
+          <ChevronRight aria-hidden="true" className="size-4 shrink-0 text-ink-700/60" />
+        </button>
+      </div>
+      {open ? (
+        <div className="absolute left-0 top-full mt-3 w-[292px] rounded-xl border border-line bg-white p-4 shadow-2xl">
+          <span
+            className="absolute -top-2 left-6 size-4 rotate-45 border-l border-t border-line bg-white"
+            aria-hidden="true"
+          />
+          <div className="relative flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => setVisibleMonth((month) => shiftMonth(month, -1))}
+              className="grid size-8 place-items-center rounded-full text-ink-700 hover:bg-cream-alt"
+              aria-label="Previous month"
+            >
+              <ChevronLeft aria-hidden="true" className="size-4" />
+            </button>
+            <p className="font-serif text-xl text-ink-700">{monthFormatter.format(visibleMonth)}</p>
+            <button
+              type="button"
+              onClick={() => setVisibleMonth((month) => shiftMonth(month, 1))}
+              className="grid size-8 place-items-center rounded-full text-ink-700 hover:bg-cream-alt"
+              aria-label="Next month"
+            >
+              <ChevronRight aria-hidden="true" className="size-4" />
+            </button>
+          </div>
+          <div className="mt-4 grid grid-cols-7 gap-1 text-center">
+            {weekdays.map((weekday) => (
+              <span key={weekday} className="py-1 text-[10px] font-black text-ink-700/70">
+                {weekday}
+              </span>
+            ))}
+            {days.map((date) => {
+              const value = dateValue(date);
+              const inCurrentMonth = date.getMonth() === visibleMonth.getMonth();
+              const selected = value === checkIn || value === checkOut;
+              const inRange = value > checkIn && value < checkOut;
+              const pending = pendingStart === value;
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => selectDate(value)}
+                  className={`h-9 rounded-md text-sm transition ${
+                    selected || pending
+                      ? 'bg-sky-600 font-bold text-white shadow-[0_0_0_2px_rgba(3,105,161,.18)]'
+                      : inRange
+                        ? 'bg-sky-100 font-semibold text-sky-900'
+                        : value === today
+                          ? 'font-bold text-pink-600'
+                          : inCurrentMonth
+                            ? 'text-ink-700 hover:bg-cream-alt'
+                            : 'text-ink-700/35 hover:bg-cream-alt'
+                  }`}
+                  aria-pressed={selected || pending}
+                >
+                  {date.getDate()}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
 }
 
 export function ResortExploreExperience({ sites, stayTypes }: ResortExploreExperienceProps) {
@@ -119,6 +284,12 @@ export function ResortExploreExperience({ sites, stayTypes }: ResortExploreExper
     setDrawerSiteId(siteId);
     setMessage('');
     setError('');
+  }
+
+  function updateDateRange(range: { checkIn: string; checkOut: string }) {
+    setCheckIn(range.checkIn);
+    setCheckOut(range.checkOut);
+    setAvailabilitySearched(false);
   }
 
   async function searchAvailability() {
@@ -210,7 +381,7 @@ export function ResortExploreExperience({ sites, stayTypes }: ResortExploreExper
     <>
       <section className="bg-[#f7f2e8]">
         <div className="border-b border-line bg-white px-5 py-4 md:px-8">
-          <div className="mx-auto grid max-w-[1680px] gap-4 lg:grid-cols-[1fr_220px_220px_220px] lg:items-end">
+          <div className="mx-auto grid max-w-[1680px] gap-4 lg:grid-cols-[1fr_330px_220px_220px] lg:items-end">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-700">
                 Resort Explore
@@ -219,32 +390,7 @@ export function ResortExploreExperience({ sites, stayTypes }: ResortExploreExper
                 Pick your spot, then request the stay.
               </h1>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <label className="text-xs font-bold text-forest-900">
-                Check-in
-                <input
-                  type="date"
-                  value={checkIn}
-                  onChange={(event) => {
-                    setCheckIn(event.target.value);
-                    setAvailabilitySearched(false);
-                  }}
-                  className="mt-1 h-11 w-full rounded-lg border border-line bg-white px-3 text-sm"
-                />
-              </label>
-              <label className="text-xs font-bold text-forest-900">
-                Check-out
-                <input
-                  type="date"
-                  value={checkOut}
-                  onChange={(event) => {
-                    setCheckOut(event.target.value);
-                    setAvailabilitySearched(false);
-                  }}
-                  className="mt-1 h-11 w-full rounded-lg border border-line bg-white px-3 text-sm"
-                />
-              </label>
-            </div>
+            <DateRangePicker checkIn={checkIn} checkOut={checkOut} onChange={updateDateRange} />
             <label className="text-xs font-bold text-forest-900">
               Area
               <select
@@ -279,10 +425,10 @@ export function ResortExploreExperience({ sites, stayTypes }: ResortExploreExper
           </div>
         </div>
 
-        <div className="mx-auto grid max-w-[1680px] lg:min-h-[calc(100vh-155px)] lg:grid-cols-[minmax(520px,1fr)_minmax(520px,1fr)]">
+        <div className="mx-auto grid max-w-[1680px] lg:min-h-[calc(100vh-155px)] lg:grid-cols-[minmax(420px,1fr)_minmax(520px,1fr)]">
           <div className="border-b border-line bg-forest-900 lg:sticky lg:top-[75px] lg:h-[calc(100vh-75px)] lg:border-b-0 lg:border-r">
-            <div className="h-full overflow-auto p-4">
-              <div className="relative aspect-[983/749] min-w-[760px] overflow-hidden rounded-2xl bg-white shadow-2xl">
+            <div className="flex h-full items-center p-3 md:p-4">
+              <div className="relative aspect-[983/749] w-full overflow-hidden rounded-2xl bg-white shadow-2xl">
                 <Image
                   src={mapImageSrc}
                   alt="Illustrated map of Sun Aura Resort"
@@ -303,12 +449,19 @@ export function ResortExploreExperience({ sites, stayTypes }: ResortExploreExper
                       onMouseLeave={() => setHoveredSiteId('')}
                       onClick={() => focusSiteCard(site.id)}
                       aria-label={`${site.code}, ${PUBLIC_SITE_STATUS_LABELS[site.status]}`}
-                      className={`absolute z-10 grid size-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-white text-[10px] font-black text-white shadow-lg transition ${statusStyles[site.status]} ${
-                        availability === 'available' ? 'animate-pulse' : ''
-                      } ${active ? selectedRing : ''}`}
+                      title={site.code}
+                      className="absolute z-10 grid size-5 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full transition hover:scale-125 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"
                       style={{ left: `${site.x}%`, top: `${site.y}%` }}
                     >
-                      {shortSiteCode(site.code)}
+                      <span
+                        className={`size-2.5 rounded-full border border-white/90 transition ${
+                          active
+                            ? selectedDot
+                            : availability === 'available'
+                              ? 'bg-cyan-300 shadow-[0_0_12px_rgba(103,232,249,.95)]'
+                              : statusDotStyles[site.status]
+                        }`}
+                      />
                     </button>
                   );
                 })}
@@ -435,25 +588,8 @@ export function ResortExploreExperience({ sites, stayTypes }: ResortExploreExper
               </button>
             </div>
             <form onSubmit={submitReservation} className="mt-7 grid gap-4">
-              <div className="grid gap-3 rounded-2xl border border-line bg-white p-4 sm:grid-cols-2">
-                <label className="text-xs font-bold text-forest-900">
-                  Check-in
-                  <input
-                    type="date"
-                    value={checkIn}
-                    onChange={(event) => setCheckIn(event.target.value)}
-                    className="mt-1 h-11 w-full rounded-lg border border-line px-3 text-sm"
-                  />
-                </label>
-                <label className="text-xs font-bold text-forest-900">
-                  Check-out
-                  <input
-                    type="date"
-                    value={checkOut}
-                    onChange={(event) => setCheckOut(event.target.value)}
-                    className="mt-1 h-11 w-full rounded-lg border border-line px-3 text-sm"
-                  />
-                </label>
+              <div className="rounded-2xl border border-line bg-white p-4">
+                <DateRangePicker checkIn={checkIn} checkOut={checkOut} onChange={updateDateRange} />
               </div>
               <label className="text-sm font-semibold text-forest-900">
                 Name
