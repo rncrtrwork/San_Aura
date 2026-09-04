@@ -87,7 +87,7 @@ select {
 }
 
 .gallery-flow-track {
-  animation: gallery-flow 34s linear infinite;
+  animation: gallery-flow 120s linear infinite;
 }
 
 .gallery-flow-track:hover {
