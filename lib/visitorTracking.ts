@@ -11,6 +11,11 @@ export type VisitorLocationInfo = {
 };
 
 const unknownLabel = 'Unknown';
+const localLocation = {
+  country: 'Local',
+  region: 'Development',
+  city: 'Localhost',
+} satisfies VisitorLocationInfo;
 
 function matchVersion(userAgent: string, patterns: RegExp[]): string {
   for (const pattern of patterns) {
@@ -146,6 +151,22 @@ function headerListIp(value: string | null): string {
   return firstValue ? normalizeIpCandidate(firstValue) : unknownLabel;
 }
 
+function normalizedHostname(value: string): string {
+  const host = value.toLowerCase().trim();
+  if (host.startsWith('[')) return host.slice(1).split(']')[0] ?? host;
+  return host.split(':')[0] ?? host;
+}
+
+function isLocalHostname(value: string): boolean {
+  const hostname = normalizedHostname(value);
+  return (
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    hostname === '::1' ||
+    hostname.endsWith('.localhost')
+  );
+}
+
 export function parseVisitorUserAgent(userAgent: string): VisitorDeviceInfo {
   const browser = parseBrowser(userAgent);
 
@@ -155,8 +176,11 @@ export function parseVisitorUserAgent(userAgent: string): VisitorDeviceInfo {
   };
 }
 
-export function visitorLocationFromHeaders(headers: Headers): VisitorLocationInfo {
-  return {
+export function visitorLocationFromHeaders(
+  headers: Headers,
+  requestHost = '',
+): VisitorLocationInfo {
+  const location = {
     country: firstHeaderValue(headers, [
       'x-vercel-ip-country',
       'cf-ipcountry',
@@ -171,6 +195,18 @@ export function visitorLocationFromHeaders(headers: Headers): VisitorLocationInf
     ]),
     city: firstHeaderValue(headers, ['x-vercel-ip-city', 'x-geo-city', 'x-city']),
   };
+
+  if (
+    requestHost &&
+    isLocalHostname(requestHost) &&
+    location.country === unknownLabel &&
+    location.region === unknownLabel &&
+    location.city === unknownLabel
+  ) {
+    return localLocation;
+  }
+
+  return location;
 }
 
 export function visitorIpAddressFromHeaders(headers: Headers): string {
@@ -186,6 +222,12 @@ export function visitorIpAddressFromHeaders(headers: Headers): string {
   if (forwardedIp !== unknownLabel) return forwardedIp;
 
   return forwardedForIp(headers.get('forwarded'));
+}
+
+export function visitorIpAddressFromRequest(headers: Headers, requestHost: string): string {
+  const headerIpAddress = visitorIpAddressFromHeaders(headers);
+  if (headerIpAddress !== unknownLabel) return headerIpAddress;
+  return isLocalHostname(requestHost) ? '127.0.0.1' : unknownLabel;
 }
 
 export function isAutomatedVisitor(userAgent: string): boolean {

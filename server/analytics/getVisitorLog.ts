@@ -24,19 +24,24 @@ export type VisitorLog = {
   entries: VisitorLogEntry[];
 };
 
-type VisitorVisitLean = Pick<
-  VisitorVisitDocument,
-  | 'browserName'
-  | 'browserVersion'
-  | 'operatingSystem'
-  | 'country'
-  | 'region'
-  | 'city'
-  | 'ipAddress'
-  | 'createdAt'
-> & {
-  _id: { toString(): string };
-};
+type VisitorVisitLean = Pick<VisitorVisitDocument, 'createdAt'> &
+  Pick<
+    Partial<VisitorVisitDocument>,
+    | 'browserName'
+    | 'browserVersion'
+    | 'operatingSystem'
+    | 'country'
+    | 'region'
+    | 'city'
+    | 'ipAddress'
+  > & {
+    _id: { toString(): string };
+  };
+
+function textOrUnknown(value: string | null | undefined): string {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : 'Unknown';
+}
 
 function startOfToday(): Date {
   const value = new Date();
@@ -47,13 +52,13 @@ function startOfToday(): Date {
 function mapEntry(entry: VisitorVisitLean): VisitorLogEntry {
   return {
     id: entry._id.toString(),
-    browserName: entry.browserName,
-    browserVersion: entry.browserVersion,
-    operatingSystem: entry.operatingSystem,
-    country: entry.country,
-    region: entry.region,
-    city: entry.city,
-    ipAddress: entry.ipAddress,
+    browserName: textOrUnknown(entry.browserName),
+    browserVersion: entry.browserVersion?.trim() ?? '',
+    operatingSystem: textOrUnknown(entry.operatingSystem),
+    country: textOrUnknown(entry.country),
+    region: textOrUnknown(entry.region),
+    city: textOrUnknown(entry.city),
+    ipAddress: textOrUnknown(entry.ipAddress),
     createdAt: entry.createdAt.toISOString(),
   };
 }
@@ -64,7 +69,7 @@ export async function getVisitorLog(): Promise<VisitorLog> {
   const [totalVisits, visitsToday, uniqueIpAddresses, entries] = await Promise.all([
     VisitorVisit.countDocuments(),
     VisitorVisit.countDocuments({ createdAt: { $gte: startOfToday() } }),
-    VisitorVisit.distinct<string>('ipAddress'),
+    VisitorVisit.distinct<string>('ipAddress', { ipAddress: { $nin: ['', null, 'Unknown'] } }),
     VisitorVisit.find().sort({ createdAt: -1 }).limit(200).lean<VisitorVisitLean[]>(),
   ]);
 

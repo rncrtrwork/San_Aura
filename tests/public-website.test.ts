@@ -32,6 +32,7 @@ import {
   isAutomatedVisitor,
   parseVisitorUserAgent,
   visitorIpAddressFromHeaders,
+  visitorIpAddressFromRequest,
   visitorLocationFromHeaders,
 } from '@/lib/visitorTracking';
 import { serializeMemberForPortal } from '@/server/members/serializeMemberForPortal';
@@ -133,6 +134,15 @@ test('visitor tracking reads client IP address from request headers', () => {
     ),
     '2001:db8:cafe::17',
   );
+});
+
+test('visitor tracking labels localhost visits when proxy headers are unavailable', () => {
+  assert.equal(visitorIpAddressFromRequest(new Headers(), 'localhost:3000'), '127.0.0.1');
+  assert.deepEqual(visitorLocationFromHeaders(new Headers(), 'localhost:3000'), {
+    country: 'Local',
+    region: 'Development',
+    city: 'Localhost',
+  });
 });
 
 test('visitor tracking filters automated visitors', () => {

@@ -73,6 +73,10 @@ export default async function VisitorLogPage() {
             This protected page shows only the required Home page visitor details: browser,
             operating system, IP address, and approximate country, state, and city.
           </p>
+          <p className="mt-2 text-sm leading-6 text-ink-700">
+            Local development visits are labeled as local unless production hosting/CDN geo headers
+            are available.
+          </p>
         </header>
 
         <section aria-label="Visitor log summary" className="mt-10 grid gap-4 md:grid-cols-3">
