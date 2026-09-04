@@ -1,5 +1,9 @@
 import { Types } from 'mongoose';
-import { groupedPublicGalleryAssets, type PublicGalleryAlbumGroup } from '@/lib/publicGallery';
+import {
+  groupedPublicGalleryAssets,
+  type PublicGalleryAlbumGroup,
+  type PublicGalleryAsset,
+} from '@/lib/publicGallery';
 import { connectToDatabase } from '@/lib/db';
 import { Album } from '@/models/Album';
 import { MediaAsset } from '@/models/MediaAsset';
@@ -19,6 +23,21 @@ type PublicGalleryAssetLean = {
   albumRef: Types.ObjectId | null;
   focalPoint: { x: number; y: number };
 };
+
+function publicGalleryAsset(
+  asset: PublicGalleryAssetLean,
+  album: { id: string; path: string } | null,
+): PublicGalleryAsset {
+  return {
+    id: asset._id.toString(),
+    url: asset.cloudinaryUrl,
+    altText: asset.altText,
+    caption: asset.caption,
+    mediaType: 'image',
+    album,
+    focalPoint: asset.focalPoint,
+  };
+}
 
 function albumPath(album: AlbumLean, albumById: Map<string, AlbumLean>): string {
   const names = [album.name];
@@ -55,24 +74,39 @@ export async function getPublicGalleryPage(): Promise<PublicGalleryAlbumGroup[]>
     return groupedPublicGalleryAssets(
       assets.map((asset) => {
         const album = asset.albumRef ? (albumById.get(asset.albumRef.toString()) ?? null) : null;
-
-        return {
-          id: asset._id.toString(),
-          url: asset.cloudinaryUrl,
-          altText: asset.altText,
-          caption: asset.caption,
-          mediaType: 'image',
-          album: album
+        return publicGalleryAsset(
+          asset,
+          album
             ? {
                 id: album._id.toString(),
                 path: albumPath(album, albumById),
               }
             : null,
-          focalPoint: asset.focalPoint,
-        };
+        );
       }),
     );
   } catch {
     return groupedPublicGalleryAssets([]);
+  }
+}
+
+export async function getPublicHomeGalleryImages(): Promise<PublicGalleryAsset[]> {
+  try {
+    await connectToDatabase();
+    const assets = await MediaAsset.find({
+      archived: false,
+      approvalStatus: 'approved',
+      publishToWebsite: true,
+      usage: 'homepage',
+      mimeType: /^image\//,
+    })
+      .select('cloudinaryUrl mimeType altText caption albumRef focalPoint uploadedAt createdAt')
+      .sort({ uploadedAt: -1, createdAt: -1 })
+      .limit(24)
+      .lean<PublicGalleryAssetLean[]>();
+
+    return assets.map((asset) => publicGalleryAsset(asset, null));
+  } catch {
+    return [];
   }
 }

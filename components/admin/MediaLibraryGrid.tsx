@@ -91,6 +91,11 @@ export function MediaLibraryGrid({ media, filters, selectedMediaId }: MediaLibra
                         ? 'Visible on website'
                         : 'Hidden'}
                     </span>
+                    {asset.usage.includes('homepage') ? (
+                      <span className="rounded-full bg-admin-accent/10 px-2.5 py-1 text-xs font-bold text-admin-accent">
+                        Home gallery
+                      </span>
+                    ) : null}
                     <span className="text-xs text-admin-muted">
                       {dateFormatter.format(new Date(asset.uploadedAt))}
                     </span>

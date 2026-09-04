@@ -28,11 +28,20 @@ function formatDimensions(dimensions: MediaAssetCard['dimensions']): string {
   return `${dimensions.width} × ${dimensions.height}px`;
 }
 
+function homepageUsage(
+  usage: MediaAssetCard['usage'],
+  showOnHomeGallery: boolean,
+): MediaAssetCard['usage'] {
+  const withoutHomepage = usage.filter((entry) => entry !== 'homepage');
+  return showOnHomeGallery ? [...withoutHomepage, 'homepage'] : withoutHomepage;
+}
+
 export function MediaDetailPanel({ asset, filters }: MediaDetailPanelProps) {
   const router = useRouter();
   const [altText, setAltText] = useState(asset.altText);
   const [caption, setCaption] = useState(asset.caption);
   const [publishToWebsite, setPublishToWebsite] = useState(asset.publishToWebsite);
+  const [showOnHomeGallery, setShowOnHomeGallery] = useState(asset.usage.includes('homepage'));
   const [focalX, setFocalX] = useState(asset.focalPoint.x);
   const [focalY, setFocalY] = useState(asset.focalPoint.y);
   const [saving, setSaving] = useState(false);
@@ -48,7 +57,7 @@ export function MediaDetailPanel({ asset, filters }: MediaDetailPanelProps) {
       altText,
       caption,
       albumId: '',
-      usage: ['homepage'],
+      usage: homepageUsage(asset.usage, showOnHomeGallery),
       approvalStatus: 'approved',
       publishToWebsite,
       privacyConfirmedNoPeople: true,
@@ -188,6 +197,22 @@ export function MediaDetailPanel({ asset, filters }: MediaDetailPanelProps) {
           </span>
         </label>
 
+        <label className="flex items-start gap-3 rounded-xl bg-cream-alt p-4 text-sm text-forest-900">
+          <input
+            type="checkbox"
+            checked={showOnHomeGallery}
+            onChange={(event) => setShowOnHomeGallery(event.target.checked)}
+            className="mt-1 size-4 rounded border-admin-border text-admin-accent"
+          />
+          <span>
+            <span className="font-bold">Show this photo in the Home gallery flow</span>
+            <span className="mt-1 block text-xs leading-relaxed text-admin-muted">
+              Selected photos appear in the moving gallery section on the Home page when they are
+              also visible on the public gallery.
+            </span>
+          </span>
+        </label>
+
         <fieldset>
           <legend className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-admin-muted">
             <SlidersHorizontal aria-hidden="true" className="size-4" />
@@ -235,6 +260,12 @@ export function MediaDetailPanel({ asset, filters }: MediaDetailPanelProps) {
             <dt className="text-admin-muted">Status</dt>
             <dd className="font-semibold text-forest-900">
               {asset.publishToWebsite ? 'Visible' : 'Hidden'}
+            </dd>
+          </div>
+          <div className="flex justify-between gap-3">
+            <dt className="text-admin-muted">Home gallery</dt>
+            <dd className="font-semibold text-forest-900">
+              {asset.usage.includes('homepage') ? 'Selected' : 'Not selected'}
             </dd>
           </div>
         </dl>

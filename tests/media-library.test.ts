@@ -83,6 +83,15 @@ test('media upload validation accepts Cloudinary media folder uploads', () => {
   assert.equal(result.valid, true);
 });
 
+test('media upload validation allows gallery photos without homepage selection', () => {
+  const result = validateMediaAssetCreate({
+    ...validUpload,
+    usage: [],
+  });
+
+  assert.equal(result.valid, true);
+});
+
 test('media upload validation allows admin gallery uploads without privacy confirmation', () => {
   const result = validateMediaAssetCreate({
     ...validUpload,

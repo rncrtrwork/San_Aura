@@ -42,7 +42,7 @@ export function MediaUploadPanel() {
       altText: filename,
       caption: '',
       albumId: '',
-      usage: ['homepage'],
+      usage: [],
       privacyConfirmedNoPeople: true,
       dimensions: dimensionsForUpload(info),
     };
@@ -142,7 +142,8 @@ export function MediaUploadPanel() {
             Upload photos to the public gallery
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-admin-muted">
-            Add resort photos. New uploads are published to the website gallery automatically.
+            Add resort photos. New uploads publish to the full Gallery page automatically; select
+            Home gallery in photo details when an image should appear on the Home page.
           </p>
         </div>
         <button

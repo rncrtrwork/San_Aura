@@ -43,8 +43,8 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
         </p>
         <h1 className="font-serif text-4xl sm:text-5xl">Gallery Photos</h1>
         <p className="mt-2 max-w-2xl text-sm text-cream">
-          Upload and manage the photos shown on the public gallery page. New uploads publish
-          automatically, and staff can hide or archive photos anytime.
+          Upload public gallery photos, then choose which approved images flow through the Home page
+          gallery section.
         </p>
       </header>
 
