@@ -21,6 +21,7 @@ MONGODB_URI=mongodb+srv://sun-aura-app:<password>@<cluster-host>/sun-aura-resort
 CLOUDINARY_CLOUD_NAME=<production-cloud-name>
 CLOUDINARY_API_KEY=<production-api-key>
 CLOUDINARY_API_SECRET=<production-api-secret>
+# Or use CLOUDINARY_URL=cloudinary://<api-key>:<api-secret>@<cloud-name>
 SESSION_SECRET=<random-32-plus-character-secret>
 SMTP_HOST=<smtp-host>
 SMTP_PORT=587

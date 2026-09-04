@@ -12,6 +12,12 @@ CLOUDINARY_API_KEY=<production-api-key>
 CLOUDINARY_API_SECRET=<production-api-secret>
 ```
 
+The app also accepts Cloudinary's single URL format when the host exposes credentials that way:
+
+```txt
+CLOUDINARY_URL=cloudinary://<api-key>:<api-secret>@<cloud-name>
+```
+
 Use separate development and production clouds. Do not reuse sandbox credentials after staff uploads real documents or public gallery assets.
 
 ## Folder structure

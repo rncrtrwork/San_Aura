@@ -45,11 +45,12 @@ For launch migration, export the client's Excel sheets as CSV and follow
 ```bash
 npm run lint
 npm run typecheck
+npm test
 npm run format:check
 npm run build
 ```
 
-CI runs lint and typecheck on every push and pull request.
+CI runs lint, typecheck, and tests on every push and pull request.
 
 Production hosts should also run `npm run verify:production` after environment variables are
 configured.
