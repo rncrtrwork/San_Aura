@@ -1,5 +1,6 @@
 import { ExploreResort } from '@/components/ExploreResort';
 import { GalleryStrip } from '@/components/GalleryStrip';
+import { GuestReviews } from '@/components/GuestReviews';
 import { Hero } from '@/components/Hero';
 import { OutdoorFeature } from '@/components/OutdoorFeature';
 import { StayYourWay } from '@/components/StayYourWay';
@@ -18,7 +19,14 @@ export async function generateMetadata() {
 
 export default async function Home() {
   const cmsPage = await getPublicContentPage('home');
-  if (cmsPage) return <PublicCmsSections page={cmsPage} />;
+  if (cmsPage) {
+    return (
+      <>
+        <PublicCmsSections page={cmsPage} />
+        <GuestReviews />
+      </>
+    );
+  }
 
   return (
     <>
@@ -29,6 +37,7 @@ export default async function Home() {
       <OutdoorFeature />
       <ExploreResort />
       <GalleryStrip />
+      <GuestReviews />
     </>
   );
 }
