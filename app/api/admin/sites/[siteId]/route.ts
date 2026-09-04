@@ -29,10 +29,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
   const { siteId } = await context.params;
   if (!Types.ObjectId.isValid(siteId)) {
-    return NextResponse.json<SiteMutationResponse>(
-      { message: 'Site not found.' },
-      { status: 404 },
-    );
+    return NextResponse.json<SiteMutationResponse>({ message: 'Site not found.' }, { status: 404 });
   }
 
   let body: SiteMutationRequest | SiteStatusUpdateRequest;
@@ -50,10 +47,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     'code type area amenities status maintenanceNote length hookups mapPosition active',
   );
   if (!site) {
-    return NextResponse.json<SiteMutationResponse>(
-      { message: 'Site not found.' },
-      { status: 404 },
-    );
+    return NextResponse.json<SiteMutationResponse>({ message: 'Site not found.' }, { status: 404 });
   }
 
   if (isStatusOnlyUpdate(body)) {

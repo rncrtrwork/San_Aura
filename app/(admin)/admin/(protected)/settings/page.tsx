@@ -96,8 +96,11 @@ function integrationCards(): IntegrationCard[] {
     },
     {
       name: 'Production hosting',
-      description: 'Provides the public site, admin workspace, API routes, and server-side rendering.',
-      configured: Boolean(process.env.PRODUCTION_URL || process.env.VERCEL_URL || process.env.NEXT_PUBLIC_SITE_URL),
+      description:
+        'Provides the public site, admin workspace, API routes, and server-side rendering.',
+      configured: Boolean(
+        process.env.PRODUCTION_URL || process.env.VERCEL_URL || process.env.NEXT_PUBLIC_SITE_URL,
+      ),
       configuredLabel: 'Hosting URL detected',
       missingLabel: 'Set production site URL',
       Icon: ServerCog,
@@ -274,9 +277,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
                         <Icon aria-hidden="true" className="size-5" />
                       </span>
                       <div>
-                        <h3 className="font-serif text-2xl text-forest-900">
-                          {integration.name}
-                        </h3>
+                        <h3 className="font-serif text-2xl text-forest-900">{integration.name}</h3>
                         <p className="mt-2 text-sm leading-6 text-admin-muted">
                           {integration.description}
                         </p>

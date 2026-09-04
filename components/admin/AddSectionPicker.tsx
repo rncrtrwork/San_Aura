@@ -1,8 +1,5 @@
 import { FileImage, FileText, ListPlus, Milestone, MousePointerClick } from 'lucide-react';
-import {
-  CONTENT_EDITOR_SECTION_TYPES,
-  type ContentEditorSectionType,
-} from '@/lib/contentManager';
+import { CONTENT_EDITOR_SECTION_TYPES, type ContentEditorSectionType } from '@/lib/contentManager';
 
 type AddSectionPickerProps = {
   pageSlug: string;

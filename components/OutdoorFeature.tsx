@@ -21,7 +21,7 @@ export function OutdoorFeature() {
       <div className="relative mx-auto max-w-[1360px]">
         <div className="max-w-xl">
           <p className="font-serif text-4xl italic leading-none text-cream md:text-5xl">
-            we ♡ outdoors at 
+            we ♡ outdoors at
           </p>
           <h2 className="mt-1 text-5xl font-black uppercase leading-[0.88] tracking-[0.08em] text-cream md:text-6xl lg:text-7xl">
             Sun Aura

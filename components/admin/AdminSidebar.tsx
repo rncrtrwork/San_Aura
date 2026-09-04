@@ -68,7 +68,7 @@ export function AdminSidebar() {
   return (
     <>
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col overflow-y-auto overscroll-contain bg-admin-sidebar px-4 py-6 text-white lg:flex">
-          <span className="font-serif text-lg tracking-wide text-center">SUN AURA ADMIN</span>
+        <span className="font-serif text-lg tracking-wide text-center">SUN AURA ADMIN</span>
         <nav aria-label="Admin navigation" className="space-y-1.5">
           <NavigationLinks pathname={pathname} />
         </nav>

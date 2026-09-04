@@ -9,9 +9,7 @@ import {
 
 export type ValidSiteInput = SiteMutationRequest;
 
-type ValidationResult =
-  | { valid: true; data: ValidSiteInput }
-  | { valid: false; message: string };
+type ValidationResult = { valid: true; data: ValidSiteInput } | { valid: false; message: string };
 
 function isSiteType(value: string): value is SiteType {
   return SITE_TYPES.some((type) => type === value);
@@ -60,8 +58,7 @@ export function validateSiteMutation(body: SiteMutationRequest): ValidationResul
   const code = typeof body.code === 'string' ? body.code.trim() : '';
   const type = typeof body.type === 'string' && isSiteType(body.type) ? body.type : null;
   const area = typeof body.area === 'string' ? body.area.trim() : '';
-  const status =
-    typeof body.status === 'string' && isSiteStatus(body.status) ? body.status : null;
+  const status = typeof body.status === 'string' && isSiteStatus(body.status) ? body.status : null;
   const amenities = cleanStringList(body.amenities);
   const maintenanceNote =
     typeof body.maintenanceNote === 'string' ? body.maintenanceNote.trim() : '';

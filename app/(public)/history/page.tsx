@@ -29,8 +29,7 @@ const fallbackHero: ContentHeroSection = {
   imageId: '',
   eyebrow: 'Resort history',
   heading: 'Our History',
-  body:
-    'From a quiet nature retreat to a modern adults-only resort community, Sun Aura’s story has always centered on open air, privacy, and easygoing connection.',
+  body: 'From a quiet nature retreat to a modern adults-only resort community, Sun Aura’s story has always centered on open air, privacy, and easygoing connection.',
 };
 
 const fallbackTimeline: ContentTimelineItem[] = [
@@ -265,9 +264,7 @@ function HistoryTimeline({ items }: { items: ContentTimelineItem[] }) {
   );
 }
 
-function faqPreviewItems(
-  faqPage: Awaited<ReturnType<typeof getPublicFaqPage>>,
-): HistoryFaqItem[] {
+function faqPreviewItems(faqPage: Awaited<ReturnType<typeof getPublicFaqPage>>): HistoryFaqItem[] {
   const orderedItems = faqPage.categories.flatMap((category) => category.items);
   const featuredIds = new Set(faqPage.featuredItems.map((item) => item.id));
   const items = [
@@ -344,7 +341,10 @@ function HistoryCta({ cta }: { cta: ContentCtaSection }) {
 }
 
 export default async function HistoryPage() {
-  const [cmsPage, faqPage] = await Promise.all([getPublicContentPage('history'), getPublicFaqPage()]);
+  const [cmsPage, faqPage] = await Promise.all([
+    getPublicContentPage('history'),
+    getPublicFaqPage(),
+  ]);
   const hero = activeHero(cmsPage);
   const timelineItems = activeTimelineItems(cmsPage);
   const cta = activeCta(cmsPage);

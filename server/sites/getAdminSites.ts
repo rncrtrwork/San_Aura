@@ -5,7 +5,9 @@ import { Site } from '@/models/Site';
 export async function getAdminSites(): Promise<AdminSite[]> {
   await connectToDatabase();
   const sites = await Site.find()
-    .select('code type area amenities status maintenanceNote length hookups mapPosition active updatedAt')
+    .select(
+      'code type area amenities status maintenanceNote length hookups mapPosition active updatedAt',
+    )
     .sort({ active: -1, type: 1, code: 1 })
     .lean();
 

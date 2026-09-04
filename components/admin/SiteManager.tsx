@@ -219,12 +219,16 @@ function SiteCard({ site }: { site: AdminSite }) {
             <span className="rounded-full bg-admin-sidebar/10 px-3 py-1 text-xs font-bold text-admin-sidebar">
               {siteTypeLabels[site.type]}
             </span>
-            <span className={`rounded-full px-3 py-1 text-xs font-bold ${statusBadgeStyles[site.status]}`}>
+            <span
+              className={`rounded-full px-3 py-1 text-xs font-bold ${statusBadgeStyles[site.status]}`}
+            >
               {siteStatusLabels[site.status]}
             </span>
             <span
               className={`rounded-full px-3 py-1 text-xs font-bold ${
-                active ? 'bg-admin-success/10 text-admin-success' : 'bg-admin-muted/10 text-admin-muted'
+                active
+                  ? 'bg-admin-success/10 text-admin-success'
+                  : 'bg-admin-muted/10 text-admin-muted'
               }`}
             >
               {active ? 'Active' : 'Inactive'}
@@ -261,8 +265,14 @@ function SiteCard({ site }: { site: AdminSite }) {
       </div>
       <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
         <Detail label="Length" value={site.length === null ? 'Not set' : `${site.length} ft`} />
-        <Detail label="Position" value={site.mapPosition ? `${site.mapPosition.x}, ${site.mapPosition.y}` : 'Not placed'} />
-        <Detail label="Hookups" value={site.hookups.length > 0 ? site.hookups.join(', ') : 'None'} />
+        <Detail
+          label="Position"
+          value={site.mapPosition ? `${site.mapPosition.x}, ${site.mapPosition.y}` : 'Not placed'}
+        />
+        <Detail
+          label="Hookups"
+          value={site.hookups.length > 0 ? site.hookups.join(', ') : 'None'}
+        />
       </dl>
       <div className="mt-4 flex flex-wrap gap-2">
         {site.amenities.length > 0 ? (
