@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   quality:
-    name: Lint and typecheck
+    name: Format, lint, typecheck, and test
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -25,8 +25,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Format check
+        run: npm run format:check
+
       - name: Lint
         run: npm run lint
 
       - name: Typecheck
         run: npm run typecheck
+
+      - name: Test
+        run: npm test

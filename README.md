@@ -50,7 +50,7 @@ npm run format:check
 npm run build
 ```
 
-CI runs lint, typecheck, and tests on every push and pull request.
+CI runs format check, lint, typecheck, and tests on every push and pull request.
 
 Production hosts should also run `npm run verify:production` after environment variables are
 configured.
