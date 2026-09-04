@@ -19,7 +19,7 @@ const visitSteps = [
   },
   {
     title: 'Wait for confirmation',
-    body: 'MVP booking requests create pending reservations so resort staff can confirm availability and details directly.',
+    body: 'Booking requests create pending reservations so resort staff can confirm availability and details directly.',
   },
   {
     title: 'Arrive prepared',

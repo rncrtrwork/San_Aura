@@ -116,7 +116,7 @@ export function AddPageForm() {
           <span>
             <span className="font-bold">Show in navigation</span>
             <span className="mt-1 block text-xs text-admin-muted">
-              Public layout will use this flag in Phase 11.
+              Published pages with this enabled appear in the public site navigation.
             </span>
           </span>
         </label>

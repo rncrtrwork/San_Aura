@@ -1,10 +1,17 @@
 import {
+  Activity,
   Bell,
   CalendarCheck,
+  CircleAlert,
+  CircleCheck,
   CreditCard,
+  Database,
+  ImageUp,
+  MailCheck,
   PlugZap,
   Settings2,
   ShieldCheck,
+  ServerCog,
   UsersRound,
 } from 'lucide-react';
 import { BookingDefaultsForm } from '@/components/admin/BookingDefaultsForm';
@@ -35,10 +42,74 @@ const tabIcons: Record<SettingsTab, typeof Settings2> = {
   integrations: PlugZap,
 };
 
+type IntegrationCard = {
+  name: string;
+  description: string;
+  configured: boolean;
+  configuredLabel: string;
+  missingLabel: string;
+  Icon: typeof Settings2;
+};
+
+function integrationCards(): IntegrationCard[] {
+  const cloudinaryConfigured = Boolean(
+    process.env.CLOUDINARY_URL ??
+      (process.env.CLOUDINARY_CLOUD_NAME &&
+        process.env.CLOUDINARY_API_KEY &&
+        process.env.CLOUDINARY_API_SECRET),
+  );
+
+  return [
+    {
+      name: 'MongoDB Atlas',
+      description: 'Stores members, reservations, media records, events, settings, and audit logs.',
+      configured: Boolean(process.env.MONGODB_URI),
+      configuredLabel: 'Database URI configured',
+      missingLabel: 'Add MONGODB_URI',
+      Icon: Database,
+    },
+    {
+      name: 'Cloudinary',
+      description: 'Handles gallery images, event images, site card photos, documents, and logos.',
+      configured: cloudinaryConfigured,
+      configuredLabel: 'Media storage configured',
+      missingLabel: 'Add Cloudinary credentials',
+      Icon: ImageUp,
+    },
+    {
+      name: 'Email delivery',
+      description: 'Used for reservation confirmations and staff-facing notification workflows.',
+      configured: Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS),
+      configuredLabel: 'SMTP credentials configured',
+      missingLabel: 'Add SMTP settings',
+      Icon: MailCheck,
+    },
+    {
+      name: 'Error monitoring',
+      description: 'Captures production errors so staff can investigate launch issues quickly.',
+      configured: Boolean(
+        process.env.SENTRY_ORG && process.env.SENTRY_PROJECT && process.env.SENTRY_AUTH_TOKEN,
+      ),
+      configuredLabel: 'Monitoring configured',
+      missingLabel: 'Add monitoring settings',
+      Icon: Activity,
+    },
+    {
+      name: 'Production hosting',
+      description: 'Provides the public site, admin workspace, API routes, and server-side rendering.',
+      configured: Boolean(process.env.PRODUCTION_URL || process.env.VERCEL_URL || process.env.NEXT_PUBLIC_SITE_URL),
+      configuredLabel: 'Hosting URL detected',
+      missingLabel: 'Set production site URL',
+      Icon: ServerCog,
+    },
+  ];
+}
+
 export default async function SettingsPage({ searchParams }: SettingsPageProps) {
   await requirePagePermission('settings.read');
   const params = await searchParams;
   const overview = await getSettingsOverview(params);
+  const integrations = integrationCards();
   const activeDefinition =
     SETTINGS_TAB_DEFINITIONS.find((tab) => tab.id === overview.activeTab) ??
     SETTINGS_TAB_DEFINITIONS[0];
@@ -51,8 +122,8 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
         </p>
         <h1 className="font-serif text-4xl text-forest-900 sm:text-5xl">Settings</h1>
         <p className="mt-2 max-w-2xl text-sm text-admin-muted">
-          Configure resort identity, operating rules, staff access, notifications, and MVP payment
-          guidance from one controlled workspace.
+          Configure resort identity, operating rules, staff access, notifications, integrations, and
+          payment guidance from one controlled workspace.
         </p>
       </header>
 
@@ -167,15 +238,6 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
             </div>
           </div>
 
-          <div className="mt-6 rounded-xl border border-admin-border bg-cream-alt/70 p-5">
-            <p className="text-sm font-bold text-forest-900">Phase 10 queue</p>
-            <p className="mt-2 text-sm leading-6 text-admin-muted">
-              This shell establishes the settings navigation and live summaries. The following tasks
-              add editable forms for property details, operating season, booking defaults, privacy
-              controls, notifications, staff roles, activity log, and MVP payments.
-            </p>
-          </div>
-
           {overview.activeTab === 'property' ? (
             <>
               <PropertyDetailsForm property={overview.property} booking={overview.booking} />
@@ -197,14 +259,44 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
               <StaffUserManagement staff={overview.staff} />
             </>
           ) : (
-            <div className="mt-6 rounded-xl border border-admin-border bg-white p-5">
-              <p className="text-sm font-bold text-forest-900">
-                {activeDefinition.label} form is queued next.
-              </p>
-              <p className="mt-2 text-sm leading-6 text-admin-muted">
-                Phase 10 builds each settings area one focused task at a time after this shared
-                shell.
-              </p>
+            <div className="mt-6 grid gap-4 lg:grid-cols-2">
+              {integrations.map((integration) => {
+                const StatusIcon = integration.configured ? CircleCheck : CircleAlert;
+                const Icon = integration.Icon;
+
+                return (
+                  <article
+                    key={integration.name}
+                    className="rounded-xl border border-admin-border bg-white p-5"
+                  >
+                    <div className="flex items-start gap-4">
+                      <span className="grid size-11 shrink-0 place-items-center rounded-full bg-cream-alt text-admin-accent">
+                        <Icon aria-hidden="true" className="size-5" />
+                      </span>
+                      <div>
+                        <h3 className="font-serif text-2xl text-forest-900">
+                          {integration.name}
+                        </h3>
+                        <p className="mt-2 text-sm leading-6 text-admin-muted">
+                          {integration.description}
+                        </p>
+                        <p
+                          className={`mt-4 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold ${
+                            integration.configured
+                              ? 'bg-admin-success/10 text-admin-success'
+                              : 'bg-admin-warning/15 text-admin-warning'
+                          }`}
+                        >
+                          <StatusIcon aria-hidden="true" className="size-4" />
+                          {integration.configured
+                            ? integration.configuredLabel
+                            : integration.missingLabel}
+                        </p>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           )}
         </section>
