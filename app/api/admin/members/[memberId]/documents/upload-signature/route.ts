@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 import { NextResponse, type NextRequest } from 'next/server';
-import { getCloudinary } from '@/lib/cloudinary';
+import { getCloudinary, getCloudinaryCredentials } from '@/lib/cloudinary';
 import { CLOUDINARY_FOLDERS } from '@/lib/cloudinaryFolders';
 import { connectToDatabase } from '@/lib/db';
 import type {
@@ -48,16 +48,18 @@ export async function GET(request: NextRequest, context: RouteContext) {
     return uploadAuthorization.response;
   }
 
-  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-  const apiKey = process.env.CLOUDINARY_API_KEY;
-  if (!cloudName || !apiKey || !process.env.CLOUDINARY_API_SECRET) {
+  const credentials = getCloudinaryCredentials();
+  if (!credentials) {
     return NextResponse.json<CloudinaryWidgetConfig>(
       { message: 'Document uploads are not configured.' },
       { status: 503 },
     );
   }
 
-  return NextResponse.json<CloudinaryWidgetConfig>({ cloudName, apiKey });
+  return NextResponse.json<CloudinaryWidgetConfig>({
+    cloudName: credentials.cloudName,
+    apiKey: credentials.apiKey,
+  });
 }
 
 export async function POST(request: NextRequest, context: RouteContext) {
@@ -100,14 +102,17 @@ export async function POST(request: NextRequest, context: RouteContext) {
     );
   }
 
-  const apiSecret = process.env.CLOUDINARY_API_SECRET;
-  if (!apiSecret) {
+  const credentials = getCloudinaryCredentials();
+  if (!credentials) {
     return NextResponse.json<CloudinarySignatureResponse>(
       { message: 'Document uploads are not configured.' },
       { status: 503 },
     );
   }
 
-  const signature = getCloudinary().utils.api_sign_request(body.paramsToSign, apiSecret);
+  const signature = getCloudinary().utils.api_sign_request(
+    body.paramsToSign,
+    credentials.apiSecret,
+  );
   return NextResponse.json<CloudinarySignatureResponse>({ signature });
 }

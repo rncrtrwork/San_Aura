@@ -1,3 +1,5 @@
+import { getCloudinaryCredentials } from '@/lib/cloudinary';
+
 export type ProductionReadinessStatus = 'pass' | 'fail';
 
 export type ProductionReadinessCheck = {
@@ -73,21 +75,20 @@ export function validateProductionMongoEnvironment(
 export function validateProductionCloudinaryEnvironment(
   env: ProductionEnvironment,
 ): ProductionReadinessCheck[] {
-  const cloudName = env.CLOUDINARY_CLOUD_NAME?.trim();
-  const apiKey = env.CLOUDINARY_API_KEY?.trim();
-  const apiSecret = env.CLOUDINARY_API_SECRET?.trim();
-  const hasCredentials = hasValue(cloudName) && hasValue(apiKey) && hasValue(apiSecret);
-  const validCloudName = Boolean(cloudName && /^[a-z0-9_-]+$/i.test(cloudName));
-  const validApiKey = Boolean(apiKey && /^[0-9]+$/.test(apiKey));
+  const credentials = getCloudinaryCredentials(env);
+  const validCloudName = Boolean(
+    credentials?.cloudName && /^[a-z0-9_-]+$/i.test(credentials.cloudName),
+  );
+  const validApiKey = Boolean(credentials?.apiKey && /^[0-9]+$/.test(credentials.apiKey));
 
   return [
     createCheck(
       'cloudinary-credentials-present',
       'Cloudinary credentials are configured',
-      hasCredentials ? 'pass' : 'fail',
-      hasCredentials
-        ? 'Cloudinary cloud name, API key, and API secret are present.'
-        : 'Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET.',
+      credentials ? 'pass' : 'fail',
+      credentials
+        ? 'Cloudinary credentials are present.'
+        : 'Set CLOUDINARY_URL or CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET.',
     ),
     createCheck(
       'cloudinary-cloud-name-format',

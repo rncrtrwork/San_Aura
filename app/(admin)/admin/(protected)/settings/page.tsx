@@ -24,6 +24,7 @@ import { RolePermissionsManager } from '@/components/admin/RolePermissionsManage
 import { StaffAccessSummary } from '@/components/admin/StaffAccessSummary';
 import { StaffUserManagement } from '@/components/admin/StaffUserManagement';
 import { SETTINGS_TAB_DEFINITIONS, settingsTabHref, type SettingsTab } from '@/lib/settingsManager';
+import { getCloudinaryCredentials } from '@/lib/cloudinary';
 import { requirePagePermission } from '@/server/auth/pageAuthorization';
 import { getSettingsOverview } from '@/server/settings/getSettingsOverview';
 
@@ -52,12 +53,7 @@ type IntegrationCard = {
 };
 
 function integrationCards(): IntegrationCard[] {
-  const cloudinaryConfigured = Boolean(
-    process.env.CLOUDINARY_URL ??
-      (process.env.CLOUDINARY_CLOUD_NAME &&
-        process.env.CLOUDINARY_API_KEY &&
-        process.env.CLOUDINARY_API_SECRET),
-  );
+  const cloudinaryConfigured = Boolean(getCloudinaryCredentials());
 
   return [
     {

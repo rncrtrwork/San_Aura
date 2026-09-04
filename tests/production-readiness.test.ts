@@ -60,6 +60,14 @@ describe('production readiness checks', () => {
     assert.equal(hasFailedReadinessChecks(checks), false);
   });
 
+  it('accepts configured Cloudinary URL credentials', () => {
+    const checks = validateProductionCloudinaryEnvironment({
+      CLOUDINARY_URL: 'cloudinary://123456789012345:cloudinary-secret@sun-aura-prod',
+    });
+
+    assert.equal(hasFailedReadinessChecks(checks), false);
+  });
+
   it('rejects incomplete Cloudinary production credentials', () => {
     const checks = validateProductionCloudinaryEnvironment({
       CLOUDINARY_CLOUD_NAME: 'sun aura prod',
