@@ -75,7 +75,13 @@ function integrationCards(): IntegrationCard[] {
     {
       name: 'Email delivery',
       description: 'Used for reservation confirmations and staff-facing notification workflows.',
-      configured: Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS),
+      configured: Boolean(
+        process.env.SMTP_HOST &&
+          process.env.SMTP_PORT &&
+          process.env.SMTP_USER &&
+          process.env.SMTP_PASSWORD &&
+          process.env.SMTP_FROM_EMAIL,
+      ),
       configuredLabel: 'SMTP credentials configured',
       missingLabel: 'Add SMTP settings',
       Icon: MailCheck,
