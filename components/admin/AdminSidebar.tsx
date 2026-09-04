@@ -2,7 +2,6 @@
 
 import {
   Activity,
-  BarChart3,
   CalendarDays,
   CircleHelp,
   FileText,
@@ -28,7 +27,6 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { label: 'Overview', href: '/admin', icon: Gauge },
-  { label: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   { label: 'Members', href: '/admin/members', icon: Users },
   { label: 'Reservations', href: '/admin/reservations', icon: TicketCheck },
   { label: 'Calendar', href: '/admin/calendar', icon: CalendarDays },

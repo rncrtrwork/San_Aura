@@ -7,6 +7,7 @@ export type VisitorVisitDocument = {
   country: string;
   region: string;
   city: string;
+  ipAddress: string;
   createdAt: Date;
 };
 
@@ -18,6 +19,7 @@ const visitorVisitSchema = new Schema<VisitorVisitDocument>(
     country: { type: String, required: true, trim: true, maxlength: 80, index: true },
     region: { type: String, required: true, trim: true, maxlength: 120, index: true },
     city: { type: String, required: true, trim: true, maxlength: 120, index: true },
+    ipAddress: { type: String, required: true, trim: true, maxlength: 120, index: true },
   },
   { timestamps: { createdAt: 'createdAt', updatedAt: false } },
 );

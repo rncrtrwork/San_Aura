@@ -31,6 +31,7 @@ import { publicNavigationItems, publicPageHref } from '@/lib/publicWebsite';
 import {
   isAutomatedVisitor,
   parseVisitorUserAgent,
+  visitorIpAddressFromHeaders,
   visitorLocationFromHeaders,
 } from '@/lib/visitorTracking';
 import { serializeMemberForPortal } from '@/server/members/serializeMemberForPortal';
@@ -113,6 +114,25 @@ test('visitor tracking reads approximate location from geo headers', () => {
     region: 'IN',
     city: 'Roselawn Township',
   });
+});
+
+test('visitor tracking reads client IP address from request headers', () => {
+  assert.equal(
+    visitorIpAddressFromHeaders(
+      new Headers({
+        'x-forwarded-for': '203.0.113.10, 10.0.0.2',
+      }),
+    ),
+    '203.0.113.10',
+  );
+  assert.equal(
+    visitorIpAddressFromHeaders(
+      new Headers({
+        forwarded: 'for="[2001:db8:cafe::17]";proto=https',
+      }),
+    ),
+    '2001:db8:cafe::17',
+  );
 });
 
 test('visitor tracking filters automated visitors', () => {

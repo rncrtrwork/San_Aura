@@ -24,7 +24,7 @@ function matchVersion(userAgent: string, patterns: RegExp[]): string {
 function cleanHeaderValue(value: string | null): string {
   if (!value) return unknownLabel;
   const trimmed = value.trim();
-  if (!trimmed) return unknownLabel;
+  if (!trimmed || trimmed.toLowerCase() === 'unknown') return unknownLabel;
 
   try {
     return decodeURIComponent(trimmed.replaceAll('+', ' '));
@@ -122,6 +122,30 @@ function parseOperatingSystem(userAgent: string): string {
   return unknownLabel;
 }
 
+function normalizeIpCandidate(value: string): string {
+  const cleaned = cleanHeaderValue(value).replace(/^"|"$/g, '').trim();
+  if (cleaned === unknownLabel) return unknownLabel;
+  if (cleaned.startsWith('[')) return cleaned.slice(1).split(']')[0] || unknownLabel;
+  if (/^\d{1,3}(?:\.\d{1,3}){3}:\d+$/.test(cleaned)) return cleaned.split(':')[0] ?? unknownLabel;
+  return cleaned;
+}
+
+function forwardedForIp(value: string | null): string {
+  if (!value) return unknownLabel;
+  const forValue = value
+    .split(';')
+    .map((part) => part.trim())
+    .find((part) => part.toLowerCase().startsWith('for='));
+  if (!forValue) return unknownLabel;
+  return normalizeIpCandidate(forValue.slice(4));
+}
+
+function headerListIp(value: string | null): string {
+  if (!value) return unknownLabel;
+  const firstValue = value.split(',')[0]?.trim();
+  return firstValue ? normalizeIpCandidate(firstValue) : unknownLabel;
+}
+
 export function parseVisitorUserAgent(userAgent: string): VisitorDeviceInfo {
   const browser = parseBrowser(userAgent);
 
@@ -147,6 +171,21 @@ export function visitorLocationFromHeaders(headers: Headers): VisitorLocationInf
     ]),
     city: firstHeaderValue(headers, ['x-vercel-ip-city', 'x-geo-city', 'x-city']),
   };
+}
+
+export function visitorIpAddressFromHeaders(headers: Headers): string {
+  const directIp = firstHeaderValue(headers, [
+    'cf-connecting-ip',
+    'true-client-ip',
+    'x-real-ip',
+    'x-client-ip',
+  ]);
+  if (directIp !== unknownLabel) return normalizeIpCandidate(directIp);
+
+  const forwardedIp = headerListIp(headers.get('x-forwarded-for'));
+  if (forwardedIp !== unknownLabel) return forwardedIp;
+
+  return forwardedForIp(headers.get('forwarded'));
 }
 
 export function isAutomatedVisitor(userAgent: string): boolean {

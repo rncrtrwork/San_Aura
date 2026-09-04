@@ -3,6 +3,7 @@ import { connectToDatabase } from '@/lib/db';
 import {
   isAutomatedVisitor,
   parseVisitorUserAgent,
+  visitorIpAddressFromHeaders,
   visitorLocationFromHeaders,
 } from '@/lib/visitorTracking';
 import { VisitorVisit } from '@/models/VisitorVisit';
@@ -16,6 +17,7 @@ export async function POST(request: NextRequest): Promise<Response> {
 
   const device = parseVisitorUserAgent(userAgent);
   const location = visitorLocationFromHeaders(request.headers);
+  const ipAddress = visitorIpAddressFromHeaders(request.headers);
 
   try {
     await connectToDatabase();
@@ -26,6 +28,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       country: location.country,
       region: location.region,
       city: location.city,
+      ipAddress,
     });
   } catch {
     return new Response(null, { status: 204 });
