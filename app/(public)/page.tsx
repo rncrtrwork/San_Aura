@@ -2,6 +2,7 @@ import { ExploreResort } from '@/components/ExploreResort';
 import { GalleryStrip } from '@/components/GalleryStrip';
 import { GuestReviews } from '@/components/GuestReviews';
 import { Hero } from '@/components/Hero';
+import { HomeVisitTracker } from '@/components/HomeVisitTracker';
 import { OutdoorFeature } from '@/components/OutdoorFeature';
 import { StayYourWay } from '@/components/StayYourWay';
 import { TrustStrip } from '@/components/TrustStrip';
@@ -22,6 +23,7 @@ export default async function Home() {
   if (cmsPage) {
     return (
       <>
+        <HomeVisitTracker />
         <PublicCmsSections page={cmsPage} />
         <GuestReviews />
       </>
@@ -30,6 +32,7 @@ export default async function Home() {
 
   return (
     <>
+      <HomeVisitTracker />
       <Hero />
       <TrustStrip />
       <UpcomingEvents />

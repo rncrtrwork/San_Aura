@@ -28,6 +28,11 @@ import { publicSeoFields } from '@/lib/publicSeo';
 import { PUBLIC_WEBSITE_REDIRECTS } from '@/lib/publicRedirects';
 import { publicStartingRateLabel } from '@/lib/publicStays';
 import { publicNavigationItems, publicPageHref } from '@/lib/publicWebsite';
+import {
+  isAutomatedVisitor,
+  parseVisitorUserAgent,
+  visitorLocationFromHeaders,
+} from '@/lib/visitorTracking';
 import { serializeMemberForPortal } from '@/server/members/serializeMemberForPortal';
 
 test('public page href keeps home at the root path', () => {
@@ -81,6 +86,38 @@ test('public navigation only includes published CMS pages marked visible', () =>
     { slug: 'home', label: 'Home', href: '/' },
     { slug: 'contact', label: 'Talk to us', href: '/contact' },
   ]);
+});
+
+test('visitor tracking parses browser and operating system from user agent', () => {
+  const parsed = parseVisitorUserAgent(
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
+      '(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+  );
+
+  assert.equal(parsed.browserName, 'Chrome');
+  assert.equal(parsed.browserVersion, '126.0.0.0');
+  assert.equal(parsed.operatingSystem, 'Windows 10/11');
+});
+
+test('visitor tracking reads approximate location from geo headers', () => {
+  const location = visitorLocationFromHeaders(
+    new Headers({
+      'x-vercel-ip-country': 'US',
+      'x-vercel-ip-country-region': 'IN',
+      'x-vercel-ip-city': 'Roselawn%20Township',
+    }),
+  );
+
+  assert.deepEqual(location, {
+    country: 'US',
+    region: 'IN',
+    city: 'Roselawn Township',
+  });
+});
+
+test('visitor tracking filters automated visitors', () => {
+  assert.equal(isAutomatedVisitor('Googlebot/2.1'), true);
+  assert.equal(isAutomatedVisitor('Mozilla/5.0 Safari/605.1.15'), false);
 });
 
 const faqItems: PublicFaqItem[] = [
